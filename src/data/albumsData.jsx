@@ -1,7 +1,7 @@
-import landscape from "../assets/img/albums/landscape.jpg";
-import landscape2 from "../assets/img/albums/landscape2.jpg";
-import landscape3 from "../assets/img/albums/landscape3.jpg";
-import landscape4 from "../assets/img/albums/landscape4.jpg";
+import landscape from "../assets/img/albums/decembre/landscape.jpg";
+import landscape2 from "../assets/img/albums/decembre/landscape2.jpg";
+import landscape3 from "../assets/img/albums/decembre/landscape3.jpg";
+import landscape4 from "../assets/img/albums/decembre/landscape4.jpg";
 
 import bw1 from "../assets/img/albums/janvier/bw1.jpg";
 import bw2 from "../assets/img/albums/janvier/bw2.jpg";
