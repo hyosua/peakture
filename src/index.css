@@ -57,3 +57,10 @@ h2 {
   border-radius: 10px;
   transition: opacity 0.3s ease-in-out;
 }
+
+button {
+  font-size: 30px;
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+}
