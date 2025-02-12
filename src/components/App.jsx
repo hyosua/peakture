@@ -8,7 +8,6 @@ import AlbumPage from "./AlbumPage";
 
 
 const App = () => {
-  const [hasVoted, setHasVoted] = useState( initialState: false);
   return (
     <Router>
       <Routes>
