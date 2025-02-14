@@ -15,7 +15,13 @@ const Home = () => {
 
                 <div className='wrapper'>
                     <header>
-                        <PictureOfTheMonth winner='Alaina' photo={albumFevrier.photos[0]} id='0' voteCount='35' avatar='avatar'/>
+                        <PictureOfTheMonth winner='Alaina' 
+                                            photo={albumFevrier.photos[0]} 
+                                            id='0' 
+                                            voteCount='35' 
+                                            avatar='avatar'
+                                            month='Février' //album.month
+                        />
                     </header>
                     
 
