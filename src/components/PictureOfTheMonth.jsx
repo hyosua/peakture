@@ -5,7 +5,7 @@ const Picture = ({winner,photo, id, voteCount, avatar, month}) => {
     const navigate = useNavigate();
 
     return (
-        <div className='wrapper items-center text-white'>
+        <div className='justify-center items-center text-white'>
             <h1 className='mb-10'>Peakture of the Month</h1>
             <img key={id} 
                 src={photo} 

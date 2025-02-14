@@ -57,7 +57,7 @@
   }
 
   .wrapper {
-    @apply px-5 py-12 xs:p-10 max-w-7xl mx-auto flex flex-col relative z-10;
+    @apply px-5 py-5  max-w-7xl mx-auto flex flex-col relative z-10;
   }
 
   .trending {
@@ -143,7 +143,6 @@
       @apply text-gray-100 font-medium text-base;
     }
   }
-}
 
   .album-preview {
     @apply grid grid-flow-col grid-cols-3 gap-5;
@@ -162,6 +161,23 @@
 
 
   }
+
+  .gallery {
+    @apply columns-2 md:columns-3 gap-4;
+  }
+
+  .gallery-photo {
+    @apply h-auto max-w-full rounded-lg object-cover;
+  }
+
+  .like-button {
+    @apply cursor-pointer absolute top-2 right-2 p-2 bg-white/10 rounded-full shadow-md transition-transform transform 
+  }
+}
+ap-4
+  .
+
+
 
 @utility text-gradient {
   @apply bg-linear-to-r from-[#D6C7FF] to-[#00ffc8] bg-clip-text text-transparent;
