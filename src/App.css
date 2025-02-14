@@ -163,12 +163,13 @@
   }
 
   .gallery {
-    @apply columns-2 md:columns-3 gap-4;
+    @apply flex gap-4
   }
 
   .gallery-photo {
     @apply h-auto max-w-full rounded-lg object-cover;
   }
+
 
   .like-button {
     @apply cursor-pointer absolute top-2 right-2 p-2 bg-white/10 rounded-full shadow-md transition-transform transform 

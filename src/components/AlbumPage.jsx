@@ -2,6 +2,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import albums from "../data/albumsData";
 import { useState } from "react";
 import Picture from "./Picture";
+import Masonry from "react-masonry-css";
+
+const breakpointColumns = {
+    default: 3,
+    1024: 3,
+    768: 2,
+    500: 1
+};
 
 const AlbumPage = () => {
     const { month } = useParams();
@@ -24,7 +32,11 @@ const AlbumPage = () => {
             <button className="cursor-pointer border border-white p-2 w-20 mb-4 rounded-lg" onClick={() => navigate("/")}>Retour</button>
             <h2>{month}</h2>
             <h4 className="text-2xl font-fold mb-6">Thème: {albumSelected.theme}</h4>
-            <div className="gallery">
+            <Masonry
+                breakpointCols={breakpointColumns}
+                className="gallery"
+                columnClassName="bg-clip-padding;"
+            >
                 {albumSelected.photos.map((photo) => (
                     <div key={photo.id} className="mb-4 break-inside-avoid">
                         <Picture photo={photo.src} 
@@ -35,7 +47,7 @@ const AlbumPage = () => {
                     </div>
 
                 ))}
-            </div>
+            </Masonry>
         </div>
     )
 }
