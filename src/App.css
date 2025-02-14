@@ -145,6 +145,24 @@
   }
 }
 
+  .album-preview {
+    @apply grid grid-flow-col grid-cols-3 gap-5;
+
+    & img {
+      @apply rounded-lg h-auto w-56 cursor-pointer scale-95 hover:scale-100 transition-all duration-500 hover:drop-shadow-glow;
+    }
+
+    & h3 {
+      @apply text-white font-bold text-xl line-clamp-1;
+    }
+
+    & h4 {
+      @apply text-white font-bold text-base line-clamp-1;
+    }
+
+
+  }
+
 @utility text-gradient {
   @apply bg-linear-to-r from-[#D6C7FF] to-[#00ffc8] bg-clip-text text-transparent;
 }

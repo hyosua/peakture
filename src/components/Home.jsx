@@ -25,14 +25,14 @@ const Home = () => {
                     </header>
                     
 
-                    <div className="">
+                    <div className="album-preview">
                         {albums.map((album, index) => (
                             <div key={index} 
                                 className=""
                                 onClick={() => navigate(`/album/${album.month}`)}
                             >
                                 <h3>{album.month}</h3>
-                                <img src={album.photos[0]} alt={album.theme} className="peakture"/>
+                                <img src={album.photos[0]} alt={album.theme} className=""/>
                                 <h3>Thème:"<i>{album.theme}</i>"</h3>
                                 <h4>Winner:<i>{album.winner}</i></h4>
                             </div>
