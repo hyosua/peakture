@@ -31,7 +31,7 @@ const AlbumPage = () => {
         <div className="wrapper text-white">
             <button className="cursor-pointer border border-white p-2 w-20 mb-4 rounded-lg" onClick={() => navigate("/")}>Retour</button>
             <h2>{month}</h2>
-            <h4 className="text-2xl font-fold mb-6">Thème: {albumSelected.theme}</h4>
+            <h4 className="text-2xl font-bold mb-6">Thème: <span className="font-normal text-amber-700">"{albumSelected.theme}"</span></h4>
             <Masonry
                 breakpointCols={breakpointColumns}
                 className="gallery"

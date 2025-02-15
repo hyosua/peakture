@@ -1,6 +1,3 @@
-import { useParams, useNavigate } from "react-router-dom";
-import albums from "../data/albumsData";
-import { useState } from "react";
 import { Heart, Mountain } from "lucide-react"
 import { animate, motion } from "framer-motion";
 
@@ -13,7 +10,7 @@ const Picture = ({photo, id, isLiked, onLike}) => {
                 src={photo} 
                 alt={`Photo ${id}`} 
                 className={`gallery-photo ${
-                    isLiked ? "border-red-500 border-4" : "border-0"
+                    isLiked ? "border-amber-700 border-4" : "border-0"
                 }`} 
                 initial={{ scale: 1 }}
                 animate={{ scale: isLiked ? 1.05 : 1 }}
@@ -26,7 +23,7 @@ const Picture = ({photo, id, isLiked, onLike}) => {
             >
                 <Heart
                     className={`w-6 h-6 ${
-                        isLiked ? "fill-red-500 stroke-none" : "stroke-white"
+                        isLiked ? "fill-amber-700 stroke-none" : "stroke-white"
                     }`}
                 />
             </motion.button>
