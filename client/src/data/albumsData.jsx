@@ -14,7 +14,7 @@ import motion3 from "../assets/img/albums/fevrier/motion3.jpg";
 import motion4 from "../assets/img/albums/fevrier/motion4.jpg";
 
 const albums = [
-    {month: "Décembre", theme: "Landscape", winner: "Alicia", 
+    {month: "Décembre", theme: "Landscape", winner: "Alicia", cover: photos[0],
         photos: [
             {id: "dec-1",src: landscape},
             {id: "dec-2",src: landscape2},
@@ -22,7 +22,7 @@ const albums = [
             {id: "dec-4",src: landscape4}
         ]
     },
-    {month: "Janvier", theme: "Black & White", winner: "Bob", 
+    {month: "Janvier", theme: "Black & White", winner: "Bob", cover: photos[0], 
         photos: [
             {id: "jan-1", src: bw1},
             {id: "jan-2", src: bw2},
@@ -30,7 +30,7 @@ const albums = [
             {id: "jan-4", src: bw4}
         ]
     },
-    {month: "Février", theme: "In Motion", winner: "Charlie",
+    {month: "Février", theme: "In Motion", winner: "Charlie", cover: photos[0],
         photos: [
             {id: "fev-1", src: motion}, 
             {id: "fev-2", src: motion2},
