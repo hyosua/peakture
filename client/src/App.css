@@ -145,11 +145,7 @@
   }
 
   .album-preview {
-    @apply grid grid-flow-col grid-cols-3 gap-5;
-
-    & img {
-      @apply rounded-lg h-auto w-56 cursor-pointer scale-95 hover:scale-100 transition-all duration-500 hover:drop-shadow-glow;
-    }
+    @apply gap-6 cursor-pointer scale-95 hover:scale-100 transition-all duration-500 hover:drop-shadow-glow;
 
     & h3 {
       @apply text-white font-bold text-xl line-clamp-1;

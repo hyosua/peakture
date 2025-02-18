@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { EllipsisVertical } from 'lucide-react'
+import { navigate } from 'react-router-dom'
+import { EllipsisVertical, Plus } from 'lucide-react'
+import axios from 'axios'
 // if database not set up yet, import albums from data
 // import albums from '../data/albumsData'
-
-const AlbumsList = () => {
+const AlbumList = () => {
     const [isHovered, setIsHovered] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const [newTheme, setNewTheme] = useState('')
+    const [editingAlbum, setEditingAlbum] = useState(null)
 
     const [albums, setAlbums] = useState([])
     // fetch albums from the server
@@ -27,11 +29,35 @@ const AlbumsList = () => {
 
     // delete an album
     async function deleteAlbum(id){
-        await fetch(`http://localhost:5000/delete:${id}`, {
+        await fetch(`http://localhost:5000/album/${id}`, {
             method: "DELETE",
         })  
         const newAlbums = albums.filter((element) => element._id !== id )
         setAlbums(newAlbums)
+    }
+
+    const handleEdit = (album) => {
+        setEditingAlbum(album)
+        setNewTheme(album.theme)
+    }
+
+    const handleSave = async () => {
+        try {
+            const response = await axios.patch(`http://localhost:5000/album/${id}`,{
+                theme: newTheme
+            })
+            setAlbums(albums.map(album =>
+                album._id === response.data._id ? response.data : album       
+            ))
+            setEditingAlbum(null)
+        } catch (error) {
+            console.error('Error updating album:', error)
+        }
+    }
+
+    const handleCancel = () => {
+        setEditingAlbum(null)
+        setNewTheme('')
     }
 
     const handleMouseEnter = () => {
@@ -49,8 +75,8 @@ const AlbumsList = () => {
 
     return (
         <> 
-            { albums.map((album, index) => (
-                <div key={index}
+            { albums.map((album) => (
+                <div key={album._id}
                     className="album-preview"
                     onClick={() => navigate(`/album/${album.month}`)}
                 >
@@ -71,16 +97,32 @@ const AlbumsList = () => {
                                 </button>
                                 {isMenuOpen && (
                                     <div className="abolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl">
-                                        <button className="block px-4 text-gray-800 hover:bg-gray-200 w-full text-left">
+                                        <button onClick={ handleEdit(album) }
+                                                className="block px-4 text-gray-800 hover:bg-gray-200 w-full text-left">
                                             Renommer le thème
                                         </button>
-                                        <button className="block px-4 text-gray-800 hover:bg-gray-200 w-full text-left">
+                                        <button onClick={deleteAlbum(album._id)}
+                                                className="block px-4 text-gray-800 hover:bg-gray-200 w-full text-left">
                                             Supprimer l'album
                                         </button>
                                     </div>
                                 )}
                             </div>
                         )}
+                        <div className="hidden absolute top-4 right-4 bg-white border border-emerald-400 p-2 rounded-lg">
+                            {editingAlbum && editingAlbum._id === album._id && (
+                                <div>
+                                    <input
+                                        type="text"
+                                        value={newTheme}
+                                        onChange={(e) => setNewTheme(e.target.value)}
+                                        placeholder={album._id.theme}
+                                    />
+                                    <button onClick={handleSave}>Save</button>
+                                    <button onClick={handleCancel}>Cancel</button>
+                                </div>
+                            )}
+                        </div>
                     </div>   
                 </div>  
             ))}
@@ -88,4 +130,4 @@ const AlbumsList = () => {
     )
 }
 
-export default AlbumsList
+export default AlbumList
