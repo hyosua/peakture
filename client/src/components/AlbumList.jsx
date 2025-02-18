@@ -141,7 +141,7 @@ const AlbumList = () => {
             <div className='flex justify-between items-center mb-6'>
                 <h1 className='text-2xl text-white font-bold'>Albums</h1>
                 <button
-                    className='p-2 text-white rounded-full border-2 border-white hover:bg-emerald-600 focus:outline-none flex items-center'
+                    className='p-2 text-white rounded-full border-2 border-white hover:bg-emerald-600 focus:outline-none flex items-center cursor-pointer'
                     onClick={() => setShowAddForm(true)}
                 >
                     <Plus size={24} />
@@ -155,7 +155,7 @@ const AlbumList = () => {
                         <div className='flex justify-between items-center mb-4'>
                             <h2 className='text-xl font-semibold'>Ajouter Un Album</h2>
                             <button 
-                                className='p-1 rounded-full hover:bg-gray-200'
+                                className='p-1 rounded-full hover:bg-gray-200 cursor-pointer'
                                 onClick={() => setShowAddForm(false)}
                             >
                                 <X size={20} />
@@ -168,7 +168,7 @@ const AlbumList = () => {
                                     value={newAlbumForm.month}
                                     onChange={handleFormChange}
                                     name='month'
-                                    className="block w-full p-2 mb-4 border rounded"
+                                    className="block w-full p-2 mb-4 border-2 border-emerald-950 rounded"
                                     required
                                 >
                                     <option value="">Sélectionner un mois</option>
@@ -184,21 +184,21 @@ const AlbumList = () => {
                                     name='theme'
                                     value={newAlbumForm.theme}
                                     onChange={handleFormChange}
-                                    className='w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500'
+                                    className='w-full px-3 py-2 border-2 border-emerald-950 rounded-lg focus:border-0 focus:outline-none focus:ring-2 focus:ring-emerald-500'
                                     required
                                 />
                             </div>
                             <div className='flex justify-end'>
                                 <button
                                     type='button'
-                                    className='px-4 py-2 text-ray-700 hover:bg-gray-100 rounded-lg mr-2'
+                                    className='px-4 py-2 text-ray-700 hover:bg-gray-100 rounded-lg mr-2 cursor-pointer'
                                     onClick={() => setShowAddForm(false)}
                                 >
                                     Annuler
                                 </button>
                                 <button
                                     type='submit'
-                                    className='px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-900'
+                                    className='px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-900 cursor-pointer'
                                 >
                                     Créer
                                 </button>
@@ -228,7 +228,7 @@ const AlbumList = () => {
 
                         {/* Edit Album */}
                         {editingAlbum === album._id && (
-                            <div className='absolute inset-0 bg-white bg-opacity-95 p-4 flex flex-col items-center justify-center'
+                            <div className='absolute inset-0 bg-white bg-opacity-95 p-4 flex flex-col items-center justify-center cursor-pointer'
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h3>Editer le Thème</h3>
@@ -242,13 +242,13 @@ const AlbumList = () => {
                                 <div className='flex space-x-2'>
                                     <button 
                                         onClick={(e) => handleSave(album._id,e)}
-                                        className='px-4 pey-2 border-2 border-white text-white rounded-lg bg-emerald-900 hover:bg-emerald-600 flex items-center'
+                                        className='px-4 pey-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex items-center'
                                     >
                                         <Check size={16} className='mr-1' /> Enregistrer
                                     </button>
                                     <button
                                         onClick={handleCancel}
-                                        className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center'
+                                        className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center cursor-pointer'
                                     >
                                         <X size={16} className='mr-1' /> Annuler
                                     </button>
@@ -262,7 +262,7 @@ const AlbumList = () => {
                             <div className='absolute top-2 right-2'>
                                 <button
                                     onClick={(e) => toggleMenu(album._id, e)}
-                                    className='p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none'
+                                    className='p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none cursor-pointer'
                                 >
                                     <EllipsisVertical size={20} />
                                 </button>
@@ -272,15 +272,15 @@ const AlbumList = () => {
                                     <div className='abosule right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
                                         <button
                                             onClick={(e) => handleEdit(album,e)}
-                                            className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100 rounded-t-lg'
+                                            className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100 rounded-t-lg cursor-pointer'
                                         >
                                             Changer le thème
                                         </button>
                                         <button 
                                             onClick={(e) => deleteAlbum(album._id,e)}
-                                            className='block w-full px-4 py-2 text-left text-red-600 hover:bg-hray-100 rounded-b-lg'
+                                            className='block w-full px-4 py-2 text-left text-red-600 hover:bg-hray-100 rounded-b-lg cursor-pointer'
                                         >
-                                            Supprimer l`&apos;`Album
+                                            Supprimer l&apos;album
                                         </button>
                                     </div>
                                 )}
