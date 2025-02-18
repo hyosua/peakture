@@ -280,7 +280,7 @@ const AlbumList = () => {
                                             onClick={(e) => deleteAlbum(album._id,e)}
                                             className='block w-full px-4 py-2 text-left text-red-600 hover:bg-hray-100 rounded-b-lg'
                                         >
-                                            Supprimer l'Album
+                                            Supprimer l`&apos;`Album
                                         </button>
                                     </div>
                                 )}
