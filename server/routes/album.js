@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
         res.status(201).send(result);
     } catch(err) {
         console.error(err);
-        res.statu(500).send("Error adding a new album");
+        res.status(500).send("Error adding a new album");
     }
 });
 
@@ -64,12 +64,12 @@ router.patch("/:id", async (req, res) => {
         let result = await collection.updateOne(query, updates);
 
         // Send back the updated document
-        if(result.matchedCound ===0) {
+        if(result.matchedCount ===0) {
             return res.status(404).send("No album found with that id");
         }
 
         // Get the updated document
-        const updatedAlbum = await collection.fondOne(query);
+        const updatedAlbum = await collection.findOne(query);
         res.status(200).send(updatedAlbum);
     } catch (err) {
         console.error(err);

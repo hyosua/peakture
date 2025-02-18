@@ -8,8 +8,8 @@ import axios from 'axios'
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
-    const [hoveredAlbumId, sethoveredAlbumId] = useState(null)
-    const [menuOpenId, setmenuOpenId] = useState(null)
+    const [hoveredAlbumId, setHoverAlbumId] = useState(null)
+    const [menuOpenId, setMenuOpenId] = useState(null)
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
@@ -50,7 +50,7 @@ const AlbumList = () => {
         e.stopPropagation() // Prevent navigation when editing
         setEditingAlbum(album._id)
         setNewTheme(album.theme)
-        setmenuOpenId(null) // Close menu after selecting edit
+        setMenuOpenId(null) // Close menu after selecting edit
     }
 
     // Save edited album
@@ -81,19 +81,19 @@ const AlbumList = () => {
 
     // Handle album hover
     const handleMouseEnter = (id) => {
-        sethoveredAlbumId(id)
+        setHoverAlbumId(id)
     }
 
     // Handle mouse leave on album
     const handleMouseLeave = () => {
-        sethoveredAlbumId(null)
-        setmenuOpenId(null)
+        setHoverAlbumId(null)
+        setMenuOpenId(null)
     }
 
     // Dropdown Menu for editing an album
     const toggleMenu = (id, e) => {
         e.stopPropagation()
-        setmenuOpenId(menuOpenId === id ? null : id)
+        setMenuOpenId(menuOpenId === id ? null : id)
     }
 
     // Handle form change for new album
@@ -121,8 +121,12 @@ const AlbumList = () => {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
-            const newAlbum = await response.json()
-            setAlbums([...albums, newAlbum])
+            const result = await response.json()
+            const newAlbum = {
+                _id: result.insertedId,
+                ...newAlbumForm
+            }
+            setAlbums(prev => [...prev, newAlbum])
             setNewAlbumForm({ month: "", theme: "" })
             setShowAddForm(false)
         } catch (error) {
@@ -150,7 +154,7 @@ const AlbumList = () => {
 
             {/* Add album form */}
             {showAddForm && (
-                <div className='fixed bg-emerald-950 bg-opacity-50 inset-0 flex items-center justify-center z-50'>
+                <div className='fixed bg-emerald-950/50 backdrop-blur-sm inset-0 flex items-center justify-center z-50'>
                     <div className="bg-white p-6 rounded-lg w-96">
                         <div className='flex justify-between items-center mb-4'>
                             <h2 className='text-xl font-semibold'>Ajouter Un Album</h2>
@@ -163,30 +167,33 @@ const AlbumList = () => {
                         </div>
                         <form onSubmit={handleSubmitNewAlbum}>
                             <div className='mb-4'>
-                                <label className="block text-gray-700 mb-2">Month</label>
-                                <select
-                                    value={newAlbumForm.month}
-                                    onChange={handleFormChange}
-                                    name='month'
-                                    className="block w-full p-2 mb-4 border-2 border-emerald-950 rounded"
-                                    required
-                                >
-                                    <option value="">Sélectionner un mois</option>
-                                    {["Janvier", "Février", "Mars", "Avril", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"].map((month) => (
-                                        <option key={month} value={month}>{month}</option>
-                                    ))}    
-                                </select>
+                                <label className="block text-gray-700 mb-2">Month
+                                    <select
+                                        value={newAlbumForm.month}
+                                        onChange={handleFormChange}
+                                        name='month'
+                                        className="block w-full p-2 mb-4 border-2 border-emerald-950 rounded"
+                                        required
+                                    >
+                                        <option value="">Sélectionner un mois</option>
+                                        {["Janvier", "Février", "Mars", "Avril", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"].map((month) => (
+                                            <option key={month} value={month}>{month}</option>
+                                        ))}    
+                                    </select>
+                                </label>
                             </div>
                             <div className='mb-4'>
-                                <label className='block text-gray-700 mb-2'>Thème</label>
-                                <input
-                                    type='text'
-                                    name='theme'
-                                    value={newAlbumForm.theme}
-                                    onChange={handleFormChange}
-                                    className='w-full px-3 py-2 border-2 border-emerald-950 rounded-lg focus:border-0 focus:outline-none focus:ring-2 focus:ring-emerald-500'
-                                    required
-                                />
+                                <label className='block text-gray-700 mb-2'>Thème
+                                    <input
+                                        type='text'
+                                        name='theme'
+                                        value={newAlbumForm.theme}
+                                        onChange={handleFormChange}
+                                        className='w-full px-3 py-2 border-2 border-emerald-950 rounded-lg focus:border-0 focus:outline-none focus:ring-2 focus:ring-emerald-500'
+                                        required
+                                    />
+                                </label>
+                                
                             </div>
                             <div className='flex justify-end'>
                                 <button
@@ -214,7 +221,8 @@ const AlbumList = () => {
                     <div
                         key={album._id}
                         className='album-preview'
-                        onMouseEnter={() => handleMouseEnter(album._id)}
+                        // onMouseEnter={() => handleMouseEnter(album._id)}
+                        onMouseEnter={() => console.log(album)}
                         onMouseLeave={handleMouseLeave}
                         onClick={() => handleAlbumClick(album.month)}
                     >
@@ -242,7 +250,7 @@ const AlbumList = () => {
                                 <div className='flex space-x-2'>
                                     <button 
                                         onClick={(e) => handleSave(album._id,e)}
-                                        className='px-4 pey-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex items-center'
+                                        className='px-4 py-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex items-center'
                                     >
                                         <Check size={16} className='mr-1' /> Enregistrer
                                     </button>
@@ -257,8 +265,8 @@ const AlbumList = () => {
 
                         )}
 
-                        {/* Album Menu (shown on hover) */}
-                        {(hoveredAlbumId === album._id && !editingAlbum) && (
+                        {/* Album Menu (affiché sur hover pour grands écrans) */}
+                        {((hoveredAlbumId === album._id || window.innerWidth < 640) && !editingAlbum) && ( 
                             <div className='absolute top-2 right-2'>
                                 <button
                                     onClick={(e) => toggleMenu(album._id, e)}
@@ -269,16 +277,16 @@ const AlbumList = () => {
 
                                 {/* Dropdown menu */}
                                 {menuOpenId === album._id && (
-                                    <div className='abosule right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
+                                    <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
                                         <button
                                             onClick={(e) => handleEdit(album,e)}
-                                            className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100 rounded-t-lg cursor-pointer'
+                                            className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-emerald-500 rounded-t-lg cursor-pointer'
                                         >
                                             Changer le thème
                                         </button>
                                         <button 
                                             onClick={(e) => deleteAlbum(album._id,e)}
-                                            className='block w-full px-4 py-2 text-left text-red-600 hover:bg-hray-100 rounded-b-lg cursor-pointer'
+                                            className='block w-full px-4 py-2 text-left text-red-600 hover:bg-emerald-500 rounded-b-lg cursor-pointer'
                                         >
                                             Supprimer l&apos;album
                                         </button>
