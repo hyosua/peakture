@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { EllipsisVertical, Plus, X, Check } from 'lucide-react'
-import axios from 'axios'
 
 // if database not set up yet, import albums from data
 // import albums from '../data/albumsData'
@@ -53,24 +52,55 @@ const AlbumList = () => {
         setMenuOpenId(null) // Close menu after selecting edit
     }
 
-    // Save edited album
-    const handleSave = async (id, e) => {
-        e.stopPropagation()
-        try {
-            await axios.patch(`http://localhost:5000/album/${id}`,{
-                theme: newTheme
-            })
+        // Save edited album
+        const handleSave = async (id, e) => {
+            e.stopPropagation()
 
-            // Update the albums state with updated album
-            setAlbums(albums.map(album =>
-                album._id === id ? { ...album, theme: newTheme } : album       
-            ))
-            setEditingAlbum(null)
-            setNewTheme('')
-        } catch (error) {
-            console.error('Error updating album:', error)
+            if(!newTheme){
+                return alert("Vous devez entrer un thème")
+            }
+
+            try {
+                console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
+                
+                const response = await fetch(`http://localhost:5000/album/${id}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        theme: newTheme
+                    })
+                })
+                
+                const updatedAlbum = await response.text();
+                console.log("Update response:", updatedAlbum);
+                // Add debugging
+                 console.log("Current albums state:", albums);
+                console.log("ID to update:", id, "type:", typeof id);
+                try {
+                    const updatedAlbums = albums.map(album => {
+
+                        return { ...album, theme: newTheme };
+                    
+                    });
+            
+                    setAlbums(updatedAlbums);
+                } catch (mapError) {
+                    console.error("Error during albums mapping:", mapError);
+                }
+
+                setEditingAlbum(null);
+                setNewTheme('');
+
+            } catch (error) {
+                console.error('Error updating album:', error);
+                if (error.response) {
+                    console.error('Error details:', error.response.data);
+                    console.error('Status:', error.response.status);
+                }
+            }
         }
-    }
 
     // Cancel Album editing
     const handleCancel = (e) => {
@@ -221,13 +251,12 @@ const AlbumList = () => {
                     <div
                         key={album._id}
                         className='album-preview'
-                        // onMouseEnter={() => handleMouseEnter(album._id)}
-                        onMouseEnter={() => console.log(album)}
+                        onMouseEnter={() => handleMouseEnter(album._id)}
                         onMouseLeave={handleMouseLeave}
                         onClick={() => handleAlbumClick(album.month)}
                     >
                         {/* Album Card */}
-                        <div className='p-4'>
+                        <div className='p-4 border-2 border-emerald-500 rounded-lg'>
                             <h3 className='mb-2'>{album.month}</h3>
                             {album.cover && <img src={album.cover} alt={album.month} className='w-full h-48 object-cover mb-2' />}
                             <h3 className='mb-1'>Thème: <i>{editingAlbum === album._id ?'' : album.theme}</i></h3>
@@ -236,7 +265,7 @@ const AlbumList = () => {
 
                         {/* Edit Album */}
                         {editingAlbum === album._id && (
-                            <div className='absolute inset-0 bg-white bg-opacity-95 p-4 flex flex-col items-center justify-center cursor-pointer'
+                            <div className='absolute inset-0 bg-white/95 flex flex-col items-center justify-center cursor-pointer'
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h3>Editer le Thème</h3>
@@ -245,7 +274,7 @@ const AlbumList = () => {
                                     value={newTheme}
                                     placeholder='Entrer le nouveau thème'
                                     onChange={(e) => setNewTheme(e.target.value)}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-4'
+                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-2'
                                 />
                                 <div className='flex space-x-2'>
                                     <button 

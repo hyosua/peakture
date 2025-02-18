@@ -2,6 +2,7 @@ import express from "express";
 import db from "../db/connexion.js";
 import { ObjectId } from "mongodb";
 
+
 // router is an instance of express router, we use it to define our routes
 // The router will be added as a middleware and will take control of requests starting with the path we give it
 const router = express.Router();
@@ -50,30 +51,46 @@ router.post("/", async (req, res) => {
         res.status(500).send("Error adding a new album");
     }
 });
-
+const isValidObjectId = (id) => ObjectId.isValid(id);
 // Update an album by id
 router.patch("/:id", async (req, res) => {
     try {
+        console.log(`Received PATCH request for album ID: ${req.params.id}`);
+        console.log(`Request body:`, req.body);
+        // Vérification de l'ID
+        if (!isValidObjectId(req.params.id)) {
+            return res.status(400).send("Invalid album ID");
+        }
+        
         const query = { _id: new ObjectId(req.params.id) };
         const updates = {
             $set: {
                 theme: req.body.theme
             },
         };
+        
+        console.log(`Querying for document with _id:`, query);
+        
         let collection = await db.collection("albums");
         let result = await collection.updateOne(query, updates);
+        
+        console.log(`Update result:`, result);
 
         // Send back the updated document
-        if(result.matchedCount ===0) {
+        if(result.matchedCount === 0) {
+            console.log(`No album found with id: ${req.params.id}`);
             return res.status(404).send("No album found with that id");
         }
 
         // Get the updated document
+        console.log(`Getting updated document for id: ${req.params.id}`);
         const updatedAlbum = await collection.findOne(query);
+        
+        console.log(`Retrieved updated album:`, updatedAlbum);
         res.status(200).send(updatedAlbum);
     } catch (err) {
-        console.error(err);
-        res.status(500).send("Error updating album");
+        console.error(`Error processing PATCH request for id ${req.params.id}:`, err);
+        res.status(500).send(`Error updating album: ${err.message}`);
     }
 });
 
