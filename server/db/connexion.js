@@ -21,6 +21,6 @@ try {
     console.error(err);
 }
 
-let db = client.db("albums");
+let db = client.db("peakture");
 
 export default db;

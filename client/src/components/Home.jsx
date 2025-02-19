@@ -1,11 +1,11 @@
-import albums from '../data/albumsData';
+import localAlbums from '../data/albumsData';
 import PictureOfTheMonth from './PictureOfTheMonth';
 import '../App.css';
 import AlbumList from './AlbumList';
 
 const Home = () => {
 
-    const albumFevrier = albums.find(a => a.month === 'Février');
+    const albumFevrier = localAlbums.find(a => a.month === 'Février');
 
     return (
         <div>

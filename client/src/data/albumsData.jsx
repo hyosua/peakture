@@ -13,7 +13,7 @@ import motion2 from "../assets/img/albums/fevrier/motion2.jpg";
 import motion3 from "../assets/img/albums/fevrier/motion3.jpg";
 import motion4 from "../assets/img/albums/fevrier/motion4.jpg";
 
-const albums = [
+const localAlbums = [
     {month: "Décembre", theme: "Landscape", winner: "Alicia", cover: landscape,
         photos: [
             {id: "dec-1",src: landscape},
@@ -40,4 +40,4 @@ const albums = [
     }
 ];
 
-export default albums;
+export default localAlbums;
