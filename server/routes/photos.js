@@ -105,3 +105,23 @@ router.delete('/photo/:id', async (req, res) => {
         res.status(500).json({ message: 'Error deleting photo', error: error.message })
     }
 })
+
+// Ajouter un Vote à une photo
+router.patch('/photo/:id/like', async (req,res) => {
+    const photoId = ObjectId.createFromHexString(req.params.id)
+    try {
+        const result = await db.collection('photos').updateOne(
+            { _id: photoId},
+            { $inc: { votes: 1 } }
+        )
+        const updatedPhoto = await db.collection('photos').findOne({
+            _id: photoId
+        })
+
+        res.json(updatedPhoto)
+    } catch (error) {
+        res.status(500).json( {message: "Erreur lors du vote", error: error.message })
+    }
+})
+
+export default router
