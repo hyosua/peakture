@@ -16,11 +16,12 @@ router.get("/", async (req, res) => {
     }
 });
 
-// Récupérer un album ar son id
-router.get('/album/:id', async (req, res) => {
+// Récupérer un album par son mois
+router.get('/:month', async (req, res) => {
     try {
+        console.log("Requète:",req)
         const album = await db.collection('albums').findOne({
-            _id: new ObjectId(req.params.id)
+            month: req.params.month
         });
         
         if (!album) {
@@ -34,8 +35,34 @@ router.get('/album/:id', async (req, res) => {
     }
 });
 
+// // Récupérer un album par son mois
+// router.get('/album/:month', async (req, res) => {
+//     try {
+//         const album = await db.collection('albums').findOne({ 
+//             month: req.params.month 
+//         });
+        
+//         if (!album) {
+//             return res.status(404).json({ message: 'Album not found' });
+//         }
+        
+//         // Récupérer les photos associées à cet album
+//         const photos = await db.collection('photos').find({ 
+//             albumId: album._id.toString() 
+//         }).toArray();
+        
+//         // Ajouter les photos à l'objet album
+//         album.photos = photos;
+        
+//         res.json(album);
+//     } catch (error) {
+//         console.error('Error fetching album by month:', error);
+//         res.status(500).json({ message: 'Error fetching album', error: error.message });
+//     }
+// });
+
 // Créer un album
-router.post("/album", async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         let newDocument = {
             month: req.body.month,
@@ -50,7 +77,7 @@ router.post("/album", async (req, res) => {
 });
 
 // MAJ un album par id
-router.patch("/album/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
     try {      
         const query = { _id: new ObjectId(req.params.id) };
         const updates = {
@@ -71,7 +98,7 @@ router.patch("/album/:id", async (req, res) => {
 
         // Get the updated document
         console.log(`Getting updated document for id: ${req.params.id}`);
-        const updatedAlbum = await collection.findOne(query);
+        const updatedAlbum = await db.collection("albums").findOne(query);
         
         console.log(`Retrieved updated album:`, updatedAlbum);
         res.status(200).send(updatedAlbum);
@@ -82,7 +109,7 @@ router.patch("/album/:id", async (req, res) => {
 });
 
 // Supprimer un album par id
-router.delete("/album/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
     try {
         const query = { _id: new ObjectId(req.params.id) };
 

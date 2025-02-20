@@ -23,7 +23,7 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
-                const response = await fetch('http://localhost:5000/album')
+                const response = await fetch('http://localhost:5000/albums')
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }
@@ -39,7 +39,7 @@ const AlbumList = () => {
     // Delete an album
     const deleteAlbum = async (id, e) => {
         e.stopPropagation(); // Prevent navigation when deleting
-        await fetch(`http://localhost:5000/album/${id}`, {
+        await fetch(`http://localhost:5000/albums/${id}`, {
             method: 'DELETE',
         })  
         setAlbums(albums.filter((album) => album._id !== id))   
@@ -63,7 +63,7 @@ const AlbumList = () => {
             try {
                 console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
                 
-                const response = await fetch(`http://localhost:5000/album/${id}`, {
+                const response = await fetch(`http://localhost:5000/albums/${id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json"
@@ -80,9 +80,10 @@ const AlbumList = () => {
                 console.log("ID to update:", id, "type:", typeof id);
                 try {
                     const updatedAlbums = albums.map(album => {
-
-                        return { ...album, theme: newTheme };
-                    
+                        if(album._id === id || album._id === parseInt(id)){
+                            return { ...album, theme: newTheme };
+                        }
+                        return album
                     });
             
                     setAlbums(updatedAlbums);
@@ -139,7 +140,7 @@ const AlbumList = () => {
     const handleSubmitNewAlbum = async (e) => {
         e.preventDefault()
         try {
-            const response = await fetch('http://localhost:5000/album',{
+            const response = await fetch('http://localhost:5000/albums',{
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
