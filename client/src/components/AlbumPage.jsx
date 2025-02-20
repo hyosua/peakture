@@ -28,7 +28,7 @@ const AlbumPage = () => {
         console.log(month)
         async function getAlbumData() {
             try {
-                const response = await fetch(`http://localhost:5000/album/${month}`);
+                const response = await fetch(`http://localhost:5000/albums/${month}`);
                 if (!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`);
                 }

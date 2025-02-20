@@ -97,10 +97,8 @@ router.patch("/:id", async (req, res) => {
         }
 
         // Get the updated document
-        console.log(`Getting updated document for id: ${req.params.id}`);
         const updatedAlbum = await db.collection("albums").findOne(query);
-        
-        console.log(`Retrieved updated album:`, updatedAlbum);
+
         res.status(200).send(updatedAlbum);
     } catch (error) {
         console.error('Error updating album:', error);

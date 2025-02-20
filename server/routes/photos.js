@@ -5,13 +5,14 @@ import { ObjectId } from "mongodb"
 const router  = express.Router()
 
 // Récupérer les photos d'un album
-router.get('/photos/:albumId', async (req, res) => {
+router.get('/:albumId', async (req, res) => {
     try {
         const photos = await db.collection('photos').find({
             albumId: req.params.albumId
         }).toArray()
 
-        res.json(photos)
+        res.json({photos});
+
     } catch (err){
         console.log("Error fetching photos:", err)
         res.status(500).json({ message: "Error fetching photos ",error: err.message })
@@ -19,7 +20,7 @@ router.get('/photos/:albumId', async (req, res) => {
 })
 
 // Ajouter une photo dans l'album
-router.post('/photo', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { albumId, src } = req.body
 
@@ -60,7 +61,7 @@ router.post('/photo', async (req, res) => {
 })
 
 // Delete a Photo
-router.delete('/photo/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const photoId = ObjectId.createFromHexString(req.params.id)
         const albumObjectId = ObjectId.createFromHexString(photo.albumId)
@@ -107,7 +108,7 @@ router.delete('/photo/:id', async (req, res) => {
 })
 
 // Ajouter un Vote à une photo
-router.patch('/photo/:id/like', async (req,res) => {
+router.patch('/:id/like', async (req,res) => {
     const photoId = ObjectId.createFromHexString(req.params.id)
     try {
         const result = await db.collection('photos').updateOne(
