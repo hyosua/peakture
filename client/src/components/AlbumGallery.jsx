@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
-import { Upload } from "lucide-react"
-import { Picture } from "Picture.jsx"
+import { Upload, Plus, X } from "lucide-react"
+import Picture  from "./Picture.jsx"
 
 const breakpointColumns = {
     default: 3,
@@ -13,9 +13,15 @@ const breakpointColumns = {
 
 const AlbumGallery = () => {
     const { month } = useParams()
+    const navigate = useNavigate()
     const [album, setAlbum] = useState(null)
     const [photos, setPhotos] = useState([])
-    const navigate = useNavigate()
+    const [showUploadForm, setShowUploadForm] = useState(false)
+    const [image, setImage] = useState(null)
+    const [preview, setPreview] = useState(null)
+    const [uploading, setUploading] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(0)
+    
         
     // Fetch Album data
     useEffect(() => {
@@ -35,8 +41,7 @@ const AlbumGallery = () => {
                     throw new Error(`Erreur: ${photosResponse.statusText}`)
                 }
                 const photosData = await photosResponse.json()
-                console.log(photosData.photos)
-                setPhotos(photosData)
+                setPhotos(photosData.photos || [])
 
             } catch(error){
                 console.error("Error while fetching album data:", error)
@@ -47,9 +52,109 @@ const AlbumGallery = () => {
         
     }, [month, navigate])
 
-    
 
+    const uploadToCloudinary = async (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', 'peakture-preset')
 
+        try {
+            const response = await fetch("https://api.cloudinary.com/v1_1/djsj0pfm3/image/upload", {
+                method: "POST",
+                body: formData
+            })
+
+            const data = await response.json()
+            return data.secure_url
+        } catch (error){
+            console.error("Error uploading to Cloudinary: ",error)
+            throw error
+        }
+    }
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check file type
+        if (!file.type.match('image.*')) {
+            alert('Veuillez sélectionner une image');
+            return;
+        }
+
+        // Limite d'un upload sur Cloudinary: 10MB
+        if (file.size > 10 * 1024 * 1024) {
+            alert('La taille de l\'image ne doit pas dépasser 10MB');
+            return;
+        }
+
+        setImage(file);
+        
+        // Création du preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        if(!image){
+            alert("Tu dois sélectionner une image")
+            return
+        }
+
+        setUploading(true)
+        setUploadProgress(10)
+        try {
+            setUploadProgress(30)
+            const imageUrl = await uploadToCloudinary(image)
+            setUploadProgress(70)
+
+            // save to database
+            const response = await fetch("http://localhost:5000/photos", {
+                method : "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    albumId: album._id,
+                    src: imageUrl
+                })
+            })
+
+            setUploadProgress(90)
+
+            if(!response.ok){
+                throw new Error(`Error saving photo: ${response.statusText}`)
+            }
+
+            const newPhoto = await response.json()
+
+            // Mettre à jour l'UI
+            console.log("tableau photos:", photos)
+            console.log("newPhoto", newPhoto)
+            setPhotos(prevPhotos => [...prevPhotos, newPhoto])
+            setUploadProgress(100)
+
+            // Reset le form
+            setImage(null)
+            setPreview(null)
+            setShowUploadForm(false)
+
+        } catch(error){
+            console.error("Erreur lors de l'upload: ", error)
+            alert("Oops... Erreur lors de l'upload")
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    if (!album) {
+        return <div className="text-white text-center p-8">Chargement...</div>;
+    }    
 
 
     return (
@@ -61,7 +166,7 @@ const AlbumGallery = () => {
                     Retour
             </button>
             <h2 className="text-white">{ month }</h2>
-            {/* <h3 className="text-white">{album.theme}</h3> */}
+            <h3 className="text-white">{album.theme}</h3>
 
             {/* Photo Gallery */}
             <div className="gallery">
@@ -90,6 +195,94 @@ const AlbumGallery = () => {
                     </div>
                 )}
             </div>
+
+            <div className='flex justify-between items-center mb-6'>
+                <button
+                    className='p-2 text-white rounded-full border-2 border-white bg-emerald-600 hover:bg-emerald-900 focus:outline-none flex items-center cursor-pointer'
+                    onClick={() => setShowUploadForm(true)}
+                >
+                    <Plus size={24} />
+                </button>
+            </div>
+
+                {showUploadForm && (
+                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                        <div className="bg-emerald-900 border-2 border-emerald-500 p-6 w-full max-w-sm lg:max-w-lg rounded-lg">
+                                <form className="space-y-4"
+                                      onSubmit={handleSubmit} 
+                                    >
+                                    <div className='border-2 border-dashed border-white rounded-lg p-4 text-center'>
+                                        {preview ? (
+                                            <div className="relative">
+                                                <img 
+                                                    src={preview}
+                                                    alt="Preview"
+                                                    className="max-h-64 mx-auto rounded"
+                                                />
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setPreview(null)
+                                                        setImage(null)
+                                                    }}
+                                                    className="absolute top-2 right-2 cursor-pointer bg-red-500 text-white rounded-full p-1"
+                                                    >
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="py-8">
+                                                <Upload size={48} className="mx-auto text-white mb-2" />
+                                                <p className="text-gray-300 mb-6">Déposez votre image ici ou</p>
+                                                <label className="bg-white hover:bg-emerald-700 text-black hover:text-white px-4 py-2 rounded cursor-pointer">
+                                                    Parcourir
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={handleImageChange}
+                                                        className="hidden"
+                                                    />
+                                                </label>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {uploading && (
+                                        <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                            <div
+                                                className="bg-emerald-500 h-2.5 rounded-full"
+                                                style={{ width: `${uploadProgress}%`}}
+                                            ></div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-end gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setShowUploadForm(false);
+                                                setPreview(null);
+                                                setImage(null);
+                                            }}
+                                            className="px-4 py-2 border border-gray-400 text-white cursor-pointer rounded hover:bg-red-400"
+                                            disabled={uploading}
+                                        >
+                                            Annuler
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 cursor-pointer text-white rounded disabled:opacity-50"
+                                            disabled={!image || uploading}
+                                        >
+                                            {uploading ? 'Chargement...' : 'Ajouter'}
+                                        </button>
+                                    </div>
+                                </form>                            
+                        </div>
+                    </div>
+                    
+                )}
+            
 
         </div>
 

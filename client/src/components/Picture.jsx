@@ -1,4 +1,5 @@
 import { Heart, Mountain } from "lucide-react"
+import PropTypes from 'prop-types';
 import { animate, motion } from "framer-motion";
 
 const Picture = ({photo, id, isLiked, onLike}) => {
@@ -30,5 +31,12 @@ const Picture = ({photo, id, isLiked, onLike}) => {
         </div>
     );
 }
+
+Picture.propTypes = {
+    photo: PropTypes.string.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    isLiked: PropTypes.bool,
+    onLike: PropTypes.func.isRequired,
+};
 
 export default Picture;
