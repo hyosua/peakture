@@ -2,6 +2,14 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
 import { Upload } from "lucide-react"
+import { Picture } from "Picture.jsx"
+
+const breakpointColumns = {
+    default: 3,
+    1024: 3,
+    768: 2,
+    500: 1
+};
 
 const AlbumGallery = () => {
     const { month } = useParams()
@@ -62,7 +70,18 @@ const AlbumGallery = () => {
                             breakpointCols={breakpointColumns}
                             className="gallery"
                             columnClassName="bg-clip-paddin"
-                        ></Masonry>
+                        >
+                        {photos.map((photo) => (
+                            <div key={photo._id} className="mb-4 break-inside-avoid">
+                                <Picture 
+                                    photo={photo.src} 
+                                    id={photo._id} 
+                                    // onLike={handleLike}
+                                    // isLiked={likedPhotoId === photo._id}
+                                />
+                            </div>
+                        ))}
+                    </Masonry>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 text-white">
                         <Upload size={64} className="mb-4" />
