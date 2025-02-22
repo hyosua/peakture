@@ -44,7 +44,6 @@ const AlbumGallery = () => {
                 }
                 const photosData = await photosResponse.json()
                 setPhotos(photosData.photos || [])
-                console.log(photos.votes)
                 
 
             } catch(error){
@@ -220,7 +219,7 @@ const AlbumGallery = () => {
                                     photo={photo.src} 
                                     id={photo._id} 
                                     onLike={handleLike}
-                                    isLiked={likedPhotoId === photo._id}
+                                    isLikedId={likedPhotoId === photo._id}
                                     votes={photo.votes || 0}
                                 />
                             </div>
