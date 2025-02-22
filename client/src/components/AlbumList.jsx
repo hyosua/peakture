@@ -170,12 +170,6 @@ const AlbumList = () => {
         <div className='container mx-auto p-4'> 
             <div className='flex justify-between items-center mb-6'>
                 <h1 className='text-2xl text-white font-bold'>Albums</h1>
-                <button
-                    className='p-2 text-white rounded-full border-2 border-white hover:bg-emerald-600 focus:outline-none flex items-center cursor-pointer'
-                    onClick={() => setShowAddForm(true)}
-                >
-                    <Plus size={24} />
-                </button>
             </div>
 
             {/* Add album form */}
@@ -240,88 +234,102 @@ const AlbumList = () => {
                     </div>
                 </div>
             )}
-
+            
             {/* Albums Grid */}
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-                {albums.map((album) => (
-                    <div
-                        key={album._id}
-                        className='album-preview'
-                        onMouseEnter={() => handleMouseEnter(album._id)}
-                        onMouseLeave={handleMouseLeave}
-                        onClick={() => handleAlbumClick(album.month)}
-                    >
-                        {/* Album Card */}
-                        <div className='p-4 border-2 border-emerald-500 rounded-lg'>
-                            <h3 className='mb-2'>{album.month}</h3>
-                            {album.cover && <img src={album.cover} alt={album.month} className='w-full h-48 object-cover mb-2' />}
-                            <h3 className='mb-1'>Thème: <i>{editingAlbum === album._id ?'' : album.theme}</i></h3>
-                            {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
-                        </div>
-
-                        {/* Edit Album */}
-                        {editingAlbum === album._id && (
-                            <div className='absolute inset-0 bg-white/95 flex flex-col items-center justify-center cursor-pointer'
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <h3>Editer le Thème</h3>
-                                <input
-                                    type='text'
-                                    value={newTheme}
-                                    placeholder='Entrer le nouveau thème'
-                                    onChange={(e) => setNewTheme(e.target.value)}
-                                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-2'
-                                />
-                                <div className='flex space-x-2'>
-                                    <button 
-                                        onClick={(e) => handleSave(album._id,e)}
-                                        className='px-4 py-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex items-center'
-                                    >
-                                        <Check size={16} className='mr-1' /> Enregistrer
-                                    </button>
-                                    <button
-                                        onClick={handleCancel}
-                                        className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center cursor-pointer'
-                                    >
-                                        <X size={16} className='mr-1' /> Annuler
-                                    </button>
-                                </div>
+            <div className='flex'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+                    {albums.map((album) => (
+                        <div
+                            key={album._id}
+                            className='album-preview'
+                            onMouseEnter={() => handleMouseEnter(album._id)}
+                            onMouseLeave={handleMouseLeave}
+                            onClick={() => handleAlbumClick(album.month)}
+                        >
+                            {/* Album Card */}
+                            <div className='p-4 border-2 bg-black/70 border-emerald-500 rounded-lg hover:bg-emerald-950'>
+                                <h3 className='mb-2'>{album.month}</h3>
+                                {album.cover && <img src={album.cover} alt={album.month} className='w-full h-48 object-cover mb-2' />}
+                                <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
+                                {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
                             </div>
 
-                        )}
-
-                        {/* Album Menu (affiché sur hover pour grands écrans) */}
-                        {((hoveredAlbumId === album._id || window.innerWidth < 640) && !editingAlbum) && ( 
-                            <div className='absolute top-2 right-2'>
-                                <button
-                                    onClick={(e) => toggleMenu(album._id, e)}
-                                    className='p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none cursor-pointer'
+                            {/* Edit Album */}
+                            {editingAlbum === album._id && (
+                                <div className='absolute inset-0 bg-white/95 flex flex-col items-center justify-center cursor-pointer'
+                                    onClick={(e) => e.stopPropagation()}
                                 >
-                                    <EllipsisVertical size={20} />
-                                </button>
-
-                                {/* Dropdown menu */}
-                                {menuOpenId === album._id && (
-                                    <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
-                                        <button
-                                            onClick={(e) => handleEdit(album,e)}
-                                            className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-emerald-500 rounded-t-lg cursor-pointer'
-                                        >
-                                            Changer le thème
-                                        </button>
+                                    <h3>Editer le Thème</h3>
+                                    <input
+                                        type='text'
+                                        value={newTheme}
+                                        placeholder='Entrer le nouveau thème'
+                                        onChange={(e) => setNewTheme(e.target.value)}
+                                        className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-2'
+                                    />
+                                    <div className='flex space-x-2'>
                                         <button 
-                                            onClick={(e) => deleteAlbum(album._id,e)}
-                                            className='block w-full px-4 py-2 text-left text-red-600 hover:bg-emerald-500 rounded-b-lg cursor-pointer'
+                                            onClick={(e) => handleSave(album._id,e)}
+                                            className='px-4 py-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex items-center'
                                         >
-                                            Supprimer l&apos;album
+                                            <Check size={16} className='mr-1' /> Enregistrer
+                                        </button>
+                                        <button
+                                            onClick={handleCancel}
+                                            className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center cursor-pointer'
+                                        >
+                                            <X size={16} className='mr-1' /> Annuler
                                         </button>
                                     </div>
-                                )}
-                            </div>
-                        )}
+                                </div>
+
+                            )}
+
+                            {/* Album Menu (affiché sur hover pour grands écrans) */}
+                            {((hoveredAlbumId === album._id || window.innerWidth < 640) && !editingAlbum) && ( 
+                                <div className='absolute top-2 right-2'>
+                                    <button
+                                        onClick={(e) => toggleMenu(album._id, e)}
+                                        className='p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none cursor-pointer'
+                                    >
+                                        <EllipsisVertical size={20} />
+                                    </button>
+
+                                    {/* Dropdown menu */}
+                                    {menuOpenId === album._id && (
+                                        <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
+                                            <button
+                                                onClick={(e) => handleEdit(album,e)}
+                                                className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-emerald-500 rounded-t-lg cursor-pointer'
+                                            >
+                                                Changer le thème
+                                            </button>
+                                            <button 
+                                                onClick={(e) => deleteAlbum(album._id,e)}
+                                                className='block w-full px-4 py-2 text-left text-red-600 hover:bg-emerald-500 rounded-b-lg cursor-pointer'
+                                            >
+                                                Supprimer l&apos;album
+                                            </button>
+                                        </div>
+                                    )}
+                                    
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                    <div className='flex items-center justify-center'>
+                        <button
+                            className='p-6 text-white rounded-full border-2 border-white hover:bg-emerald-600 focus:outline-none flex items-center cursor-pointer'
+                            onClick={() => setShowAddForm(true)}
+                        >
+                            <Plus size={24} />
+                        </button>
                     </div>
-                ))}
+                     
+                </div>
             </div>
+            
+           
         </div>
     )
 }

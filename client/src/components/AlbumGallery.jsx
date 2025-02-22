@@ -195,14 +195,29 @@ const AlbumGallery = () => {
 
     return (
         <div className="wrapper">
-            <button 
-                    className="cursor-pointer border hover:bg-emerald-900 text-white border-white p-2 w-20 mb-4 rounded-lg"
-                    onClick={() => navigate("/")}
-                >
-                    Retour
-            </button>
-            <h2 className="text-white">{ month }</h2>
-            <h3 className="text-white mb-6">{album.theme}</h3>
+            <div className="flex items-center place-content-around">
+                <button 
+                        className="cursor-pointer border hover:bg-emerald-900 text-white border-white p-2 w-20 mb-4 rounded-lg"
+                        onClick={() => navigate("/")}
+                    >
+                        Retour
+                </button>
+                <div className="flex items-center flex-col ">
+                    <h2 className="text-white text-4xl">{ month }</h2>
+                    <h3 className="text-white mb-6">{album.theme}</h3>
+                </div>
+
+                {/* Add Photo Button */}
+                <div className='mb-6'>
+                    <button
+                        className='p-2 text-white rounded-full border-2 border-white bg-emerald-600 hover:bg-emerald-900 focus:outline-none flex items-center cursor-pointer'
+                        onClick={() => setShowUploadForm(true)}
+                    >
+                        <Plus size={24} />
+                    </button>
+                </div>
+            </div>
+            
 
             {/* Photo Gallery */}
             <div className="gallery">
@@ -234,14 +249,7 @@ const AlbumGallery = () => {
                 )}
             </div>
 
-            <div className='flex justify-between items-center mb-6'>
-                <button
-                    className='p-2 text-white rounded-full border-2 border-white bg-emerald-600 hover:bg-emerald-900 focus:outline-none flex items-center cursor-pointer'
-                    onClick={() => setShowUploadForm(true)}
-                >
-                    <Plus size={24} />
-                </button>
-            </div>
+            
 
                 {showUploadForm && (
                     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
