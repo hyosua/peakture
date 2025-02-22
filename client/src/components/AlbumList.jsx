@@ -73,23 +73,18 @@ const AlbumList = () => {
                     })
                 })
                 
-                const updatedAlbum = await response.text();
-                console.log("Update response:", updatedAlbum);
-                // Add debugging
-                 console.log("Current albums state:", albums);
-                console.log("ID to update:", id, "type:", typeof id);
-                try {
-                    const updatedAlbums = albums.map(album => {
-                        if(album._id === id || album._id === parseInt(id)){
-                            return { ...album, theme: newTheme };
-                        }
-                        return album
-                    });
-            
-                    setAlbums(updatedAlbums);
-                } catch (mapError) {
-                    console.error("Error during albums mapping:", mapError);
-                }
+                const updatedAlbum = await response.json();
+                console.log("Updated resonse: ", updatedAlbum)
+
+          
+                const updatedAlbums = albums.map(album => {
+                    if(album._id === id || album._id === parseInt(id)){
+                        return { ...album, theme: newTheme };
+                    }
+                    return album
+                });
+        
+                setAlbums(updatedAlbums);
 
                 setEditingAlbum(null);
                 setNewTheme('');

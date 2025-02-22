@@ -12,6 +12,7 @@ const breakpointColumns = {
 };
 
 const AlbumGallery = () => {
+    const API_BASE_URL = 'http://localhost:5000'
     const { month } = useParams()
     const navigate = useNavigate()
     const [album, setAlbum] = useState(null)
@@ -21,13 +22,14 @@ const AlbumGallery = () => {
     const [preview, setPreview] = useState(null)
     const [uploading, setUploading] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(0)
+    const [likedPhotoId, setLikedPhotoId] = useState(null)
     
         
     // Fetch Album data
     useEffect(() => {
         async function getAlbumData() {
             try {
-                const response = await fetch(`http://localhost:5000/albums/${month}`)
+                const response = await fetch(`${API_BASE_URL}/albums/${month}`)
                 if(!response.ok){
                     throw new Error(`Erreur: ${response.statusText}`)
                 }
@@ -36,12 +38,13 @@ const AlbumGallery = () => {
                 setAlbum(albumData)
 
                 // Fetch photos from this album
-                const photosResponse = await fetch(`http://localhost:5000/photos/${albumData._id}`)
+                const photosResponse = await fetch(`${API_BASE_URL}/photos/${albumData._id}`)
                 if(!photosResponse.ok){
                     throw new Error(`Erreur: ${photosResponse.statusText}`)
                 }
                 const photosData = await photosResponse.json()
                 setPhotos(photosData.photos || [])
+                
 
             } catch(error){
                 console.error("Error while fetching album data:", error)
@@ -114,7 +117,7 @@ const AlbumGallery = () => {
             setUploadProgress(70)
 
             // save to database
-            const response = await fetch("http://localhost:5000/photos", {
+            const response = await fetch(`${API_BASE_URL}/photos`, {
                 method : "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -152,6 +155,39 @@ const AlbumGallery = () => {
         }
     }
 
+    const handleLike = async (photo_id) => {
+        const cleanId = encodeURIComponent(photo_id) // assure les caractères spéciaux sont encodés
+        
+        // MAJ optimiste de l'UI
+        setLikedPhotoId(cleanId)
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/photos/${cleanId}/like`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type" : "application/json"
+                }
+            })
+
+            if(!response.ok){
+                throw new Error(`Erreur: ${response.statusText}`)
+            }
+
+            // Mettre à jour l'état des photos pour refléter le nouveau nombre de likes
+            const updatedPhoto = await response.json()
+            setPhotos(prevPhotos => 
+                prevPhotos.map(photo => 
+                    photo._id === cleanId ? updatedPhoto : photo
+                )
+            )
+        } catch (error) {
+            console.error("Erreur lors du like:", error)
+            console.log("ID problématique:", photo_id)
+            // Annuler le like en cas d'erreur
+            setLikedPhotoId(null)
+        }
+    }
+
     if (!album) {
         return <div className="text-white text-center p-8">Chargement...</div>;
     }    
@@ -160,13 +196,13 @@ const AlbumGallery = () => {
     return (
         <div className="wrapper">
             <button 
-                    className="cursor-pointer border text-white border-white p-2 w-20 mb-4 rounded-lg"
+                    className="cursor-pointer border hover:bg-emerald-900 text-white border-white p-2 w-20 mb-4 rounded-lg"
                     onClick={() => navigate("/")}
                 >
                     Retour
             </button>
             <h2 className="text-white">{ month }</h2>
-            <h3 className="text-white">{album.theme}</h3>
+            <h3 className="text-white mb-6">{album.theme}</h3>
 
             {/* Photo Gallery */}
             <div className="gallery">
@@ -177,12 +213,13 @@ const AlbumGallery = () => {
                             columnClassName="bg-clip-paddin"
                         >
                         {photos.map((photo) => (
+                            
                             <div key={photo._id} className="mb-4 break-inside-avoid">
                                 <Picture 
                                     photo={photo.src} 
                                     id={photo._id} 
-                                    // onLike={handleLike}
-                                    // isLiked={likedPhotoId === photo._id}
+                                    onLike={handleLike}
+                                    isLiked={likedPhotoId === photo._id}
                                 />
                             </div>
                         ))}

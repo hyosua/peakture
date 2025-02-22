@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { animate, motion } from "framer-motion";
 
 const Picture = ({photo, id, isLiked, onLike}) => {
-
+    
     return (
         <div className="relative inline-block">
             <motion.img 
@@ -11,7 +11,7 @@ const Picture = ({photo, id, isLiked, onLike}) => {
                 src={photo} 
                 alt={`Photo ${id}`} 
                 className={`gallery-photo ${
-                    isLiked ? "border-amber-700 border-4" : "border-0"
+                    isLiked ? "border-emerald-400 border-4" : "border-0"
                 }`} 
                 initial={{ scale: 1 }}
                 animate={{ scale: isLiked ? 1.05 : 1 }}
@@ -20,11 +20,11 @@ const Picture = ({photo, id, isLiked, onLike}) => {
             <motion.button 
                 onClick={() => onLike(id)} 
                 className='like-button'
-                whileHover={{ scale: 1.2, rotate: 9 }}
+                whileHover={{ scale: 1.2 }}
             >
                 <Heart
                     className={`w-6 h-6 ${
-                        isLiked ? "fill-amber-700 stroke-none" : "stroke-white"
+                        isLiked ? "fill-emerald-400 stroke-none" : "stroke-white"
                     }`}
                 />
             </motion.button>

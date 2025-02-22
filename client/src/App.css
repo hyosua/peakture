@@ -168,7 +168,7 @@
 
 
   .like-button {
-    @apply cursor-pointer absolute top-2 right-2 p-2 bg-white/10 rounded-full shadow-md transition-transform transform 
+    @apply cursor-pointer absolute bottom-2 right-2 p-2 bg-white/10 rounded-full shadow-md transition-transform transform 
   }
 }
 ap-4
