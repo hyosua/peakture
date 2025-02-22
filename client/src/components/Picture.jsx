@@ -2,7 +2,7 @@ import { Heart, Mountain } from "lucide-react"
 import PropTypes from 'prop-types';
 import { animate, motion } from "framer-motion";
 
-const Picture = ({photo, id, isLiked, onLike}) => {
+const Picture = ({photo, id, isLiked, onLike, votes}) => {
     
     return (
         <div className="relative inline-block">
@@ -27,6 +27,7 @@ const Picture = ({photo, id, isLiked, onLike}) => {
                         isLiked ? "fill-emerald-400 stroke-none" : "stroke-white"
                     }`}
                 />
+                <span className="text-emerald-400 font-bold text-sm">{votes}</span>
             </motion.button>
         </div>
     );
@@ -37,6 +38,7 @@ Picture.propTypes = {
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     isLiked: PropTypes.bool,
     onLike: PropTypes.func.isRequired,
+    votes: PropTypes.number
 };
 
 export default Picture;
