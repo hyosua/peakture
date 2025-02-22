@@ -188,6 +188,22 @@ const AlbumGallery = () => {
         }
     }
 
+    const deletePhoto = async (photoId) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/photos/${photoId}`, {
+                method: "DELETE" 
+            })
+
+            if(!response.ok) {
+                throw new Error("Une erreur est survenue lors du fetching")
+            }
+
+            setPhotos(photos.filter(photo => photo._id !== photoId))
+        } catch(error){
+            console.log(`Error deleting photo: ${error}`)
+        }
+    }
+
     if (!album) {
         return <div className="text-white text-center p-8">Chargement...</div>;
     }    
@@ -234,6 +250,7 @@ const AlbumGallery = () => {
                                     photo={photo.src} 
                                     id={photo._id} 
                                     onLike={handleLike}
+                                    deletePhoto={deletePhoto}
                                     isLikedId={likedPhotoId === photo._id}
                                     votes={photo.votes || 0}
                                 />

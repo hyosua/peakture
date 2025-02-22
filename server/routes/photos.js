@@ -60,52 +60,79 @@ router.post('/', async (req, res) => {
     }
 })
 
-// Delete a Photo
 router.delete('/:id', async (req, res) => {
     try {
-        const photoId = ObjectId.createFromHexString(req.params.id)
-        const albumObjectId = ObjectId.createFromHexString(photo.albumId)
-        const photo = await db.collection('albums').findOne(
-            {_id: photoId },
-        )
-
-        if(!photo){
-            res.status(404).json({ message: "Photo not found"})
+        // Validate ID format before database query
+        let photoId;
+        try {
+            photoId = ObjectId.createFromHexString(req.params.id);
+        } catch (error) {
+            return res.status(400).json({ message: "Invalid photo ID format" });
         }
 
-        const result = await db.collection('photos').deleteOne({
-            _id: photoId
-        })
+        // Find the photo first
+        const photo = await db.collection('photos').findOne({ _id: photoId });
+        
+        if (!photo) {
+            return res.status(404).json({ message: "Photo not found" });
+        }
 
+        // Validate album ID format
+        let albumObjectId;
+        try {
+            albumObjectId = ObjectId.createFromHexString(photo.albumId);
+        } catch (error) {
+            return res.status(500).json({ message: "Invalid album ID format in photo document" });
+        }
+
+        // Delete the photo
+        const deleteResult = await db.collection('photos').deleteOne({ _id: photoId });
+        
+        if (deleteResult.deletedCount === 0) {
+            return res.status(500).json({ message: "Failed to delete photo" });
+        }
+
+        // Check if this photo was used as album cover
         const album = await db.collection('albums').findOne({
             _id: albumObjectId,
             cover: photo.src
-        })
+        });
 
-        if(album){
-            const otherPhoto = await db.collection('albums').findOne({
-                albumId: photo.albumId, 
-                _id: {$ne: photoId}
-            })
+        // Update album cover if necessary
+        if (album) {
+            const otherPhoto = await db.collection('photos').findOne({
+                albumId: photo.albumId,
+                _id: { $ne: photoId }
+            });
 
-            if(otherPhoto){
-                await db.collection('albums').updateOne(
-                    {_id: albumObjectId},
-                    { $set: {cover: otherPhoto.src} }
-                )
-            }else {
-                await db.collection('albums').updateOne(
-                    { _id: albumObjectId },
-                    { $unset: { cover: "" } }
-                )
+            const updateOperation = otherPhoto 
+                ? { $set: { cover: otherPhoto.src } }
+                : { $unset: { cover: "" } };
+
+            const albumUpdateResult = await db.collection('albums').updateOne(
+                { _id: albumObjectId },
+                updateOperation
+            );
+
+            if (albumUpdateResult.matchedCount === 0) {
+                console.warn(`Album ${albumObjectId} not found while updating cover`);
             }
         }
-        res.json({ message: 'Photo supprimée'})
+
+        res.json({ 
+            message: 'Photo deleted successfully',
+            photoId: photoId.toString(),
+            albumUpdated: album ? true : false
+        });
+
     } catch (error) {
-        console.error('Error deleting photo:', error)
-        res.status(500).json({ message: 'Error deleting photo', error: error.message })
+        console.error('Error deleting photo:', error);
+        res.status(500).json({ 
+            message: 'Internal server error while deleting photo',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
-})
+});
 
 // Ajouter un Vote à une photo
 router.patch('/:id/like', async (req,res) => {

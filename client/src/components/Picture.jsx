@@ -1,8 +1,8 @@
-    import { Heart } from "lucide-react";
+    import { Heart, X } from "lucide-react";
     import PropTypes from 'prop-types';
     import { motion, AnimatePresence } from "framer-motion";
 
-    const Picture = ({ photo, id, isLikedId, onLike, votes }) => {
+    const Picture = ({ photo, id, deletePhoto, isLikedId, onLike, votes }) => {
         return (
             <div className="relative inline-block">
                 <motion.img 
@@ -14,6 +14,13 @@
                     animate={{ scale: isLikedId ? 1.05 : 1 }}
                     transition={{ type: "spring", stiffness: 30, damping: 10 }}
                 />
+                    <button 
+                        type="button"
+                        onClick={() => deletePhoto(id)}
+                        className="absolute top-2 right-2 cursor-pointer bg-red-500 text-white rounded-full p-1"
+                        >
+                    <X size={16} />
+                </button>
                 <motion.button 
                     onClick={() => onLike(id)} 
                     className="like-button flex items-center space-x-1 absolute bottom-2 right-2 bg-black/50 p-1 rounded"
@@ -47,6 +54,7 @@
         id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
         isLikedId: PropTypes.bool,
         onLike: PropTypes.func.isRequired,
+        deletePhoto: PropTypes.func,
         votes: PropTypes.number
     };
 

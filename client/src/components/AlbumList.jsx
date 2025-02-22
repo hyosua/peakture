@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { EllipsisVertical, Plus, X, Check } from 'lucide-react'
 
-// if database not set up yet, import albums from data
-// import albums from '../data/albumsData'
-
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
     const [hoveredAlbumId, setHoverAlbumId] = useState(null)
