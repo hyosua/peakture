@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import PropTypes from 'prop-types';
 import avatarPic from "../assets/img/avatars/avatar.jpg";
 const Picture = ({winner,photo, id, voteCount, avatar, month}) => {
     const navigate = useNavigate();
@@ -20,5 +21,13 @@ const Picture = ({winner,photo, id, voteCount, avatar, month}) => {
         </div>
     );
 }
+Picture.propTypes = {
+    winner: PropTypes.string.isRequired,
+    photo: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    voteCount: PropTypes.number.isRequired,
+    avatar: PropTypes.string,
+    month: PropTypes.string.isRequired,
+};
 
 export default Picture;
