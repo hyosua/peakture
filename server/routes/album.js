@@ -22,7 +22,6 @@ router.get("/", async (req, res) => {
 // Récupérer un album par son mois
 router.get('/:month', async (req, res) => {
     try {
-            console.log("Requète:",req)
         const album = await db.collection('albums').findOne({
             month: req.params.month
         });
