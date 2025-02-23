@@ -10,7 +10,7 @@ export default function EditDropdown({ actions }) {
   useClickAway(dropdownRef, () => setIsOpen(false));
 
     return (
-        <div className="relative inline-block group" ref={dropdownRef}>
+        <div className="relative inline-block " ref={dropdownRef}>
             {/* Bouton caché sur grand écran sauf au hover, et toujours visible sur mobile */}
             <button
                 onClick={(e) => {
@@ -38,7 +38,7 @@ export default function EditDropdown({ actions }) {
                             action.onClick();
                             setIsOpen(false);
                         }}
-                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex cursor-pointer items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                         {action.icon} {action.label}
                         </button>

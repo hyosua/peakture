@@ -223,7 +223,7 @@ const AlbumList = () => {
                             onClick={() => handleAlbumClick(album.month)}
                         >
                             {/* Album Card */}
-                            <div className='p-4 border-2 bg-black/70 border-emerald-500 rounded-lg '>
+                            <div className='p-4 border-2 bg-black/70 border-emerald-500 rounded-lg group'>
                                 <h3 className='mb-2'>{album.month}</h3>
                                 {album.cover && <img src={album.cover} alt={album.month} className='w-full h-48 object-cover mb-2' />}
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
