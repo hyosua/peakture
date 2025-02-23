@@ -1,19 +1,12 @@
 import { EllipsisVertical } from "lucide-react"
 import PropTypes from 'prop-types'
-import { useState } from "react"
 
 const EditObject = ({hovered, editing, object, deleteObject, editObject, toggleMenu, menuOpenId}) => {
-    const [hoveredObjectId, setHoveredObjectId] = useState(null)
-
-
-    const handleMouseEnter = (id) => {
-        setHoveredObjectId(id)
-    }
 
     return (
         <>
             {/* Album Menu (affiché sur hover si grand écran) */}
-            {((hoveredObjectId === object._id || window.innerWidth < 640) && !editing) && ( 
+            {((hovered || window.innerWidth < 640) && !editing) && ( 
                 <div className='absolute top-2 right-2'>
                     <button
                         onClick={(e) => toggleMenu(object._id, e)}

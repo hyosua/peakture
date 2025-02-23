@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { EllipsisVertical, Plus, X, Check } from 'lucide-react'
+import { Plus, X, Check } from 'lucide-react'
+import EditObject from './EditObject'
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -283,36 +284,16 @@ const AlbumList = () => {
 
                             )}
 
-                            {/* Album Menu (affiché sur hover si grand écran) */}
-                            {((hoveredAlbumId === album._id || window.innerWidth < 640) && !editingAlbum) && ( 
-                                <div className='absolute top-2 right-2'>
-                                    <button
-                                        onClick={(e) => toggleMenu(album._id, e)}
-                                        className='p-2 bg-gray-200 rounded-full hover:bg-gray-300 focus:outline-none cursor-pointer'
-                                    >
-                                        <EllipsisVertical size={20} />
-                                    </button>
+                            <EditObject 
+                                hovered={hoveredAlbumId === album._id}
+                                editing={editingAlbum}
+                                object={album}
+                                deleteObject={deleteAlbum}
+                                editObject={handleEdit}
+                                toggleMenu={toggleMenu}
+                                menuOpenId={menuOpenId}
+                            />
 
-                                    {/* Dropdown menu */}
-                                    {menuOpenId === album._id && (
-                                        <div className='absolute right-0 mt-2 w-48 bg-white/80 rounded-lg shadow-lg border border-gray-200 z-10'>
-                                            <button
-                                                onClick={(e) => handleEdit(album,e)}
-                                                className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-emerald-500 rounded-t-lg cursor-pointer'
-                                            >
-                                                Changer le thème
-                                            </button>
-                                            <button 
-                                                onClick={(e) => deleteAlbum(album._id,e)}
-                                                className='block w-full px-4 py-2 text-left text-red-600 hover:bg-emerald-500 rounded-b-lg cursor-pointer'
-                                            >
-                                                Supprimer l&apos;album
-                                            </button>
-                                        </div>
-                                    )}
-                                    
-                                </div>
-                            )}
                         </div>
                     ))}
                     <div className='flex items-center justify-center'>
