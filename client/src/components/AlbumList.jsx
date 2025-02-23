@@ -5,8 +5,6 @@ import EditDropdown from './EditDropdown.jsx'
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
-    const [hoveredAlbumId, setHoverAlbumId] = useState(null)
-    const [menuOpenId, setMenuOpenId] = useState(null)
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
@@ -35,66 +33,63 @@ const AlbumList = () => {
     }, [])
 
     // Delete an album
-    const deleteAlbum = async (id, e) => {
-        e.stopPropagation(); // Prevent navigation when deleting
+    const deleteAlbum = async (id) => {
         await fetch(`http://localhost:5000/albums/${id}`, {
             method: 'DELETE',
         })  
         setAlbums(albums.filter((album) => album._id !== id))   
     }
 
-    const handleEdit = (album, e) => {
-        e.stopPropagation() // Prevent navigation when editing
+    const handleEdit = (album) => {
         setEditingAlbum(album._id)
         setNewTheme(album.theme)
-        setMenuOpenId(null) // Close menu after selecting edit
     }
 
-        // Save edited album
-        const handleSave = async (id, e) => {
-            e.stopPropagation()
+    // Save edited album
+    const handleSave = async (id, e) => {
+        e.stopPropagation()
 
-            if(!newTheme){
-                return alert("Vous devez entrer un thème")
-            }
+        if(!newTheme){
+            return alert("Vous devez entrer un thème")
+        }
 
-            try {
-                console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
-                
-                const response = await fetch(`http://localhost:5000/albums/${id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        theme: newTheme
-                    })
+        try {
+            console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
+            
+            const response = await fetch(`http://localhost:5000/albums/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    theme: newTheme
                 })
-                
-                const updatedAlbum = await response.json();
-                console.log("Updated resonse: ", updatedAlbum)
+            })
+            
+            const updatedAlbum = await response.json();
+            console.log("Updated resonse: ", updatedAlbum)
 
-          
-                const updatedAlbums = albums.map(album => {
-                    if(album._id === id || album._id === parseInt(id)){
-                        return { ...album, theme: newTheme };
-                    }
-                    return album
-                });
         
-                setAlbums(updatedAlbums);
-
-                setEditingAlbum(null);
-                setNewTheme('');
-
-            } catch (error) {
-                console.error('Error updating album:', error);
-                if (error.response) {
-                    console.error('Error details:', error.response.data);
-                    console.error('Status:', error.response.status);
+            const updatedAlbums = albums.map(album => {
+                if(album._id === id || album._id === parseInt(id)){
+                    return { ...album, theme: newTheme };
                 }
+                return album
+            });
+    
+            setAlbums(updatedAlbums);
+
+            setEditingAlbum(null);
+            setNewTheme('');
+
+        } catch (error) {
+            console.error('Error updating album:', error);
+            if (error.response) {
+                console.error('Error details:', error.response.data);
+                console.error('Status:', error.response.status);
             }
         }
+    }
 
     // Cancel Album editing
     const handleCancel = (e) => {
@@ -103,22 +98,7 @@ const AlbumList = () => {
         setNewTheme('')
     }
 
-    // Handle album hover
-    const handleMouseEnter = (id) => {
-        setHoverAlbumId(id)
-    }
 
-    // Handle mouse leave on album
-    const handleMouseLeave = () => {
-        setHoverAlbumId(null)
-        setMenuOpenId(null)
-    }
-
-    // Dropdown Menu for editing an album
-    const toggleMenu = (id, e) => {
-        e.stopPropagation()
-        setMenuOpenId(menuOpenId === id ? null : id)
-    }
 
     // Handle form change for new album
     function handleFormChange(e) {
@@ -240,8 +220,6 @@ const AlbumList = () => {
                         <div
                             key={album._id}
                             className='album-preview'
-                            onMouseEnter={() => handleMouseEnter(album._id)}
-                            onMouseLeave={handleMouseLeave}
                             onClick={() => handleAlbumClick(album.month)}
                         >
                             {/* Album Card */}
@@ -250,6 +228,23 @@ const AlbumList = () => {
                                 {album.cover && <img src={album.cover} alt={album.month} className='w-full h-48 object-cover mb-2' />}
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
                                 {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
+                                <div className='absolute top-2 right-2'>
+                                    <EditDropdown
+                                        actions={[
+                                            {
+                                            label: "Modifier le thème",
+                                            icon: <Edit className="h-4 w-4" />,
+                                            onClick: () => handleEdit(album),
+                                            },
+                                            {
+                                            label: "Supprimer",
+                                            icon: <Trash className="h-4 w-4 text-red-500" />,
+                                            onClick: () => deleteAlbum(album._id),
+                                            },
+                                        ]}
+                                    />
+                                </div>
+                                
                             </div>
 
                             {/* Edit Album */}
@@ -283,21 +278,6 @@ const AlbumList = () => {
                                 </div>
 
                             )}
-
-                        <EditDropdown
-                            actions={[
-                                {
-                                label: "Modifier l'album",
-                                icon: <Edit className="h-4 w-4" />,
-                                onClick: (e) => handleEdit(album._id, e),
-                                },
-                                {
-                                label: "Supprimer",
-                                icon: <Trash className="h-4 w-4 text-red-500" />,
-                                onClick: (e) => deleteAlbum(album._id,e),
-                                },
-                            ]}
-                        />
 
                         </div>
                     ))}

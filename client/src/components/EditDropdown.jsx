@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
-import { MoreVertical } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import { useClickAway } from "react-use";
 
 export default function EditDropdown({ actions }) {
@@ -13,10 +13,13 @@ export default function EditDropdown({ actions }) {
         <div className="relative inline-block group" ref={dropdownRef}>
             {/* Bouton caché sur grand écran sauf au hover, et toujours visible sur mobile */}
             <button
-                onClick={() => setIsOpen((prev) => !prev)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 md:opacity-100 p-2 rounded-full hover:bg-gray-100"
+                onClick={(e) => {
+                    e.stopPropagation() // Empêche le clic de se propager au parent
+                    setIsOpen((prev) => !prev)
+                  }}
+                className="opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200 md:opacity-100 p-2 rounded-full hover:bg-gray-100"
                 >
-                <MoreVertical className="h-5 w-5" />
+                <EllipsisVertical className="h-5 w-5" />
             </button>
 
             {isOpen && (
@@ -30,7 +33,8 @@ export default function EditDropdown({ actions }) {
                     {actions.map((action, index) => (
                     <li key={index}>
                         <button
-                        onClick={() => {
+                        onClick={(e) => {
+                            e.stopPropagation() // Empêche le clic de se propager au parent
                             action.onClick();
                             setIsOpen(false);
                         }}
