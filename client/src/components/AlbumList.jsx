@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, X, Check } from 'lucide-react'
-import EditObject from './EditObject'
+import { Plus, X, Check, Edit, Trash } from 'lucide-react'
+import EditDropdown from './EditDropdown.jsx'
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -284,15 +284,20 @@ const AlbumList = () => {
 
                             )}
 
-                            <EditObject 
-                                hovered={hoveredAlbumId === album._id}
-                                editing={editingAlbum}
-                                object={album}
-                                deleteObject={deleteAlbum}
-                                editObject={handleEdit}
-                                toggleMenu={toggleMenu}
-                                menuOpenId={menuOpenId}
-                            />
+                        <EditDropdown
+                            actions={[
+                                {
+                                label: "Modifier l'album",
+                                icon: <Edit className="h-4 w-4" />,
+                                onClick: (e) => handleEdit(album._id, e),
+                                },
+                                {
+                                label: "Supprimer",
+                                icon: <Trash className="h-4 w-4 text-red-500" />,
+                                onClick: (e) => deleteAlbum(album._id,e),
+                                },
+                            ]}
+                        />
 
                         </div>
                     ))}
