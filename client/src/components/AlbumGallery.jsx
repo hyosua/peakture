@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
-import { Upload, Plus, X } from "lucide-react"
+import { Upload, Plus } from "lucide-react"
 import Picture  from "./Picture.jsx"
+
 
 const breakpointColumns = {
     default: 3,
@@ -254,6 +255,7 @@ const AlbumGallery = () => {
                                     isLikedId={likedPhotoId === photo._id}
                                     votes={photo.votes || 0}
                                 />
+    
                             </div>
                         ))}
                     </Masonry>
