@@ -5,6 +5,9 @@ import { ObjectId } from "mongodb";
 // The router will be added as a middleware and will take control of requests starting with the path we give it
 const router = express.Router();
 
+
+
+  
 // Récupérer tous les albums
 router.get("/", async (req, res) => {
     try {
@@ -19,7 +22,7 @@ router.get("/", async (req, res) => {
 // Récupérer un album par son mois
 router.get('/:month', async (req, res) => {
     try {
-        console.log("Requète:",req)
+            console.log("Requète:",req)
         const album = await db.collection('albums').findOne({
             month: req.params.month
         });
