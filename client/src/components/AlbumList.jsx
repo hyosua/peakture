@@ -253,7 +253,7 @@ const AlbumList = () => {
 
                             {/* Edit Album */}
                             {editingAlbum === album._id && (
-                                <div className='absolute inset-0 bg-white/95 flex flex-col items-center justify-center cursor-pointer'
+                                <div className='absolute inset-0 backdrop-blur-sm bg-black/60 flex flex-col items-center justify-center cursor-pointer'
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <h3>Editer le Thème</h3>
@@ -262,27 +262,28 @@ const AlbumList = () => {
                                         value={newTheme}
                                         placeholder='Entrer le nouveau thème'
                                         onChange={(e) => setNewTheme(e.target.value)}
-                                        className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-2'
+                                        className='w-full px-3 py-2 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-2'
                                     />
                                     <div className='flex space-x-2'>
-                                        <button 
-                                            onClick={(e) => handleSave(album._id,e)}
-                                            className='px-4 py-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex items-center'
-                                        >
-                                            <Check size={16} className='mr-1' /> Enregistrer
-                                        </button>
                                         <button
                                             onClick={handleCancel}
-                                            className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center cursor-pointer'
+                                            className='p-2 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-red-400 flex items-center cursor-pointer'
                                         >
-                                            <X size={16} className='mr-1' /> Annuler
+                                            <X size={26} className='mr-1' /> 
                                         </button>
+                                        <button 
+                                            onClick={(e) => handleSave(album._id,e)}
+                                            className='p-2 py-2 border-2 border-white text-white rounded-lg bg-emerald-900 cursor-pointer hover:bg-emerald-600 flex justify-center'
+                                        >
+                                            <Check size={26} className='mr-1' /> 
+                                        </button>
+                                        
                                     </div>
                                 </div>
 
                             )}
 
-                            {/* Album Menu (affiché sur hover pour grands écrans) */}
+                            {/* Album Menu (affiché sur hover si grand écran) */}
                             {((hoveredAlbumId === album._id || window.innerWidth < 640) && !editingAlbum) && ( 
                                 <div className='absolute top-2 right-2'>
                                     <button
@@ -294,7 +295,7 @@ const AlbumList = () => {
 
                                     {/* Dropdown menu */}
                                     {menuOpenId === album._id && (
-                                        <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
+                                        <div className='absolute right-0 mt-2 w-48 bg-white/80 rounded-lg shadow-lg border border-gray-200 z-10'>
                                             <button
                                                 onClick={(e) => handleEdit(album,e)}
                                                 className='block w-full px-4 py-2 text-left text-gray-800 hover:bg-emerald-500 rounded-t-lg cursor-pointer'
