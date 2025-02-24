@@ -3,7 +3,7 @@
     import { motion, AnimatePresence } from "framer-motion";
     import EditDropdown from "./EditDropdown.jsx"
 
-    const Picture = ({ photo, id, deletePhoto, isLikedId, onLike, votes }) => {
+    const Picture = ({ photo, id, deletePhoto, isLikedId, onLike, showUploadForm, replacingPhoto, votes }) => {
         return (
             <div className="relative group inline-block">
                 <motion.img 
@@ -21,8 +21,10 @@
                                             {
                                             label: "Modifier l'image",
                                             icon: <Edit className="h-4 w-4" />,
-                                            // onClick: () => handleEdit(album),
-                                            },
+                                            onClick: () => {
+                                                showUploadForm(true)
+                                                replacingPhoto(id)
+                                            }},
                                             {
                                             label: "Supprimer",
                                             icon: <Trash className="h-4 w-4 text-red-500" />,
@@ -65,6 +67,8 @@
         isLikedId: PropTypes.bool,
         onLike: PropTypes.func.isRequired,
         deletePhoto: PropTypes.func,
+        showUploadForm: PropTypes.func,
+        replacingPhoto: PropTypes.func,
         votes: PropTypes.number
     };
 

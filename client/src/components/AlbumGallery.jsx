@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
-import { Upload, Plus } from "lucide-react"
+import { Upload, Plus, X } from "lucide-react"
 import Picture  from "./Picture.jsx"
 
 
@@ -19,6 +19,7 @@ const AlbumGallery = () => {
     const [album, setAlbum] = useState(null)
     const [photos, setPhotos] = useState([])
     const [showUploadForm, setShowUploadForm] = useState(false)
+    const [replacingPhoto, setReplacingPhoto] = useState(null)
     const [image, setImage] = useState(null)
     const [preview, setPreview] = useState(null)
     const [uploading, setUploading] = useState(false)
@@ -109,17 +110,23 @@ const AlbumGallery = () => {
             alert("Tu dois sélectionner une image")
             return
         }
-
+        console.log(replacingPhoto)
         setUploading(true)
         setUploadProgress(10)
         try {
             setUploadProgress(30)
             const imageUrl = await uploadToCloudinary(image)
+            let endRoute = ""
+            let fetchMethod = "POST"
+            if(replacingPhoto){
+                endRoute = `/${replacingPhoto}`
+                fetchMethod = "PATCH"
+            }
             setUploadProgress(70)
 
             // save to database
-            const response = await fetch(`${API_BASE_URL}/photos`, {
-                method : "POST",
+            const response = await fetch(`${API_BASE_URL}/photos${endRoute}`, {
+                method : fetchMethod,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -138,11 +145,18 @@ const AlbumGallery = () => {
             const newPhoto = await response.json()
 
             // Mettre à jour l'UI
-            console.log("tableau photos:", photos)
-            console.log("newPhoto", newPhoto)
-            setPhotos(prevPhotos => [...prevPhotos, newPhoto])
-            setUploadProgress(100)
+            setPhotos(prevPhotos => {
+                if(replacingPhoto){ // remplacer l'existante
+                    return prevPhotos.map(photo => 
+                        photo._id === replacingPhoto ? newPhoto.photo : photo
+                    )
+                } else { // ajouter une nouvelle
+                    return [...prevPhotos, newPhoto]                    
+                }
+            })
 
+            setUploadProgress(100)
+            setReplacingPhoto(null)
             // Reset le form
             setImage(null)
             setPreview(null)
@@ -251,7 +265,10 @@ const AlbumGallery = () => {
                                     photo={photo.src} 
                                     id={photo._id} 
                                     onLike={handleLike}
+                                    changePhoto={handleImageChange}
                                     deletePhoto={deletePhoto}
+                                    showUploadForm={setShowUploadForm}
+                                    replacingPhoto={setReplacingPhoto}
                                     isLikedId={likedPhotoId === photo._id}
                                     votes={photo.votes || 0}
                                 />

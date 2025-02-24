@@ -17,7 +17,7 @@ export default function EditDropdown({ actions }) {
                     e.stopPropagation() // Empêche le clic de se propager au parent
                     setIsOpen((prev) => !prev)
                   }}
-                className="lg:opacity-0 text-emerald-600 group-hover:bg-white/20 group-hover:opacity-100 cursor-pointer transition-opacity duration-200 opacity-100 p-2 rounded-full"
+                className="lg:opacity-0 text-white group-hover:bg-black/20 group-hover:opacity-100 cursor-pointer transition-opacity duration-200 opacity-100 p-2 rounded-full"
                 >
                 <EllipsisVertical className="h-8 w-8" />
             </button>

@@ -96,7 +96,6 @@ router.delete('/:id', async (req, res) => {
 
         // Extraction de l'id public cloudinary à partir de l'URL
         const publicId = photo.src.split('/').pop().split('.')[0]
-        console.log(publicId)
 
         // Suppression de l'image sur Cloudinary
         try {
@@ -131,13 +130,13 @@ router.delete('/:id', async (req, res) => {
         }
 
         // Vérif si la photo était une cover
-        const album = await db.collection('albums').findOne({
+        const albumCover = await db.collection('albums').findOne({
             _id: albumObjectId,
             cover: photo.src
         });
 
         // Si nécessaire MAJ de la cover de l'album
-        if (album) {
+        if (albumCover) {
             const otherPhoto = await db.collection('photos').findOne({
                 albumId: photo.albumId,
                 _id: { $ne: photoId }
@@ -172,6 +171,65 @@ router.delete('/:id', async (req, res) => {
         });
     }
 });
+
+// Modifier une photo
+router.patch('/:id', async (req,res) => {
+    const photoId = new ObjectId(req.params.id)
+    const { src, albumId } = req.body
+
+    if(!src || !albumId){
+        return res.status(404).json({
+            message: "Img Url ou AlbumId manquant"
+        })
+    }
+
+    const updatedPhoto = {
+        src: src,
+        albumId: albumId,
+        votes: 0
+    }
+
+    try {
+        const result = await db.collection('photos').replaceOne(
+            { _id: photoId },
+            updatedPhoto
+        )
+
+        if(result.count === 0){
+            return res.status(404).json({
+                message: "Photo non trouvée"
+            })
+        }
+
+        const albumCover = await db.collection('albums').findOne({
+            _id: albumId,
+            cover: src
+        })
+
+        if(albumCover){
+            await db.collection('albums').updateOne(
+                {_id: albumId },
+                { cover: updatedPhoto.src }
+            )
+        }
+
+        const newPhoto = await db.collection('photos').findOne({
+            _id:  photoId
+        })
+
+        res.json({
+            message: "L'image a bien été mise à jour",
+            photo: newPhoto 
+        })
+    
+    } catch (error){
+        console.error('Erreur lors du changement de la photo:', error)
+        res.status(500).json({
+            message: 'Erreur lors du changement de la photo',
+            error: error.message
+        })
+    }
+})
 
 // Ajouter un Vote à une photo
 router.patch('/:id/like', async (req,res) => {
