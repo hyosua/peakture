@@ -25,6 +25,7 @@ const AlbumGallery = () => {
     const [uploading, setUploading] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(0)
     const [likedPhotoId, setLikedPhotoId] = useState(null)
+    const [cloudinaryURL, setCloudinaryUrl] = useState(null)
     
         
     // Fetch Album data
@@ -110,7 +111,7 @@ const AlbumGallery = () => {
             alert("Tu dois sélectionner une image")
             return
         }
-        console.log(replacingPhoto)
+
         setUploading(true)
         setUploadProgress(10)
         try {
@@ -121,6 +122,11 @@ const AlbumGallery = () => {
             if(replacingPhoto){
                 endRoute = `/${replacingPhoto}`
                 fetchMethod = "PATCH"
+
+                if(cloudinaryURL){
+                    console.log(cloudinaryURL)
+                    await handleCloudinaryDelete(cloudinaryURL)
+                }
             }
             setUploadProgress(70)
 
@@ -143,18 +149,19 @@ const AlbumGallery = () => {
             }
 
             const newPhoto = await response.json()
+            console.log("NewPhoto: ",newPhoto)
 
             // Mettre à jour l'UI
             setPhotos(prevPhotos => {
-                if(replacingPhoto){ // remplacer l'existante
-                    return prevPhotos.map(photo => 
-                        photo._id === replacingPhoto ? newPhoto.photo : photo
-                    )
-                } else { // ajouter une nouvelle
-                    return [...prevPhotos, newPhoto]                    
-                }
+                const updatedPhotos = replacingPhoto 
+                    ? prevPhotos.map(photo => photo._id === replacingPhoto ? newPhoto : photo)
+                    : [...prevPhotos, newPhoto];
+                
+                console.log("Photos mises à jour:", updatedPhotos);
+                return updatedPhotos;
             })
 
+            console.log(photos)
             setUploadProgress(100)
             setReplacingPhoto(null)
             // Reset le form
@@ -291,13 +298,14 @@ const AlbumGallery = () => {
                             
                             <div key={photo._id} className="mb-4 break-inside-avoid">
                                 <Picture 
-                                    photo={photo.src} 
+                                    photoUrl={photo.src} 
                                     id={photo._id} 
                                     onLike={handleLike}
                                     changePhoto={handleImageChange}
                                     deletePhoto={deletePhoto}
                                     showUploadForm={setShowUploadForm}
                                     replacingPhoto={setReplacingPhoto}
+                                    cloudinaryURL={setCloudinaryUrl}
                                     isLikedId={likedPhotoId === photo._id}
                                     votes={photo.votes || 0}
                                 />
