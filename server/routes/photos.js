@@ -211,11 +211,18 @@ router.patch('/:id', async (req,res) => {
         albumId: albumId,
         votes: 0
     }
+    
+    // récupération de l'ancienne photo
+    const photo = await db.collection('photos').findOne({ _id: photoId });
+    const albumCover = await db.collection('albums').findOne({
+        _id: new ObjectId(albumId),
+        cover: photo.src
+    })
 
     try {
         const result = await db.collection('photos').updateOne(
             { _id: photoId },
-            updatedPhoto
+            { $set: updatedPhoto }
         )
 
         if(result.count === 0){
@@ -224,15 +231,10 @@ router.patch('/:id', async (req,res) => {
             })
         }
 
-        const albumCover = await db.collection('albums').findOne({
-            _id: albumId,
-            cover: src
-        })
-
         if(albumCover){
             await db.collection('albums').updateOne(
-                {_id: albumId },
-                { cover: updatedPhoto.src }
+                {_id: new ObjectId(albumId) },
+                { $set: { cover: updatedPhoto.src } }
             )
         }
 

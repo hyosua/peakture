@@ -150,7 +150,6 @@ const AlbumGallery = () => {
             }
 
             const responseData = await response.json()
-            console.log("Response data: ", responseData)
 
             const newPhoto = responseData.photo || responseData 
 
@@ -165,7 +164,6 @@ const AlbumGallery = () => {
                 }
             })
 
-            console.log(photos)
             setUploadProgress(100)
             setReplacingPhoto(null)
             setCloudinaryUrl(null)
@@ -232,7 +230,6 @@ const AlbumGallery = () => {
                 throw new Error(errorData.message || "Erreur de suppression photo sur Cloudinary")
             }
 
-            console.log("Photo supprimée de Cloudinary")
             return true
         } catch(error){
             console.log("Erreur Cloudinary: ", error)
