@@ -111,6 +111,11 @@ router.patch("/:id", async (req, res) => {
 // Supprimer un album par id
 router.delete("/:id", async (req, res) => {
     try {
+        
+        await db.collection('photos').deleteMany({
+            albumId: req.params.id
+        })
+        
         const query = { _id: new ObjectId(req.params.id) };
 
         const result = await db.collection("albums").deleteOne(query);
@@ -118,11 +123,7 @@ router.delete("/:id", async (req, res) => {
         if (result.deletedCount === 0){
             return res.status(404).send("No album found with that id");
         }
-
-        await db.collection('photos').deleteMany({
-            albumId: ObjectId.createFromHexString(req.params.id) 
-        })
-        
+   
         res.status(200).send(result)
     } catch (err) {
         console.error(err);
