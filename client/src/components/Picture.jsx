@@ -13,7 +13,7 @@
                     className={`gallery-photo ${isLikedId ? "border-emerald-400 border-4" : "border-0"}`} 
                     initial={{ scale: 1 }}
                     animate={{ scale: isLikedId ? 1.05 : 1 }}
-                    transition={{ type: "spring", stiffness: 30, damping: 10 }}
+                    transition={{ type: "spring", stiffness: 30, damping: 10, duration: 1.5 }}
                 />
                     <div className='absolute top-2 right-2'>
                                     <EditDropdown
@@ -38,6 +38,7 @@
                     onClick={() => onLike(id)} 
                     className="like-button flex items-center space-x-1 absolute bottom-2 right-2 bg-black/50 p-1 rounded"
                     whileHover={{ scale: 1.2 }}
+                    transition={{ duration: 0.4 }}
                 >
                     <Heart
                         className={`w-6 h-6 ${isLikedId ? "fill-emerald-400 stroke-none" : "stroke-white"}`}

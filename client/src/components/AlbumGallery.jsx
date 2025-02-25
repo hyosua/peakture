@@ -3,6 +3,7 @@ import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
 import { Upload, Plus, X } from "lucide-react"
 import Picture  from "./Picture.jsx"
+import { motion } from "framer-motion";
 
 
 const breakpointColumns = {
@@ -317,9 +318,17 @@ const AlbumGallery = () => {
                     </Masonry>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 text-white">
-                        <Upload size={64} className="mb-4" />
+                        <motion.button 
+                                    className="cursor-pointer flex flex-col items-center   hover:text-emerald-600"
+                                    onClick={() => setShowUploadForm(true)}
+                                    initial={{ scale: 1 }}
+                                    whileHover={{ scale: 1.2 }}
+                                    transition={{ type: "spring", stiffness: 30, damping: 10 }}
+                    >
+                            <Upload size={64} className="mb-4" />
+                        </motion.button>
                         <p className="text-xl mb-2">Aucune Photo pour le moment.</p> 
-                        <p>Soyez le premier!</p>
+                        <p>Soyez le premier!</p>                        
                     </div>
                 )}
             </div>
