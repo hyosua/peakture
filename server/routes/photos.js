@@ -82,7 +82,7 @@ router.delete('/:id', async (req, res) => {
         // on valide d'abord le format de l'id de la photo
         let photoId;
         try {
-            photoId = ObjectId.createFromHexString(req.params.id);
+            photoId = new ObjectId(req.params.id)
         } catch (error) {
             return res.status(400).json({ message: "Invalid photo ID format" });
         }
@@ -94,30 +94,10 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ message: "Photo not found" });
         }
 
-        // Extraction de l'id public cloudinary à partir de l'URL
-        const publicId = photo.src.split('/').pop().split('.')[0]
-
-        // Suppression de l'image sur Cloudinary
-        try {
-            const cloudinaryResult = await cloudinary.uploader.destroy(publicId)
-            if (cloudinaryResult.result !== 'ok') {
-                return res.status(500).json({
-                    message: "Erreur en supprimant de Cloudinary",
-                    cloudinaryError: cloudinaryResult.result
-                })
-            }
-        } catch (cloudinaryError){
-            console.error('Cloudinary deletion error:', cloudinaryError)
-            return res.status(500).json({
-                message: "Error deleting from Cloudinary",
-                error: cloudinaryError.message
-            })
-        }
-
         // Vérif du format d'album Id
         let albumObjectId;
         try {
-            albumObjectId = ObjectId.createFromHexString(photo.albumId);
+            albumObjectId = new ObjectId(photo.albumId);
         } catch (error) {
             return res.status(500).json({ message: "Invalid album ID format in photo document" });
         }
@@ -159,8 +139,7 @@ router.delete('/:id', async (req, res) => {
         res.json({ 
             message: 'Photo deleted successfully',
             photoId: photoId.toString(),
-            albumUpdated: album ? true : false,
-            cloudinaryPublicId: publicId
+            albumUpdated: albumCover ? true : false,
         });
 
     } catch (error) {
@@ -171,6 +150,50 @@ router.delete('/:id', async (req, res) => {
         });
     }
 });
+
+// Supprimer une photo de Cloudinary
+router.post('/cloudinary/delete', async (req,res) => {
+    try {
+        const { src } = req.body
+
+        if (!src) {
+            return res.status(400).json({
+                message: "URL Cloudinary manquante"
+            })
+        }   
+
+        // Extraction de l'id public cloudinary à partir de l'URL
+        const publicId = src.split('/').pop().split('.')[0]
+
+        // Suppression de l'image sur Cloudinary
+        try {
+            const cloudinaryResult = await cloudinary.uploader.destroy(publicId)
+            if (cloudinaryResult.result !== 'ok') {
+                return res.status(500).json({
+                    message: "Erreur en supprimant de Cloudinary",
+                    cloudinaryError: cloudinaryResult.result
+                })
+            }
+        } catch (cloudinaryError){
+            console.error('Cloudinary deletion error:', cloudinaryError)
+            return res.status(505).json({
+                message: "Error deleting from Cloudinary",
+                error: cloudinaryError.message
+            })
+        }
+
+        res.status(200).json({ 
+            message: 'Photo deleted successfully from Cloudinary',
+        });
+
+    } catch (error) {
+        console.error('Error deleting photo:', error);
+        res.status(500).json({ 
+            message: 'Internal server error while deleting photo from Cloudinary',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+})
 
 // Modifier une photo
 router.patch('/:id', async (req,res) => {

@@ -28,7 +28,7 @@
                                             {
                                             label: "Supprimer",
                                             icon: <Trash className="h-4 w-4 text-red-500" />,
-                                            onClick: () => deletePhoto(id),
+                                            onClick: () => deletePhoto(id, photo),
                                             },
                                         ]}
                                     />

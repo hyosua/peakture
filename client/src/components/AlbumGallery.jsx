@@ -203,15 +203,44 @@ const AlbumGallery = () => {
         }
     }
 
-    const deletePhoto = async (photoId) => {
+    const handleCloudinaryDelete = async (cloudinaryUrl) => {
         try {
+            const response = await fetch(`${API_BASE_URL}/photos/cloudinary/delete`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    src: cloudinaryUrl
+                })
+            })
+
+            if(!response.ok){
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Erreur de suppression photo sur Cloudinary")
+            }
+
+            console.log("Photo supprimée de Cloudinary")
+            return true
+        } catch(error){
+            console.log("Erreur Cloudinary: ", error)
+            return false
+        }
+    }
+
+    const deletePhoto = async (photoId, src) => {
+        try {
+            const cloudinaryDeleteSuccess =  await handleCloudinaryDelete(src)
+            if(!cloudinaryDeleteSuccess) {
+                console.warn('Suppression de cloudinary échouée')
+            }
+            
             const response = await fetch(`${API_BASE_URL}/photos/${photoId}`, {
                 method: "DELETE" 
             })
-
             if(!response.ok) {
-                throw new Error("Une erreur est survenue lors du fetching")
-            }
+                throw new Error("Une erreur est survenue lors de la suppression de la Bdd")
+            }         
 
             setPhotos(photos.filter(photo => photo._id !== photoId))
         } catch(error){
