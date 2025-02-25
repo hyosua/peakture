@@ -120,6 +120,7 @@ const AlbumGallery = () => {
             let endRoute = ""
             let fetchMethod = "POST"
             if(replacingPhoto){
+                console.log("Photo à remplacer ID:", replacingPhoto);
                 endRoute = `/${replacingPhoto}`
                 fetchMethod = "PATCH"
 
@@ -148,22 +149,26 @@ const AlbumGallery = () => {
                 throw new Error(`Error saving photo: ${response.statusText}`)
             }
 
-            const newPhoto = await response.json()
-            console.log("NewPhoto: ",newPhoto)
+            const responseData = await response.json()
+            console.log("Response data: ", responseData)
+
+            const newPhoto = responseData.photo || responseData 
 
             // Mettre à jour l'UI
             setPhotos(prevPhotos => {
-                const updatedPhotos = replacingPhoto 
-                    ? prevPhotos.map(photo => photo._id === replacingPhoto ? newPhoto : photo)
-                    : [...prevPhotos, newPhoto];
-                
-                console.log("Photos mises à jour:", updatedPhotos);
-                return updatedPhotos;
+                if(replacingPhoto){
+                    return prevPhotos.map(photo =>
+                        photo._id === replacingPhoto ? newPhoto : photo
+                    )
+                } else {
+                    return [...prevPhotos, newPhoto]
+                }
             })
 
             console.log(photos)
             setUploadProgress(100)
             setReplacingPhoto(null)
+            setCloudinaryUrl(null)
             // Reset le form
             setImage(null)
             setPreview(null)

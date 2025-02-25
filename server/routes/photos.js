@@ -213,7 +213,7 @@ router.patch('/:id', async (req,res) => {
     }
 
     try {
-        const result = await db.collection('photos').replaceOne(
+        const result = await db.collection('photos').updateOne(
             { _id: photoId },
             updatedPhoto
         )
