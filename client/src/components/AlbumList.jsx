@@ -230,7 +230,10 @@ const AlbumList = () => {
                             {/* Album Card */}
                             <div className='p-4 border-2 bg-black/70 border-emerald-500 rounded-lg group'>
                                 <h3 className='mb-2'>{album.month}</h3>
-                                {album.cover && <img src={album.cover} alt={album.month} className='w-full h-48 object-cover mb-2' />}
+                                <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"} 
+                                    alt={album.month} 
+                                    className='w-full h-48 object-cover mb-2' 
+                                />
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
                                 {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
                                 <div className='absolute top-2 right-2'>
