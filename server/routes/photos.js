@@ -195,6 +195,36 @@ router.post('/cloudinary/delete', async (req,res) => {
     }
 })
 
+router.post('/cloudinary/delete/:id', async (req, res) => {
+    try {
+        const albumId = req.params.id
+
+        const photos = await db.collection('photos').find({
+            albumId:  req.params.id
+        }).toArray()
+    
+        if(!photos || photos.length === 0){
+            return res.status(404).json({ message: "Aucune photo trouvée dans cet album "})
+        }
+    
+        const cloudinaryIds = photos.map((photo) => {
+            return photo.src.split('/').pop().split('.')[0]
+        })
+    
+        const deletionPromises = cloudinaryIds.map((publicId) => {
+            return cloudinary.uploader.destroy(publicId)
+        })
+    
+        await Promise.all(deletionPromises)
+    
+        res.status(200).json({
+            message: `Toutes les photos (${photos.length} de l'album ont été supprimées avec succès)`
+        })
+    } catch (error){
+        res.status(500).json({ message: "Erreur lors de la suppression des photos sur cloudinary: ",error})
+    }
+})
+
 // Modifier une photo
 router.patch('/:id', async (req,res) => {
     const photoId = new ObjectId(req.params.id)

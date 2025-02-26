@@ -34,6 +34,11 @@ const AlbumList = () => {
 
     // Delete an album
     const deleteAlbum = async (id) => {
+
+        await fetch(`http://localhost:5000/photos/cloudinary/delete/${id}`, {
+            method: 'POST'
+        })
+
         await fetch(`http://localhost:5000/albums/${id}`, {
             method: 'DELETE',
         })  
