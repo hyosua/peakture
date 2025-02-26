@@ -290,7 +290,7 @@ const AlbumGallery = () => {
             
 
             {/* Photo Gallery */}
-            <div className="gallery">
+            <div className="gallery flex justify-center">
                 {photos.length > 0 ? (
                     <Masonry 
                             breakpointCols={breakpointColumns}
