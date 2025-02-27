@@ -1,26 +1,17 @@
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import mongoose from 'mongoose'
 
-const uri = process.env.ATLAS_URI || "";
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    },
-});
 
-try {
-    //Connect the client to the server
-    await client.connect();
-    //send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-        "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-} catch (err) {
-    console.error(err);
+const connectMongoDB = async () => {
+    try {
+        const conn = await mongoose.connect(process.env.ATLAS_URI)
+        console.log(
+            "Pinged your deployment. You successfully connected to MongoDB!"
+        );
+    } catch (err) {
+        console.error(`Error connecting to Mongodb: ${err}`);
+        process.exit(1)
+    }
 }
 
-let db = client.db("peakture");
 
-export default db;
+export default connectMongoDB;
