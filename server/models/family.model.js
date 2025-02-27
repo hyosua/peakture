@@ -5,12 +5,19 @@ const familySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    inviteCode: {
+        type: String,
+        unique: true
+    },
     members: [{
         type: mongoose.Schema.Types.ObjectId, ref: 'User'
     }],
     admin: {
         type: mongoose.Schema.Types.ObjectId, ref: 'User'
-    }
+    },
+    guestMembers: [{
+        type: mongoose.Schema.Types.ObjectId, ref: 'Guest'
+    }]
 })
 
 const Family = mongoose.model("Family", familySchema)
