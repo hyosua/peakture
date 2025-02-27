@@ -1,4 +1,4 @@
-import mongooses from "mongoose"
+import mongoose from "mongoose"
 
 const familySchema = new mongoose.Schema({
     name: {
