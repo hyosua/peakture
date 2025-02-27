@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import albums from './routes/album.js'
-import photos from './routes/photos.js'
-import authRoutes from './routes/auth.js'
+import albums from './routes/album.routes.js'
+import photos from './routes/photos.routes.js'
+import authRoutes from './routes/auth.routes.js'
 import { errorHandler } from './errorHandler.js';
 import connectMongoDB from './db/connexion.js'
 
