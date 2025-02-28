@@ -20,9 +20,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'user'], default: 'user'
     },
-    familyId:{
+    families:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Family'
-    },
+    }],
     isGuest:{
         type: Boolean,
         default: false
