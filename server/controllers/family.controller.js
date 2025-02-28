@@ -6,16 +6,22 @@ import crypto from 'crypto'
 
 export const create = async (req, res) => {
     try {
-        const { familyName } = req.body
-        const getUser = req.user
-        console.log(req.user)
-
+        const familyName = req.body.name
+        console.log(familyName)
         if(!familyName){
             return res.status(400).json({error: "Tu dois rentrer un nom de Famille valide."})
         }
+
+        const getUser = req.user
         if(!getUser){
-            return res.status(400).json({error: "Tu n'es pas connu de la police pour pouvoir créer une famille"})
+            return res.status(400).json({error: "Tu n'es pas connu de la police pour pouvoir créer une famille, il faut s'inscrire!"})
         }
+
+        const existingFamily = await Family.findOne({familyName})
+        if(existingFamily){
+            return res.status(401).json({error: "Cette famille existe déjà"})
+        }
+
 
         const inviteCode = crypto.randomBytes(3).toString('hex').toUpperCase()
 
