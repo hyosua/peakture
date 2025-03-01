@@ -28,8 +28,21 @@ app.use("/photos", photos)
 app.use(errorHandler)
 
 
-app.listen(PORT, () => {
-    console.log(`Server running on port: http://localhost:${PORT}`)
-connectMongoDB()    
-})       
+connectMongoDB()
+  .then(() => {
+    console.log('Connecté à MongoDB')
+    
+    // Importer et initialiser les tâches planifiées
+    import('./jobs/cron/index.js')
+      .then(() => console.log('Tâches planifiées initialisées'))
+      .catch(err => console.error('Erreur lors de l\'initialisation des tâches planifiées:', err))
+    
+    // Démarrer le serveur après la connexion à la base de données
+    app.listen(PORT, () => {
+      console.log(`Serveur démarré sur: http://localhost:${PORT}`)
+    })
+  })
+  .catch((err) => {
+    console.error('Erreur de connexion à MongoDB:', err)
+  })      
     
