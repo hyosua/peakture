@@ -7,8 +7,10 @@ const guestSchema = new mongoose.Schema({
         required: true
     },
     families: [{ type: mongoose.Schema.Types.ObjectId, ref: "Family"}],
-    expiresAt: {type: Date, default: () => Date.now() + 7 * 24 * 60 * 60 * 1000 } //Expire dans 7 jours
+    expiresAt: {type: Date, default: () => Date.now() + 30 * 60 * 1000 } //Expire dans 30 minutes
 })
+
+guestSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }) // nettoyer les données
 
 const Guest = mongoose.model("Guest", guestSchema)
 

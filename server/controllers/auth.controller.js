@@ -37,7 +37,7 @@ export const signup = async (req, res) => {
         })
 
         if(newUser){
-            generateTokenAndSetCookie(newUser._id, res)
+            generateTokenAndSetCookie(res, newUser._id)
             await newUser.save()
 
             res.status(201).json({
@@ -73,7 +73,7 @@ export const login = async (req, res) => {
             return res.status(400).json({error: "Opala... qui va là? mot de passe incorrect."})
         }
 
-        generateTokenAndSetCookie(user._id, res)
+        generateTokenAndSetCookie(res, user._id)
 
         res.status(201).json({
             _id: user._id,

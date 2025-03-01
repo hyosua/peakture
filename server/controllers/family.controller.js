@@ -1,8 +1,10 @@
 import bcrypt from 'bcryptjs'
 import Family from '../models/family.model.js'
 import User from '../models/user.model.js'
+import Guest from '../models/guest.model.js'
 import me from '../routes/auth.routes.js'
 import crypto from 'crypto'
+import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 
 export const create = async (req, res) => {
     try {
@@ -18,7 +20,6 @@ export const create = async (req, res) => {
         }
 
         const existingFamily = await Family.findOne({name: familyName})
-        console.log(existingFamily)
         if(existingFamily){
             return res.status(401).json({error: "Cette famille existe déjà"})
         }
@@ -43,7 +44,7 @@ export const create = async (req, res) => {
                 name: newFamily.name,
                 admin: newFamily.admin,
                 inviteCode: newFamily.inviteCode,
-                members: newFamily.guestMembers,
+                members: newFamily.members,
                 guestMembers: newFamily.guestMembers
                 
             })
@@ -57,40 +58,61 @@ export const create = async (req, res) => {
 }
 
 export const join = async (req, res) => {
-    try{
+    try {
         const { inviteCode } = req.body
+
+        // Vérification du code d'invitation
         const family = await Family.findOne({ inviteCode })
-        if(!family){
-            return res.status(400).json({ message:"Cette famille n'est pas enregistrée chez nous..."})
+        if (!family) {
+            return res.status(400).json({ message: "Cette famille n'est pas enregistrée chez nous..." })
         }
 
-        if(req.user){ // si un utilisateur enregistré rejoint une famille
-            if(!req.user.families.includes(family._id)){
+        if (req.user) {
+            // Un utilisateur enregistré rejoint une famille
+            if (!req.user.families.includes(family._id)) {
                 req.user.families.push(family._id)
                 await req.user.save()
             }
 
-            if(!family.members.includes(req.user._id)){
+            if (!family.members.includes(req.user._id)) {
                 family.members.push(req.user._id)
                 await family.save()
             }
 
-            return res.status(201).json({ message: "Bienvenue dans la famille !", family})
+            return res.status(201).json({ message: "Bienvenue dans la famille !", family })
         }
 
-        if(req.guest) { // Si un guest rejoins une famille
-            if (!req.guest.families.includes(family._id)) {
-                req.guest.families.push(family._id);
-                await req.guest.save();
+        // Gestion des invités avec un sessionId
+        let sessionId = req.cookies.sessionId
+        let guest
+
+        if (!sessionId) {
+            sessionId = generateTokenAndSetCookie(res) // Générer un sessionId
+            guest = new Guest({ sessionId, families: [family._id] })
+            await guest.save()
+        } else {
+            // Vérifier si le guest existe déjà
+            guest = await Guest.findOne({ sessionId })
+            if (!guest) {
+                guest = new Guest({ sessionId, families: [family._id] })
+                await guest.save()
             }
-            if (!family.guestMembers.includes(req.guest._id)) {
-            family.guestMembers.push(req.guest._id);
-            await family.save();
-            }
-              return res.json({ message: "Un nouvel invité dans la famille !", family });
         }
-    }catch(error){
-        console.log("Error in join family controller", error.message)
-        return res.status(500).json({ error: "Internal Server Error"})
+
+        // Ajouter le guest à la famille
+        if (!guest.families.includes(family._id)) {
+            guest.families.push(family._id)
+            await guest.save()
+        }
+
+        if (!family.guestMembers.includes(guest._id)) {
+            family.guestMembers.push(guest._id)
+            await family.save()
+        }
+
+        return res.status(201).json({ message: "Invité ajouté à la famille", family, sessionId })
+    } catch (error) {
+        console.error("Erreur dans join Family Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }
