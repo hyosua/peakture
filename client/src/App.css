@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
 
 @import "tailwindcss";
-
+@plugin "daisyui";
 @theme {
   --color-primary: slate-950;
 
@@ -27,7 +27,7 @@
   body {
     font-family: "DM Sans", serif;
     font-optical-sizing: auto;
-    background: #030014;
+    background: #020009;
   }
 
   h1 {
@@ -171,8 +171,6 @@
     @apply flex items-center gap-2 cursor-pointer absolute bottom-2 right-2 p-2 bg-white/10 rounded-full shadow-md 
   }
 }
-ap-4
-  .
 
 
 

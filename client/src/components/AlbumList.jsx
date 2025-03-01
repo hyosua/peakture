@@ -15,6 +15,11 @@ const AlbumList = () => {
 
     const navigate = useNavigate()
 
+    const monthsList = [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ]
+
     // Fetch albums from the server
     useEffect(() => {
         async function getAlbums() {
@@ -34,10 +39,6 @@ const AlbumList = () => {
 
     // Delete an album
     const deleteAlbum = async (id) => {
-
-        await fetch(`http://localhost:5000/photos/cloudinary/delete/${id}`, {
-            method: 'POST'
-        })
 
         await fetch(`http://localhost:5000/albums/${id}`, {
             method: 'DELETE',
@@ -179,9 +180,9 @@ const AlbumList = () => {
                                         required
                                     >
                                         <option value="">Sélectionner un mois</option>
-                                        {["Janvier", "Février", "Mars", "Avril", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"].map((month) => (
-                                            <option key={month} value={month}>{month}</option>
-                                        ))}    
+                                        {monthsList.map((month, index) => (
+                                            <option key={`month-${index}`} value={month}>{month}</option>
+                                        ))}   
                                     </select>
                                 </label>
                             </div>
@@ -218,13 +219,14 @@ const AlbumList = () => {
                 </div>
             )}
             
+            
             {/* Albums Grid */}
             <div className='flex'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
                     {albums.map((album) => (
                         <div
                             key={album._id}
-                            className='album-preview'
+                            className='album-preview relative'
                             onClick={() => handleAlbumClick(album.month)}
                         >
                             {/* Album Card */}

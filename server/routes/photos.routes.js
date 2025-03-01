@@ -1,16 +1,10 @@
 import express from "express"
-import db from "../db/connexion.js"
+import Album from "../models/album.model.js"
+import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb"
+import cloudinary from "../cloudinaryConfig.js"
 
 const router  = express.Router()
-import { v2 as cloudinary } from 'cloudinary';
-
-// Configuration de Cloudinary
-cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
 
 // Récupérer les photos d'un album
 router.get('/:albumId', async (req, res) => {
@@ -23,9 +17,9 @@ router.get('/:albumId', async (req, res) => {
             return res.status(400).json({ message: "Invalid album ID format" });
         }
 
-        const photos = await db.collection('photos').find({
+        const photos = await Photo.find({
             albumId: albumId.toString()
-        }).toArray()
+        })
 
         res.json({photos});
 
@@ -45,26 +39,28 @@ router.post('/', async (req, res) => {
         }
 
         // Ajout de la photo
-        const result = await db.collection('photos').insertOne({
+        const photoData = {
             albumId,
             src,
             votes: 0,
             createdAt: new Date()
-        })
+        }
+        const result = await Photo.create(photoData)
 
         // Récupération de la photo 
-        const insertedPhoto = await db.collection('photos').findOne({
-            _id: result.insertedId
-        })
+        let insertedPhoto
+        if (result._id) {
+            insertedPhoto = result
+        }
 
         // MAJ de l'album cover si absent
-        const album = await db.collection('albums').findOne({
-            _id: ObjectId.createFromHexString(albumId) 
+        const album = await Album.findOne({
+            _id: new ObjectId(albumId) 
         })
 
         if(!album.cover){
-            await db.collection('albums').updateOne(
-                {_id: ObjectId.createFromHexString(albumId) },
+            await Album.updateOne(
+                {_id: new ObjectId(albumId) },
                 { $set: {cover: src} }
             )
         }
@@ -88,7 +84,7 @@ router.delete('/:id', async (req, res) => {
         }
 
         // récupération de la photo
-        const photo = await db.collection('photos').findOne({ _id: photoId });
+        const photo = await Photo.findOne({ _id: photoId });
         
         if (!photo) {
             return res.status(404).json({ message: "Photo not found" });
@@ -103,21 +99,21 @@ router.delete('/:id', async (req, res) => {
         }
 
         // suppression de la photo
-        const deleteResult = await db.collection('photos').deleteOne({ _id: photoId });
+        const deleteResult = await Photo.deleteOne({ _id: photoId });
         
         if (deleteResult.deletedCount === 0) {
             return res.status(500).json({ message: "Failed to delete photo" });
         }
 
         // Vérif si la photo était une cover
-        const albumCover = await db.collection('albums').findOne({
+        const albumCover = await Album.findOne({
             _id: albumObjectId,
             cover: photo.src
         });
 
         // Si nécessaire MAJ de la cover de l'album
         if (albumCover) {
-            const otherPhoto = await db.collection('photos').findOne({
+            const otherPhoto = await Photo.findOne({
                 albumId: photo.albumId,
                 _id: { $ne: photoId }
             });
@@ -126,7 +122,7 @@ router.delete('/:id', async (req, res) => {
                 ? { $set: { cover: otherPhoto.src } }
                 : { $unset: { cover: "" } };
 
-            const albumUpdateResult = await db.collection('albums').updateOne(
+            const albumUpdateResult = await Album.updateOne(
                 { _id: albumObjectId },
                 updateOperation
             );
@@ -176,7 +172,7 @@ router.post('/cloudinary/delete', async (req,res) => {
             }
         } catch (cloudinaryError){
             console.error('Cloudinary deletion error:', cloudinaryError)
-            return res.status(505).json({
+            return res.status(500).json({
                 message: "Error deleting from Cloudinary",
                 error: cloudinaryError.message
             })
@@ -199,9 +195,9 @@ router.post('/cloudinary/delete/:id', async (req, res) => {
     try {
         const albumId = req.params.id
 
-        const photos = await db.collection('photos').find({
-            albumId:  req.params.id
-        }).toArray()
+        const photos = await Photo.find({
+            albumId
+        })
     
         if(!photos || photos.length === 0){
             return res.status(404).json({ message: "Aucune photo trouvée dans cet album "})
@@ -243,32 +239,32 @@ router.patch('/:id', async (req,res) => {
     }
     
     // récupération de l'ancienne photo
-    const photo = await db.collection('photos').findOne({ _id: photoId });
-    const albumCover = await db.collection('albums').findOne({
+    const photo = await Photo.findOne({ _id: photoId });
+    const albumCover = await Album.findOne({
         _id: new ObjectId(albumId),
         cover: photo.src
     })
 
     try {
-        const result = await db.collection('photos').updateOne(
+        const result = await Photo.updateOne(
             { _id: photoId },
             { $set: updatedPhoto }
         )
 
-        if(result.count === 0){
+        if(result.matchedCount === 0){
             return res.status(404).json({
                 message: "Photo non trouvée"
             })
         }
 
         if(albumCover){
-            await db.collection('albums').updateOne(
+            await Album.updateOne(
                 {_id: new ObjectId(albumId) },
                 { $set: { cover: updatedPhoto.src } }
             )
         }
 
-        const newPhoto = await db.collection('photos').findOne({
+        const newPhoto = await Photo.findOne({
             _id:  photoId
         })
 
@@ -288,13 +284,20 @@ router.patch('/:id', async (req,res) => {
 
 // Ajouter un Vote à une photo
 router.patch('/:id/like', async (req,res) => {
-    const photoId = ObjectId.createFromHexString(req.params.id)
+    
     try {
-        const result = await db.collection('photos').updateOne(
+        const photoId = new ObjectId(req.params.id)
+        
+        const result = await Photo.updateOne(
             { _id: photoId},
             { $inc: { votes: 1 } }
         )
-        const updatedPhoto = await db.collection('photos').findOne({
+
+        if(result.matchedCount === 0) {
+            return res.status(404).json({ message: "Photo non trouvée" })
+        }
+        
+        const updatedPhoto = await Photo.findOne({
             _id: photoId
         })
 
