@@ -5,12 +5,12 @@
 
     const Picture = ({ photoUrl, id, deletePhoto, isLikedId, onLike, showUploadForm, replacingPhoto, votes, cloudinaryURL }) => {
         return (
-            <div className="relative group inline-block">
+            <div className="relative m-4 p-2 group inline-block">
                 <motion.img 
                     key={id} 
                     src={photoUrl} 
                     alt={`Photo ${id}`} 
-                    className={`gallery-photo ${isLikedId ? "border-emerald-400 border-4" : "border-0"}`} 
+                    className={`rounded-xl ${isLikedId ? "border-primary  border-4" : "border-0"}`} 
                     initial={{ scale: 1 }}
                     animate={{ scale: isLikedId ? 1.05 : 1 }}
                     transition={{ type: "spring", stiffness: 30, damping: 10, duration: 1.5 }}
@@ -33,15 +33,15 @@
                                             },
                                         ]}
                                     />
-                                </div>
+                    </div>
                 <motion.button 
                     onClick={() => onLike(id)} 
-                    className="like-button flex items-center space-x-1 absolute bottom-2 right-2 bg-black/50 p-1 rounded"
+                    className="cursor-pointer flex items-center space-x-1 absolute bottom-4 right-4 bg-black/50 p-1 rounded"
                     whileHover={{ scale: 1.2 }}
                     transition={{ duration: 0.4 }}
                 >
                     <Heart
-                        className={`w-6 h-6 ${isLikedId ? "fill-emerald-400 stroke-none" : "stroke-white"}`}
+                        className={`w-6 h-6 ${isLikedId ? "fill-primary stroke-none" : "stroke-white"}`}
                     />
                     {/* Conteneur pour le compteur */}
                     <div className="relative h-6 w-4 overflow-hidden">
@@ -52,7 +52,7 @@
                                 animate={{ y: 0, opacity: 1 }}
                                 exit={{ y: -20, opacity: 0 }}
                                 transition={{ duration: 0.5  }}
-                                className="absolute inset-0 flex justify-center items-center text-emerald-400 font-bold text-sm"
+                                className="absolute inset-0 flex justify-center items-center text-primary font-bold text-sm"
                             >
                                 {votes}
                             </motion.span>

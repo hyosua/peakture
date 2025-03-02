@@ -2,19 +2,23 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import FamilyHome from "./FamilyHome"
 import AlbumGallery from "./AlbumGallery"
 import '../App.css'
+import SignUp from './auth/SignUp'
+import HomePage from './auth/HomePage'
+import LogIn from './auth/LogIn'
 
 
 
 const App = () => {
   return (
-    <div data-theme="coffee">
+    <div>
       <Router>
-        
         <Routes>
-          <Route path="/" element={<FamilyHome />} /> 
+          <Route path="/" element={<HomePage />} /> 
+          <Route path="/signup" element={<SignUp />} /> 
+          <Route path="/login" element={<LogIn />} /> 
+          <Route path="/family" element={<FamilyHome />} /> 
           <Route path="/album/:month" element={<AlbumGallery />} />
         </Routes>
-        
       </Router>
     </div>
   )

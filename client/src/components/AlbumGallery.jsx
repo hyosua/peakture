@@ -264,37 +264,29 @@ const AlbumGallery = () => {
 
 
     return (
-        <div className="wrapper">
-            <div className="flex items-center place-content-around">
+        <div className="lg:p-10">
+            <div className="m-6 relative w-full flex flex-col items-center">
                 <button 
-                        className="cursor-pointer border hover:bg-emerald-900 text-white border-white p-2 w-20 mb-4 rounded-lg"
+                        className="absolute left-4 top-4 btn btn-soft"
                         onClick={() => navigate("/")}
                     >
                         Retour
                 </button>
                 <div className="flex items-center flex-col ">
-                    <h2 className="text-white text-4xl">{ month }</h2>
-                    <h3 className="text-white mb-6">{album.theme}</h3>
+                    <h2 className="text-white text-7xl">{ month }</h2>
+                    <h3 className="font-semibold text-white mb-6">{album.theme}</h3>
                 </div>
 
-                {/* Add Photo Button */}
-                <div className='mb-6'>
-                    <button
-                        className='p-2 text-white rounded-full border-2 border-white bg-emerald-600 hover:bg-emerald-900 focus:outline-none flex items-center cursor-pointer'
-                        onClick={() => setShowUploadForm(true)}
-                    >
-                        <Plus size={24} />
-                    </button>
-                </div>
+                
             </div>
             
 
             {/* Photo Gallery */}
-            <div className="gallery flex justify-center">
+            <div className=" flex flex-col items-center justify-center">
                 {photos.length > 0 ? (
                     <Masonry 
                             breakpointCols={breakpointColumns}
-                            className="gallery"
+                            className="flex"
                             columnClassName="bg-clip-paddin"
                         >
                         {photos.map((photo) => (
@@ -319,7 +311,7 @@ const AlbumGallery = () => {
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 text-white">
                         <motion.button 
-                                    className="cursor-pointer flex flex-col items-center   hover:text-emerald-600"
+                                    className="cursor-pointer flex flex-col items-center   hover:text-primary"
                                     onClick={() => setShowUploadForm(true)}
                                     initial={{ scale: 1 }}
                                     whileHover={{ scale: 1.2 }}
@@ -330,18 +322,28 @@ const AlbumGallery = () => {
                         <p className="text-xl mb-2">Aucune Photo pour le moment.</p> 
                         <p>Soyez le premier!</p>                        
                     </div>
-                )}
+                )} 
+                {/* Add Photo Button */}
+                <div className='mb-6'>
+                    <button
+                        className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
+                        onClick={() => setShowUploadForm(true)}
+                    >
+                        <Plus size={24} />
+                    </button>
+                </div>
+                
             </div>
 
             
 
                 {showUploadForm && (
                     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-                        <div className="bg-emerald-900 border-2 border-emerald-500 p-6 w-full max-w-sm lg:max-w-lg rounded-lg">
+                        <div className="bg-base-100 p-6 w-full max-w-sm lg:max-w-lg rounded-lg">
                                 <form className="space-y-4"
                                       onSubmit={handleSubmit} 
                                     >
-                                    <div className='border-2 border-dashed border-white rounded-lg p-4 text-center'>
+                                    <div className='border-2 border-dashed border-secondary rounded-lg p-4 text-center'>
                                         {preview ? (
                                             <div className="relative">
                                                 <img 
@@ -355,16 +357,16 @@ const AlbumGallery = () => {
                                                         setPreview(null)
                                                         setImage(null)
                                                     }}
-                                                    className="absolute top-2 right-2 cursor-pointer bg-red-500 text-white rounded-full p-1"
+                                                    className="absolute top-2 right-2 cursor-pointer bg-error hover:text-base-100  text-white rounded-full p-1"
                                                     >
-                                                    <X size={16} />
+                                                    <X size={20} />
                                                 </button>
                                             </div>
                                         ) : (
                                             <div className="py-8">
                                                 <Upload size={48} className="mx-auto text-white mb-2" />
                                                 <p className="text-gray-300 mb-6">Déposez votre image ici ou</p>
-                                                <label className="bg-white hover:bg-emerald-700 text-black hover:text-white px-4 py-2 rounded cursor-pointer">
+                                                <label className="bg-white hover:bg-neutral text-black hover:text-white px-4 py-2 rounded cursor-pointer">
                                                     Parcourir
                                                     <input
                                                         type="file"
@@ -378,9 +380,9 @@ const AlbumGallery = () => {
                                     </div>
 
                                     {uploading && (
-                                        <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                        <div className="w-full bg-base-200 rounded-full h-2.5">
                                             <div
-                                                className="bg-emerald-500 h-2.5 rounded-full"
+                                                className="bg-primary h-2.5 rounded-full"
                                                 style={{ width: `${uploadProgress}%`}}
                                             ></div>
                                         </div>
@@ -394,14 +396,14 @@ const AlbumGallery = () => {
                                                 setPreview(null);
                                                 setImage(null);
                                             }}
-                                            className="px-4 py-2 border border-gray-400 text-white cursor-pointer rounded hover:bg-red-400"
+                                            className="px-4 py-2 btn btn-ghost hover:text-base-100 hover:bg-error"
                                             disabled={uploading}
                                         >
                                             Annuler
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 cursor-pointer text-white rounded disabled:opacity-50"
+                                            className="px-4 py-2 btn btn-primary disabled:opacity-50 hover:text-neutral hover:font-bold"
                                             disabled={!image || uploading}
                                         >
                                             {uploading ? 'Chargement...' : 'Ajouter'}

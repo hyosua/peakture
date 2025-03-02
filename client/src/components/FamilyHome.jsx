@@ -9,10 +9,9 @@ const FamilyHome = () => {
 
     return (
         <div>
-            <main className='bg-base-100'>
+            <main>
                 <div />
-
-                <div className='bg-base-200 flex flex-col items-center'>
+                <div className='bg-base-100 flex flex-col items-center'>
                     <header>
                         <PictureOfTheMonth winner='Alaina' 
                                             photo={albumFevrier.photos[0].src} 

@@ -27,9 +27,9 @@ export default function EditDropdown({ actions }) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-xl border border-gray-200"
+                className="absolute right-0 mt-2 w-48 bg-neutral shadow-lg rounded-xl border-2 border-gray-200"
                 >
-                <ul className="py-1">
+                <ul className="">
                     {actions.map((action, index) => (
                     <li key={index}>
                         <button
@@ -38,7 +38,7 @@ export default function EditDropdown({ actions }) {
                             action.onClick()
                             setIsOpen(false)
                         }}
-                        className="flex cursor-pointer items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex cursor-pointer font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100"
                         >
                         {action.icon} {action.label}
                         </button>
