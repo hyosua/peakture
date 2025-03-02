@@ -7,12 +7,16 @@ import '../App.css'
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<FamilyHome />} /> 
-        <Route path="/album/:month" element={<AlbumGallery />} />
-      </Routes>
-    </Router>
+    <div data-theme="coffee">
+      <Router>
+        
+        <Routes>
+          <Route path="/" element={<FamilyHome />} /> 
+          <Route path="/album/:month" element={<AlbumGallery />} />
+        </Routes>
+        
+      </Router>
+    </div>
   )
 }
 

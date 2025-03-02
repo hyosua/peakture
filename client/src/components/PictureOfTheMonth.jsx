@@ -6,12 +6,13 @@ const Picture = ({winner,photo, id, voteCount, avatar, month}) => {
     const navigate = useNavigate();
 
     return (
-        <div className='justify-center items-center text-white'>
+        
+        <div className='w-[300px] md:w-[500px] lg:w-[700px] bg-primary rounded-xl overflow-hidden shadow-lg'>
             <h1 className='mb-10'>Peakture of the Month</h1>
             <img key={id} 
                 src={photo} 
                 alt={`Photo of the Month`} 
-                className="peakture"
+                className="w-full h-auto border-accent rounded-3xl"
                 onClick={() => navigate(`/album/${month}`)} 
             />
             <div className='w-80 m-7 flex justify-center items-center'>

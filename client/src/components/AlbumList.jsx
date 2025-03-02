@@ -73,7 +73,7 @@ const AlbumList = () => {
             })
             
             const updatedAlbum = await response.json();
-            console.log("Updated resonse: ", updatedAlbum)
+            console.log("Updated response: ", updatedAlbum)
 
         
             const updatedAlbums = albums.map(album => {
@@ -131,10 +131,11 @@ const AlbumList = () => {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
 
-            const result = await response.json()
+            const newAlbumFromServer = await response.json()
             const newAlbum = {
-                _id: result.insertedId,
-                ...newAlbumForm
+                _id: newAlbumFromServer._id,
+                month: newAlbumFromServer.month,
+                theme: newAlbumFromServer.theme
             }
             setAlbums(prev => [...prev, newAlbum])
             setNewAlbumForm({ month: "", theme: "" })
@@ -151,14 +152,14 @@ const AlbumList = () => {
   
     
     return (
-        <div className='container mx-auto p-4'> 
+        <div className=' mx-auto p-4'> 
             <div className='flex justify-between items-center mb-6'>
                 <h1 className='text-2xl text-white font-bold'>Albums</h1>
             </div>
 
             {/* Add album form */}
             {showAddForm && (
-                <div className='fixed bg-emerald-950/50 backdrop-blur-sm inset-0 flex items-center justify-center z-50'>
+                <div className='fixed backdrop-blur-sm inset-0 flex items-center justify-center z-50'>
                     <div className="bg-white p-6 rounded-lg w-96">
                         <div className='flex justify-between items-center mb-4'>
                             <h2 className='text-xl font-semibold'>Ajouter Un Album</h2>
@@ -226,7 +227,7 @@ const AlbumList = () => {
                     {albums.map((album) => (
                         <div
                             key={album._id}
-                            className='album-preview relative'
+                            className='relative'
                             onClick={() => handleAlbumClick(album.month)}
                         >
                             {/* Album Card */}
