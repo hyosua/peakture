@@ -4,6 +4,7 @@ import User from '../models/user.model.js'
 import Guest from '../models/guest.model.js'
 import Album from '../models/album.model.js'
 import me from '../routes/auth.routes.js'
+import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 
@@ -120,10 +121,13 @@ export const join = async (req, res) => {
 
 export const getAlbums = async (req, res) => {
     try{
-        const albums = await Album.find({familyId: req.params.id})
+        const familyId = req.params.id
+        const albums = await Album.find({familyId})
+        
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });
         }
+        console.log("route getAlbums: ", albums)
 
         res.json(albums)
     } catch (error){

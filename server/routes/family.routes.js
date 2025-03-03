@@ -6,6 +6,6 @@ const router = express.Router()
 
 router.post('/create', identifyUserOrGuest, create) 
 router.post('/join',identifyUserOrGuest,  join)
-router.get('/albums', getAlbums)
+router.get('/albums/:id', getAlbums)
   
 export default router

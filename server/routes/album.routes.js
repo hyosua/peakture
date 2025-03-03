@@ -66,7 +66,8 @@ router.post("/", async (req, res) => {
     try {
         let newDocument = {
             month: req.body.month,
-            theme: req.body.theme
+            theme: req.body.theme,
+            familyId: new ObjectId(req.body.familyId)
         };
         const result = await Album.create(newDocument);
         res.status(201).send(result);

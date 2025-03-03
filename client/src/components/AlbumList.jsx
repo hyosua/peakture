@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Plus, X, Check, Edit, Trash } from 'lucide-react'
 import EditDropdown from './EditDropdown.jsx'
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,10 +9,13 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
+    const { id } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: '',
         theme: '',
+        family: id
     })
+    
 
     const navigate = useNavigate()
 
@@ -24,19 +27,21 @@ const AlbumList = () => {
     // Fetch albums from the server
     useEffect(() => {
         async function getAlbums() {
+             
             try {
-                const response = await fetch('http://localhost:5000/api/family/albums')
+                const response = await fetch(`http://localhost:5000/api/family/albums/${id}`)
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }
                 const albumsData = await response.json()
+                console.log("AlbumsData:",albumsData)
                 setAlbums(albumsData)
             } catch (error){
                 console.error('Error fetching albums:', error)
             }
         }
         getAlbums()
-    }, [])
+    }, [id])
 
     // Delete an album
     const deleteAlbum = async (id) => {
@@ -139,7 +144,7 @@ const AlbumList = () => {
                 theme: newAlbumFromServer.theme
             }
             setAlbums(prev => [...prev, newAlbum])
-            setNewAlbumForm({ month: "", theme: "" })
+            setNewAlbumForm({ month: "", theme: "", familyId: id })
             setShowAddForm(false)
         } catch (error) {
             console.error('Error creating a new album: ', error)
@@ -187,7 +192,7 @@ const AlbumList = () => {
                                         >
                                             <option className="font-semibold bg-base-100" value="">Sélectionner un mois</option>
                                             {monthsList.map((month, index) => (
-                                                <option className="bg-base-100 font-bold" key={`month-${index}`} value={month}>{month}</option>
+                                                <option className="bg-base-100 font-bold" key={`month-${index}-${id}`} value={month}>{month}</option>
                                             ))}   
                                         </motion.select>
                                     </label>
