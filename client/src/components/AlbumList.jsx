@@ -25,7 +25,7 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
-                const response = await fetch('http://localhost:5000/albums')
+                const response = await fetch('http://localhost:5000/api/family/albums')
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }

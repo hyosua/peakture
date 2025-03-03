@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import Family from '../models/family.model.js'
 import User from '../models/user.model.js'
 import Guest from '../models/guest.model.js'
+import Album from '../models/album.model.js'
 import me from '../routes/auth.routes.js'
 import crypto from 'crypto'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
@@ -64,7 +65,7 @@ export const join = async (req, res) => {
         // Vérification du code d'invitation
         const family = await Family.findOne({ inviteCode })
         if (!family) {
-            return res.status(400).json({ message: "Cette famille n'est pas enregistrée chez nous..." })
+            return res.status(400).json({ message: "Aucune famille ne correspond à ce code...", family: null })
         }
 
         if (req.user) {
@@ -113,6 +114,20 @@ export const join = async (req, res) => {
         return res.status(201).json({ message: "Invité ajouté à la famille", family, sessionId })
     } catch (error) {
         console.error("Erreur dans join Family Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
+
+export const getAlbums = async (req, res) => {
+    try{
+        const albums = await Album.find({familyId: req.params.id})
+        if (!albums) {
+            return res.status(404).json({ message: 'Aucun album trouvé' });
+        }
+
+        res.json(albums)
+    } catch (error){
+        console.error("Erreur dans getAlbums Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }
