@@ -33,7 +33,6 @@ const AlbumGallery = () => {
     useEffect(() => {
         async function getAlbumData() {
             try {
-                console.log("useparams id:",id)
                 const response = await fetch(`${API_BASE_URL}/albums/${id}`)
                 if(!response.ok){
                     throw new Error(`Erreur: ${response.statusText}`)
@@ -268,7 +267,7 @@ const AlbumGallery = () => {
         <div className="lg:p-10">
             <button 
                 className="absolute left-4 top-4 btn btn-soft"
-                onClick={() => navigate("/")}
+                onClick={() => navigate(`/family/${album.familyId}`)}
             >
                 <ArrowBigLeft size={26}/>
             </button>
