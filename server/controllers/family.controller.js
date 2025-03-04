@@ -11,7 +11,7 @@ import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 export const create = async (req, res) => {
     try {
         const familyName = req.body.name
-        console.log(familyName)
+
         if(!familyName){
             return res.status(400).json({error: "Tu dois rentrer un nom de Famille valide."})
         }
@@ -127,7 +127,6 @@ export const getAlbums = async (req, res) => {
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });
         }
-        console.log("route getAlbums: ", albums)
 
         res.json(albums)
     } catch (error){

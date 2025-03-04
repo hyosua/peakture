@@ -34,7 +34,6 @@ const AlbumList = () => {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }
                 const albumsData = await response.json()
-                console.log("AlbumsData:",albumsData)
                 setAlbums(albumsData)
             } catch (error){
                 console.error('Error fetching albums:', error)

@@ -4,7 +4,6 @@ const albumSchema = new mongoose.Schema({
     month:{
         type: String,
         required: true,
-        unique: true,
     },
     theme:{
         type: String,
@@ -14,10 +13,12 @@ const albumSchema = new mongoose.Schema({
         type: String,
     },
     familyId:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'Family'
+        type: mongoose.Schema.Types.ObjectId, ref: 'Family',required: true 
     },
 
 },{timestamps: true})
+
+albumSchema.index({ month: 1, familyId: 1 }, { unique: true });
 
 const Album = mongoose.model("Album", albumSchema)
 

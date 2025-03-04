@@ -17,7 +17,7 @@ const cleanGuestReferences = async () => {
     }
 }
 
-cron.schedule('0 7 8 * * *', cleanGuestReferences,{
+cron.schedule('0 43 7 * * *', cleanGuestReferences,{
     scheduled: true,
     timezone: "Europe/Paris" 
 })
