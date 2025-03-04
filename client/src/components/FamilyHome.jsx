@@ -13,7 +13,6 @@ const FamilyHome = () => {
     const [deviceNavigator, setDeviceNavigator] = useState('mobile')
 
     useEffect(() => {
-        console.log("Params id:", familyId)
         const device = navigator.share ? "mobile" : "pc"
         setDeviceNavigator(device)
         fetch(`http://localhost:5000/api/family/${familyId.id}`)
@@ -39,12 +38,14 @@ const FamilyHome = () => {
         <div>
             { family ? (
                 <div className='bg-base-100 flex flex-col items-center'>
-                    <h1 className='font-bold mt-4 text-4xl'>{family.name}&apos;s Family</h1>
-                    <p className='mt-2 font-semibold'>Family Code: <span className='text-accent text-lg font-mono'>{family.inviteCode}</span>
+                    <h1 className="mt-4 text-5xl font-extrabold">
+                        <span className="text-primary">{family.name}</span>    
+                    </h1>
+                    <p className='font-semibold'>Family Code: <span className='text-accent text-lg font-mono'>{family.inviteCode}</span>
                     <button
                         onClick={handleShare} 
-                        className='mt-4 ml-2 p-2 bg-accent text-white cursor-pointer rounded-lg'>
-                        {deviceNavigator === "mobile"  ? (<Share2 size={17}/>) : (<Copy size={17} />)}
+                        className='mt-4 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
+                        {deviceNavigator === "mobile"  ? (<Share2 size={14}/>) : (<Copy size={14} />)}
                     </button>
                     </p>
                     

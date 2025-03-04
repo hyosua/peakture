@@ -13,8 +13,9 @@ const AlbumList = () => {
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: '',
         theme: '',
-        family: id
+        familyId: id
     })
+    const [errorMessage, setErrorMessage] = useState('')
     
 
     const navigate = useNavigate()
@@ -27,7 +28,6 @@ const AlbumList = () => {
     // Fetch albums from the server
     useEffect(() => {
         async function getAlbums() {
-             
             try {
                 const response = await fetch(`http://localhost:5000/api/family/albums/${id}`)
                 if(!response.ok) {
@@ -124,6 +124,8 @@ const AlbumList = () => {
     const handleSubmitNewAlbum = async (e) => {
         e.preventDefault()
         try {
+            console.log("newAlbumForm avant envoi :", newAlbumForm);
+
             const response = await fetch('http://localhost:5000/albums',{
                 method: "POST",
                 headers: {
@@ -133,14 +135,17 @@ const AlbumList = () => {
             })
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                const errorData = await response.json()
+                setErrorMessage(errorData.message || "Erreur lors de la création d'album")
+                return
             }
 
             const newAlbumFromServer = await response.json()
             const newAlbum = {
                 _id: newAlbumFromServer._id,
                 month: newAlbumFromServer.month,
-                theme: newAlbumFromServer.theme
+                theme: newAlbumFromServer.theme,
+                familyId: newAlbumFromServer.familyId
             }
             setAlbums(prev => [...prev, newAlbum])
             setNewAlbumForm({ month: "", theme: "", familyId: id })
@@ -171,14 +176,17 @@ const AlbumList = () => {
                                 <h2 className='text-xl font-semibold'>Ajouter Un Album</h2>
                                 <button 
                                     className='p-1 rounded-full hover:bg-gray-200 hover:text-neutral cursor-pointer'
-                                    onClick={() => setShowAddForm(false)}
+                                    onClick={() => {
+                                        setShowAddForm(false)
+                                        setErrorMessage('')
+                                    }}
                                 >
                                     <X size={20} />
                                 </button>
                             </div>
                             <form onSubmit={handleSubmitNewAlbum}>
                                 <div className='mb-4'>
-                                    <label className="font-semibold block  mb-2">Month
+                                    <label className="font-semibold block  mb-2">Mois
                                         <motion.select
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
@@ -212,11 +220,20 @@ const AlbumList = () => {
                                     </label>
                                     
                                 </div>
+                                {errorMessage && (
+                                    <div role="alert" className="alert alert-error alert-soft m-2">
+                                        <span>{errorMessage}</span>
+                                    </div>
+                                )}
+                                
                                 <div className='flex gap-4 justify-end'>
                                     <button
                                         type='button'
                                         className='btn btn-ghost hover:bg-red-400 hover:text-base-100'
-                                        onClick={() => setShowAddForm(false)}
+                                        onClick={() => {
+                                            setShowAddForm(false)
+                                            setErrorMessage('')
+                                        }}
                                     >
                                         Annuler
                                     </button>

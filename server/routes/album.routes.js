@@ -64,10 +64,13 @@ router.get('/:month', async (req, res) => {
 // Créer un album
 router.post("/", async (req, res) => {
     try {
+        if(await Album.findOne({familyId: req.body.familyId, month: req.body.month})){
+            return res.status(404).json({ message: "Il y'a déjà un album pour ce mois" })
+        }
         let newDocument = {
             month: req.body.month,
             theme: req.body.theme,
-            familyId: req.body.family
+            familyId: req.body.familyId
         };
         const result = await Album.create(newDocument);
         res.status(201).send(result);

@@ -10,7 +10,6 @@ import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 
 export const getFamily = async (req, res) => {
     try {
-        console.log(new ObjectId(req.params.id))
         const family = await Family.findOne({_id: req.params.id})
         res.status(200).json({ family })
     }catch (error){
