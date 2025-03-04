@@ -1,6 +1,6 @@
 import '../../App.css';
 
-import  { useState, useEffect, useRef} from 'react';
+import  { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'
 
 const HomePage = () => {
@@ -10,16 +10,10 @@ const HomePage = () => {
   const [creatingFamily, setCreatingFamily] = useState(false);
   const [joiningFamily, setJoiningFamily] = useState(false);
 
-  const inputRef = useRef(null); // Référence pour l'input
   const navigate = useNavigate()
 
   const handleJoinFamily = async (e) => {
     e.preventDefault();
-
-    if (!inputRef.current.checkValidity()) {
-      inputRef.current.reportValidity(); // Force la validation du champ
-      return;
-    }
 
     try {
       setJoiningFamily(true)
@@ -72,6 +66,7 @@ const HomePage = () => {
 
   };
 
+
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">
       {/* Header with Logo */}
@@ -91,7 +86,6 @@ const HomePage = () => {
                 <span className="label-text mb-2">Enter Family Code</span>
               </label>
                 <input 
-                  ref={inputRef}
                   type="text" 
                   placeholder="ABC123" 
                   className="input input-bordered w-full" 
@@ -99,14 +93,13 @@ const HomePage = () => {
                   value={joinCode}
                   onChange={
                     (e) => {setJoinCode(e.target.value)
-                    inputRef.current.setCustomValidity("") // Réinitialise l’erreur
                   }}
                   title="Code hexadécimal (6 caractères, A-F, 0-9)" 
                   required 
-                  onInput={(e) => (e.target.value = e.target.value.toUpperCase())}
+                  onInput={(e) => e.target.value = e.target.value.toUpperCase()}
                   />
               <p className="validator-hint">
-                Le code doit contenir exactement 6 caractères
+                Le code doit contenir exactement 6 caractères (A-F, 0-9)
               </p>
             </div>
             { serverResponse && !serverResponse.family && joiningFamily && (

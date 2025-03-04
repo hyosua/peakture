@@ -8,6 +8,17 @@ import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 
+export const getFamily = async (req, res) => {
+    try {
+        console.log(new ObjectId(req.params.id))
+        const family = await Family.findOne({_id: req.params.id})
+        res.status(200).json({ family })
+    }catch (error){
+        console.log("Error in getFamily controller", error.message)
+        return res.status(500).json({ error: "Internal Server Error"})
+    }
+}
+
 export const create = async (req, res) => {
     try {
         const familyName = req.body.name
