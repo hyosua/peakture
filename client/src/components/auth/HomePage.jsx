@@ -7,6 +7,9 @@ const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');
   const [familyName, setFamilyName] = useState('');
   const [serverResponse, setServerResponse] = useState(null)
+  const [creatingFamily, setCreatingFamily] = useState(false);
+  const [joiningFamily, setJoiningFamily] = useState(false);
+
   const inputRef = useRef(null); // Référence pour l'input
   const navigate = useNavigate()
 
@@ -19,6 +22,7 @@ const HomePage = () => {
     }
 
     try {
+      setJoiningFamily(true)
       const result = await fetch('http://localhost:5000/api/family/join',{
         method : "POST",
         headers: {
@@ -44,10 +48,28 @@ const HomePage = () => {
     }
   },[serverResponse, navigate])
 
-  const handleCreateFamily = (e) => {
+  const handleCreateFamily = async (e) => {
     e.preventDefault();
-    console.log('Creating family named:', familyName);
-    // Add actual create functionality here
+    setCreatingFamily(true)
+    try {
+      
+      const result = await fetch('http://localhost:5000/api/family/create',{
+        method : "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: familyName
+        })
+      }) 
+      const familyData = await result.json()
+      console.log("family:", familyData)
+      setServerResponse(familyData)
+    }catch(error){
+      setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
+    }
+
+
   };
 
   return (
@@ -87,7 +109,7 @@ const HomePage = () => {
                 Le code doit contenir exactement 6 caractères
               </p>
             </div>
-            { serverResponse && !serverResponse.family && (
+            { serverResponse && !serverResponse.family && joiningFamily && (
               <div role="alert" className="alert alert-error alert-soft mt-2">
               <span>{serverResponse.message}</span>
               </div>
@@ -117,6 +139,11 @@ const HomePage = () => {
                 onChange={(e) => setFamilyName(e.target.value)}
                 required
               />
+              { serverResponse?.message && creatingFamily && (
+              <div role="alert" className="alert alert-error alert-soft mt-2">
+              <span>{serverResponse.message}</span>
+              </div>
+            )}
             </div>
             <button type="submit" className="btn btn-secondary hover:bg-orange-500 w-full mt-6 text-lg">
               Create 

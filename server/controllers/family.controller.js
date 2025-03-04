@@ -13,41 +13,40 @@ export const create = async (req, res) => {
         const familyName = req.body.name
 
         if(!familyName){
-            return res.status(400).json({error: "Tu dois rentrer un nom de Famille valide."})
-        }
-
-        const getUser = req.user
-        if(!getUser){
-            return res.status(400).json({error: "Tu n'es pas connu de la police pour pouvoir créer une famille, il faut s'inscrire!"})
+            return res.status(400).json({message: "Tu dois rentrer un nom de Famille valide."})
         }
 
         const existingFamily = await Family.findOne({name: familyName})
         if(existingFamily){
-            return res.status(401).json({error: "Cette famille existe déjà"})
+            return res.status(401).json({message: "Cette famille existe déjà"})
         }
 
-
         const inviteCode = crypto.randomBytes(3).toString('hex').toUpperCase()
-
+        const user = req.user ? req.user : req.guest
         const newFamily = new Family({
             name: familyName,
-            admin: getUser._id,
+            admin: user._id,
             inviteCode
         })
 
 
 
         if(newFamily){
-            await User.updateOne({_id: getUser._id}, {role: "admin"})
-            await newFamily.save()
+            if(req.user){
+                await User.updateOne({_id: user._id}, {role: "admin"})
+            }
+            if(req.guest){
+                await Guest.updateOne({_id: user._id}, {role: "admin"})
 
+            }
+            await newFamily.save()
+            const family = newFamily
             res.status(201).json({
                 _id: newFamily._id,
+                family,
                 name: newFamily.name,
                 admin: newFamily.admin,
                 inviteCode: newFamily.inviteCode,
-                members: newFamily.members,
-                guestMembers: newFamily.guestMembers
                 
             })
         } else{
