@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
-import { Upload, Plus, X } from "lucide-react"
+import { Upload, Plus, X, ArrowBigLeft } from "lucide-react"
 import Picture  from "./Picture.jsx"
 import { motion } from "framer-motion";
 
@@ -15,7 +15,7 @@ const breakpointColumns = {
 
 const AlbumGallery = () => {
     const API_BASE_URL = 'http://localhost:5000'
-    const { month } = useParams()
+    const { id } = useParams()
     const navigate = useNavigate()
     const [album, setAlbum] = useState(null)
     const [photos, setPhotos] = useState([])
@@ -33,7 +33,8 @@ const AlbumGallery = () => {
     useEffect(() => {
         async function getAlbumData() {
             try {
-                const response = await fetch(`${API_BASE_URL}/albums/${month}`)
+                console.log("useparams id:",id)
+                const response = await fetch(`${API_BASE_URL}/albums/${id}`)
                 if(!response.ok){
                     throw new Error(`Erreur: ${response.statusText}`)
                 }
@@ -57,7 +58,7 @@ const AlbumGallery = () => {
         }
         getAlbumData()
         
-    }, [month, navigate])
+    }, [id, navigate])
 
 
     const uploadToCloudinary = async (file) => {
@@ -265,19 +266,16 @@ const AlbumGallery = () => {
 
     return (
         <div className="lg:p-10">
-            <div className="m-6 relative w-full flex flex-col items-center">
-                <button 
-                        className="absolute left-4 top-4 btn btn-soft"
-                        onClick={() => navigate("/")}
-                    >
-                        Retour
-                </button>
-                <div className="flex items-center flex-col ">
-                    <h2 className="text-white text-7xl">{ month }</h2>
-                    <h3 className="font-semibold text-white mb-6">{album.theme}</h3>
-                </div>
-
+            <button 
+                className="absolute left-4 top-4 btn btn-soft"
+                onClick={() => navigate("/")}
+            >
+                <ArrowBigLeft size={26}/>
+            </button>
                 
+            <div className="flex pt-4 items-center flex-col ">
+                <h2 className="text-white text-7xl">{ album.month }</h2>
+                <h3 className="font-semibold text-white mb-6">{album.theme}</h3>
             </div>
             
 

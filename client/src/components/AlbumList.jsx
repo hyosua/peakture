@@ -124,8 +124,6 @@ const AlbumList = () => {
     const handleSubmitNewAlbum = async (e) => {
         e.preventDefault()
         try {
-            console.log("newAlbumForm avant envoi :", newAlbumForm);
-
             const response = await fetch('http://localhost:5000/albums',{
                 method: "POST",
                 headers: {
@@ -156,8 +154,8 @@ const AlbumList = () => {
     }
 
     // Navigate to album page
-    const handleAlbumClick = (month) => {
-        navigate(`/album/${month}`)
+    const handleAlbumClick = (id) => {
+        navigate(`/album/${id}`)
     }
   
     
@@ -259,7 +257,7 @@ const AlbumList = () => {
                         <div
                             key={album._id}
                             className='relative'
-                            onClick={() => handleAlbumClick(album.month)}
+                            onClick={() => handleAlbumClick(album._id)}
                         >
                             {/* Album Card */}
                             <div className='p-4 cursor-pointer border-2 bg-base-200 border-primary rounded-lg group'>

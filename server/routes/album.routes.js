@@ -17,11 +17,11 @@ router.get("/", async (req, res) => {
     }
 });
 
-// Récupérer un album par son mois
-router.get('/:month', async (req, res) => {
+// Récupérer un album par son id
+router.get('/:id', async (req, res) => {
     try {
         const album = await Album.findOne({
-            month: req.params.month
+            _id: req.params.id
         });
         
         if (!album) {

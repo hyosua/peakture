@@ -28,7 +28,6 @@ const HomePage = () => {
       }) 
   
       const familyData = await result.json()
-      console.log("family:", familyData)
       setServerResponse(familyData)
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
@@ -57,7 +56,6 @@ const HomePage = () => {
         })
       }) 
       const familyData = await result.json()
-      console.log("family:", familyData)
       setServerResponse(familyData)
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
