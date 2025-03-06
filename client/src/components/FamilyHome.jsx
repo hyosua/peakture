@@ -25,11 +25,11 @@ const FamilyHome = () => {
         if (navigator.share) {
             navigator.share({
                 title: "Rejoins ma famille sur Peakture !",
-                text: `Utilise ce code pour nous rejoindre : ${family?.code}`,
+                text: `Utilise ce code pour nous rejoindre : ${family?.inviteCode}`,
                 url: window.location.href
             });
         } else {
-            navigator.clipboard.writeText(family?.code);
+            navigator.clipboard.writeText(family?.inviteCode);
             alert("Code copié !");
         }
     }
@@ -38,7 +38,7 @@ const FamilyHome = () => {
         <div>
             { family ? (
                 <div className='bg-base-100 flex flex-col items-center'>
-                    <h1 className="mt-4 text-5xl font-extrabold">
+                    <h1 className="mt-4 text-4xl lg:text-5xl font-extrabold">
                         <span className="text-primary">{family.name}</span>    
                     </h1>
                     <p className='font-semibold'>Family Code: <span className='text-accent text-lg font-mono'>{family.inviteCode}</span>

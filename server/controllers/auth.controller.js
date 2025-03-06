@@ -66,11 +66,11 @@ export const login = async (req, res) => {
         const correctPass = await bcrypt.compare(password, user?.password || "")
 
         if(!user){
-            return res.status(400).json({error: "Utilisateur inconnu au bataillon"})
+            return res.status(400).json({error: "Utilisateur introuvable... mais on t'aime quand même!"})
         }
 
         if(!correctPass){
-            return res.status(400).json({error: "Opala... qui va là? mot de passe incorrect."})
+            return res.status(400).json({error: "Qui va là? mot de passe incorrect"})
         }
 
         generateTokenAndSetCookie(res, user._id)

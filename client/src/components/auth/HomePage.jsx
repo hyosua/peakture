@@ -1,7 +1,9 @@
 import '../../App.css';
-
 import  { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'
+import { X } from 'lucide-react'
+import * as motion from "motion/react-client"
+import { AnimatePresence } from "motion/react"
 
 const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');
@@ -9,6 +11,13 @@ const HomePage = () => {
   const [serverResponse, setServerResponse] = useState(null)
   const [creatingFamily, setCreatingFamily] = useState(false);
   const [joiningFamily, setJoiningFamily] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successLogin, setSuccessLogin] = useState(false)
+  const [userData, setUserData] = useState(null)
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const navigate = useNavigate()
 
@@ -64,16 +73,63 @@ const HomePage = () => {
 
   };
 
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const result = await fetch("http://localhost:5000/api/auth/login",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username,
+          password
+        })
+      })
+
+      const response = await result.json()
+
+      if(response.error){
+        setErrorMessage(response.error)
+        return
+      }
+
+      setUserData(response)
+      setSuccessLogin(true)
+
+
+    }catch(error){
+      console.error("Erreur lors du login: ",error)
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">
       {/* Header with Logo */}
-      <header className="py-4 px-4 flex justify-center">
+      <header className="relative py-4 px-4 flex justify-center">
+
+        { successLogin && (
+          <div role="alert" className="alert alert-success alert-soft">
+          <span>Bienvenue à la maison {username}</span>
+        </div>
+        )}
+
         <img src="/src/assets/img/logo/logo white.png" className='w-40 h-auto'/>
+        <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
+                onClick={() => setShowLoginForm(true)}
+        >
+            Se Connecter
+        </button>
+        <button className='btn btn-sm btn-soft hidden lg:block btn-accent absolute top-4 right-32'
+                onClick={() => navigate("/auth")}
+        >
+            S&apos;inscrire
+        </button>
+
       </header>
 
       <main className="flex-grow flex flex-col md:flex-row px-4 py-2">
-        
         
         {/* Join Family Side */}
         <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:mr-2  md:mb-0">
@@ -141,6 +197,125 @@ const HomePage = () => {
             </button>
           </form>
         </div>
+        
+        
+        <AnimatePresence initial={false}>
+          { showLoginForm && (
+            <motion.div className='fixed inset-0 min-h-screen flex items-center justify-center bg-base-200/20 backdrop-blur-sm z-50'
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+            >
+              {/* Conteneur principal */}
+              <div className="w-96 m-4 h-auto perspective-1000 flex items-center justify-center">
+                {/* Conteneur qui va tourner */}
+                <motion.div 
+                  className="w-full h-full flex items-center relative preserve-3d"
+                  animate={{ rotateY: isSignUp ? 180 : 0 }}
+                  transition={{ 
+                    duration: 0.6,
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20
+                  }}
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  {/* Face avant - Login */}
+                  <div className="absolute w-full backface-hidden" style={{ backfaceVisibility: "hidden" }}>
+                    <div className="card w-full bg-base-100 shadow-2xl">
+                      <div className="card-body relative">
+                        <h2 className="card-title">Se Connecter</h2>
+                        <button 
+                          className="absolute cursor-pointer text-secondary top-4 right-4"
+                          onClick={() => setShowLoginForm(false)}
+                        >
+                          <X />
+                        </button>
+                        <form 
+                          className="space-y-4"
+                          onSubmit={handleLoginSubmit}
+                        >
+                          <input
+                            type="text"
+                            placeholder="Nom d'utilisateur"
+                            className="input input-bordered w-full"
+                            onChange={(e) => setUsername(e.target.value)}
+                            value={username}
+                          />
+                          <input
+                            type="password"
+                            placeholder="Mot de passe" 
+                            className="input input-bordered w-full"
+                            onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                          />
+                          <button type="submit" className="btn btn-primary w-full">
+                            Se connecter
+                          </button>
+                          <div className="text-center">
+                            Pas encore de compte ? 
+                            <button
+                              type="button"
+                              className="btn btn-link text-accent btn-accent text-sm"
+                              onClick={() => setIsSignUp(true)}
+                            >
+                              S&apos;inscrire
+                            </button>
+                          </div>
+                          {errorMessage !== '' && (
+                            <div role="alert" className="alert alert-error alert-soft">
+                              <span>{errorMessage}</span>
+                            </div>
+                          )}
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Face arrière - Signup */}
+                  <div 
+                    className="absolute w-full backface-hidden" 
+                    style={{ 
+                      backfaceVisibility: "hidden",
+                      transform: "rotateY(180deg)" 
+                    }}
+                  >
+                    <div className="card w-full bg-base-100 shadow-2xl">
+                      <div className="card-body relative">
+                        <h2 className="card-title">Créer un compte</h2>
+                        <button
+                          className="absolute cursor-pointer text-secondary top-4 right-4"
+                          onClick={() => setShowLoginForm(false)}
+                        >
+                          <X />
+                        </button>
+                        <form className="space-y-4" onSubmit={""}>
+                          <input type="text" placeholder="Nom d'utilisateur" className="input input-bordered w-full" required />
+                          <input type="email" placeholder="Email" className="input input-bordered w-full" required />
+                          <input type="password" placeholder="Mot de passe" className="input input-bordered w-full" required />
+                          <button type="submit" className="btn btn-accent w-full">
+                            S&apos;inscrire
+                          </button>
+                          <div className="text-center">
+                            Déjà inscrit ?{" "}
+                            <button
+                              type="button"
+                              className="btn btn-link text-primary btn-primary text-sm"
+                              onClick={() => setIsSignUp(false)}
+                            >
+                              Se connecter
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
        
       </main>
       

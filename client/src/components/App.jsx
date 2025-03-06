@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import FamilyHome from "./FamilyHome"
 import AlbumGallery from "./AlbumGallery"
 import '../App.css'
-import SignUp from './auth/SignUp'
+import Auth from './auth/Auth.jsx'
 import HomePage from './auth/HomePage'
-import LogIn from './auth/LogIn'
+import LogIn from './auth/LoginSignup'
 
 
 
@@ -14,7 +14,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} /> 
-          <Route path="/signup" element={<SignUp />} /> 
+          <Route path="/auth" element={<Auth />} /> 
           <Route path="/login" element={<LogIn />} /> 
           <Route path="/family/:id" element={<FamilyHome />} /> 
           <Route path="/album/:id" element={<AlbumGallery />} />
