@@ -1,0 +1,175 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { EyeOff,Eye, X } from 'lucide-react';
+
+const Signup = ({ onClose, onSwitchToLogin }) => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const validateForm = () => {
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMessage("Les mots de passe ne correspondent pas");
+      return false;
+    }
+    
+    if (formData.password.length < 6) {
+      setErrorMessage("Le mot de passe doit contenir au moins 6 caractères");
+      return false;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setErrorMessage("adresse email non valide");
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsLoading(true);
+    setErrorMessage('');
+    
+    try {
+      // Remplacez par votre endpoint d'inscription
+      const result = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        })
+      });
+
+      const response = await result.json();
+
+      if (response.error) {
+        setErrorMessage(response.error);
+        setIsLoading(false);
+        return;
+      }
+
+      // Si l'inscription réussit, on passe à la connexion
+      onSwitchToLogin();
+    } catch (error) {
+      console.error("Erreur lors de l'inscription: ", error);
+      setErrorMessage("Une erreur de connexion s'est produite.");
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="card w-full bg-base-100 shadow-2xl">
+      <div className="card-body relative">
+        <h2 className="card-title">Créer un compte</h2>
+        <button
+          className="absolute text-secondary top-4 right-4"
+          onClick={onClose}
+          aria-label="Fermer"
+        >
+          <X />
+        </button>
+        <form className="space-y-4" onSubmit={handleSignupSubmit}>
+          <input 
+            type="text" 
+            name="username"
+            placeholder="Nom d'utilisateur" 
+            className="input input-bordered w-full" 
+            value={formData.username}
+            onChange={handleChange}
+            required 
+          />
+          <input 
+            type="email" 
+            name="email"
+            placeholder="Email" 
+            className="input input-bordered w-full" 
+            value={formData.email}
+            onChange={handleChange}
+            required 
+          />
+          <input 
+            type="password" 
+            name="password"
+            placeholder="Mot de passe" 
+            className="input input-bordered w-full" 
+            value={formData.password}
+            onChange={handleChange}
+            required 
+          />
+          <div className='relative'>
+            <input 
+              type={showPassword ? "text" : "password"} 
+              name="confirmPassword"
+              placeholder="Confirmer le mot de passe" 
+              className="input input-bordered w-full" 
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required 
+            />
+            <button 
+                  type="button"
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer'
+                  onClick={() => setShowPassword(!showPassword)}
+                  >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}        
+            </button>
+          </div>
+          
+          <button 
+            type="submit" 
+            className={`btn btn-accent w-full ${isLoading ? 'loading' : ''}`}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Inscription...' : 'S\'inscrire'}
+          </button>
+          <div className="text-center">
+            Déjà inscrit ?{" "}
+            <button
+              type="button"
+              className="btn btn-link text-primary btn-primary text-sm"
+              onClick={onSwitchToLogin}
+            >
+              Se connecter
+            </button>
+          </div>
+          {errorMessage && (
+            <div role="alert" className="alert alert-error  font-semibold alert-soft">
+              <span>{errorMessage}</span>
+            </div>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+};
+Signup.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onSwitchToLogin: PropTypes.func.isRequired,
+};
+
+export default Signup;

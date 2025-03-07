@@ -4,7 +4,7 @@ import AlbumGallery from "./AlbumGallery"
 import '../App.css'
 import Auth from './auth/Auth.jsx'
 import HomePage from './auth/HomePage'
-import LogIn from './auth/LoginSignup'
+import Login from './auth/Login'
 
 
 
@@ -15,7 +15,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} /> 
           <Route path="/auth" element={<Auth />} /> 
-          <Route path="/login" element={<LogIn />} /> 
+          <Route path="/login" element={<Login />} /> 
           <Route path="/family/:id" element={<FamilyHome />} /> 
           <Route path="/album/:id" element={<AlbumGallery />} />
         </Routes>
