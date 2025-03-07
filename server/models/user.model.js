@@ -23,10 +23,6 @@ const userSchema = new mongoose.Schema({
     families:[{
         type: mongoose.Schema.Types.ObjectId, ref: 'Family'
     }],
-    isGuest:{
-        type: Boolean,
-        default: false
-    },
     profileImg:{
         type: String,
         default: "",

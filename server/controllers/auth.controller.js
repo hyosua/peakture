@@ -4,17 +4,8 @@ import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 
 export const signup = async (req, res) => {
     try {
-        const { username, email, password, role } = req.body
-        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
-
-        if(!emailRegex.test(email)){
-            return res.status(400).json({ error: "Format email invalide"})
-        }
-
-        if(password.length < 6){
-            return res.status(400).json({ error: "Ton mot de passe doit avoir plus de 6 caractères. (C'est pour ton bien)"})
-        }
-
+        const { username, email, password } = req.body
+        
         const existingUser = await User.findOne({ username })
         if(existingUser){
             return res.status(400).json({ error: "Ce pseudo est déjà pris"})
@@ -32,7 +23,6 @@ export const signup = async (req, res) => {
         const newUser = new User({
             username,
             email,
-            role,
             password: hashedPassword
         })
 
@@ -47,7 +37,6 @@ export const signup = async (req, res) => {
                 email: newUser.email,
                 families: newUser.familyId,
                 profileImg: newUser.profileImg,
-                isGuest: newUser.isGuest
                 
             })
         } else{
