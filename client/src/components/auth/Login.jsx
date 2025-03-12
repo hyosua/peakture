@@ -2,6 +2,7 @@ import '../../App.css'
 import { Eye, EyeOff, X } from 'lucide-react';
 import { useState } from 'react'
 import PropTypes from 'prop-types';
+import { useAuth } from '../../context/AuthContext';
 
 
 const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
@@ -10,6 +11,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false)
+  const { login } = useAuth()
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -17,30 +19,14 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
     setErrorMessage('');
     
     try {
-      const result = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          username,
-          password
-        })
-      });
+      const userData = await login(username, password)
 
-      const response = await result.json();
-
-      if (response.error) {
-        setErrorMessage(response.error);
-        setIsLoading(false);
-        return;
-      }
-
-      // Si la connexion réussit, notifier le composant parent
-      onLoginSuccess(response);
+      // si le login réussi, on notifie le parent
+      onLoginSuccess(userData)
     } catch (error) {
       console.error("Erreur lors du login: ", error);
-      setErrorMessage("Une erreur de connexion s'est produite.");
+      setErrorMessage(error.message || "Une erreur de connexion s'est produite.");
+    } finally{
       setIsLoading(false);
     }
   };

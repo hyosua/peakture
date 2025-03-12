@@ -3,6 +3,7 @@ import  { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'
 import Auth from './Auth.jsx'
 import { CheckCircle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');
@@ -12,9 +13,9 @@ const HomePage = () => {
   const [joiningFamily, setJoiningFamily] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [successLogin, setSuccessLogin] = useState(false)
-  const [userData, setUserData] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
 
+  const {currentUser, loading, logout} = useAuth()
   const navigate = useNavigate()
 
   const handleJoinFamily = async (e) => {
@@ -80,26 +81,23 @@ const HomePage = () => {
   },[successLogin])
 
   const handleLogout = async (e) => {
-    setErrorMessage('')
     e.preventDefault()
+    setErrorMessage('')
     try {
-      const result = await fetch("http://localhost:5000/api/auth/logout", {
-        method: "POST",
-      });
-
-      const response = await result.json();
-
-      if (response.error) {
-        setErrorMessage(response.error);
-        return;
-      }
-
+      await logout()
+      navigate('/')
+      console.log("Logout: ", currentUser)
     } catch (error) {
       console.error("Erreur lors du logout: ", error);
       setErrorMessage("Une erreur lors de la déconnexion s'est produite.");
     }
   }
 
+  if(loading) return (
+    <div>
+      <span className="loading loading-ring loading-xl"></span>
+    </div>
+    )
 
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">
@@ -110,7 +108,7 @@ const HomePage = () => {
           <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
             <div role="alert" className="alert alert-success alert-soft shadow-lg maw-w-md">
               <CheckCircle />
-            <span>Bienvenue à la maison {userData.username}</span>
+            <span>Bienvenue à la maison {currentUser?.username}</span>
           </div>
         </div>
         )}
@@ -126,13 +124,13 @@ const HomePage = () => {
         {/* LOGO */}
         <img src="/src/assets/img/logo/logo white.png" className='w-40 h-auto'/>
         
-        <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
-                onClick={() => handleLogout}
+        { currentUser ? (
+          <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
+                onClick={handleLogout}
         >
                   Se Déconnecter
         </button>
-
-        { userData && (
+        ) : (
           <div>
               <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
                        onClick={() => setShowLoginForm(true)}
@@ -147,11 +145,24 @@ const HomePage = () => {
                   S&apos;inscrire
               </button>
           </div>
-          
         )}
-        
 
       </header>
+
+      {/* Navigation panel */}
+      {currentUser && (
+        <div className="bg-base-100 p-4 mb-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-bold mb-2">Welcome, {currentUser.username}!</h3>
+          <div className="flex space-x-4">
+            <button className="btn btn-sm btn-primary" onClick={() => navigate('/dashboard')}>
+              Dashboard
+            </button>
+            <button className="btn btn-sm btn-secondary" onClick={() => navigate('/profile')}>
+              Profile
+            </button>
+          </div>
+        </div>
+      )}
 
       <main className="flex-grow flex flex-col md:flex-row px-4 py-2">
         
@@ -226,8 +237,7 @@ const HomePage = () => {
         { showLoginForm && (
           <Auth 
             onClose={() => setShowLoginForm(false)}
-            onLoginSuccess={(userData) => {
-              setUserData(userData)
+            onLoginSuccess={() => {
               setSuccessLogin(true)
               setShowLoginForm(false)
             }}
