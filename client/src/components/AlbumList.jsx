@@ -9,11 +9,11 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
-    const { id } = useParams() 
+    const { familyId } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: '',
         theme: '',
-        familyId: id
+        familyId: familyId
     })
     const [errorMessage, setErrorMessage] = useState('')
     
@@ -29,7 +29,8 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
-                const response = await fetch(`http://localhost:5000/api/family/albums/${id}`)
+                console.log("id from useParams: ",familyId)
+                const response = await fetch(`http://localhost:5000/api/family/albums/${familyId}`)
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }
@@ -40,7 +41,7 @@ const AlbumList = () => {
             }
         }
         getAlbums()
-    }, [id])
+    }, [familyId])
 
     // Delete an album
     const deleteAlbum = async (id) => {
@@ -146,7 +147,7 @@ const AlbumList = () => {
                 familyId: newAlbumFromServer.familyId
             }
             setAlbums(prev => [...prev, newAlbum])
-            setNewAlbumForm({ month: "", theme: "", familyId: id })
+            setNewAlbumForm({ month: "", theme: "", familyId: familyId })
             setShowAddForm(false)
         } catch (error) {
             console.error('Error creating a new album: ', error)
@@ -197,7 +198,7 @@ const AlbumList = () => {
                                         >
                                             <option className="font-semibold bg-base-100" value="">Sélectionner un mois</option>
                                             {monthsList.map((month, index) => (
-                                                <option className="bg-base-100 font-bold" key={`month-${index}-${id}`} value={month}>{month}</option>
+                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={`${familyId}-${month}`}>{month}</option>
                                             ))}   
                                         </motion.select>
                                     </label>

@@ -10,7 +10,9 @@ import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 
 export const getFamily = async (req, res) => {
     try {
-        const family = await Family.findOne({_id: req.params.id})
+        const id = req.params.id
+        const family = await Family.findById(new ObjectId(id));
+        console.log("family trouvée dans API:", family);
         res.status(200).json({ family })
     }catch (error){
         console.log("Error in getFamily controller", error.message)
@@ -131,8 +133,11 @@ export const join = async (req, res) => {
 export const getAlbums = async (req, res) => {
     try{
         const familyId = req.params.id
-        const albums = await Album.find({familyId})
-        
+        console.log("familyId reçu dans API:", familyId);
+
+        const albums = await Album.find(new ObjectId(familyId))
+        console.log("résultat requète getAlbums:", albums);
+
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });
         }

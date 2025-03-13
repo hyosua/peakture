@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+
     const fetchCurrentUser = async () => {
         try {
             setLoading(true)
@@ -24,6 +25,15 @@ export const AuthProvider = ({ children }) => {
 
             const userData = await response.json()
             setCurrentUser(userData)
+            console.log("User Data:", userData)
+
+            if(userData.families.length > 0){
+                const currentPath = window.location.pathname
+
+                if(currentPath === '/' || currentPath.includes('login') || currentPath.includes('signup')){
+                    window.location.href = `/family/${userData.families[0]}`
+                }
+            }
         } catch (error) {
             console.error('Erreur en fetchant l\'utilisateur actuel:', error)
             setError('Echec lors de la récupération des données utilisateur')
@@ -59,7 +69,10 @@ export const AuthProvider = ({ children }) => {
 
         // Maj des données utilisateur après login réussi
         setCurrentUser(response)
-        console.log('User after login:', response)
+
+        if (response.familyId) {
+            window.location.href = `/family/${response.families[0]}`;
+        }
         return response
     }
 
@@ -74,7 +87,6 @@ export const AuthProvider = ({ children }) => {
 
             // Nettoyer user data
             setCurrentUser(null)
-            console.log("Current user après logout:", currentUser)
             return response
         }catch(error) {
             console.error('Erreur lors de la déconnexion', error)
