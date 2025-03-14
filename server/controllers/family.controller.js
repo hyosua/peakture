@@ -135,7 +135,7 @@ export const getAlbums = async (req, res) => {
         const familyId = req.params.id
         console.log("familyId reçu dans API:", familyId);
 
-        const albums = await Album.find(new ObjectId(familyId))
+        const albums = await Album.find({ familyId: new ObjectId(familyId) })
         console.log("résultat requète getAlbums:", albums);
 
         if (!albums) {
