@@ -43,10 +43,11 @@ const AppRoutes = () => {
       />
       <Route 
         path="/family/:familyId" 
-        element={
-          <ProtectedRoute>
+        element={ 
+          // Possibilité de protéger l'accès à une famille 
+          // <ProtectedRoute>
             <FamilyHome />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         } 
       />
       <Route path="/auth" element={<Auth />} /> 

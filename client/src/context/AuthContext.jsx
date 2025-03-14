@@ -25,8 +25,7 @@ export const AuthProvider = ({ children }) => {
 
             const userData = await response.json()
             setCurrentUser(userData)
-            console.log("User Data:", userData)
-
+            
             if(userData.families.length > 0){
                 const currentPath = window.location.pathname
 

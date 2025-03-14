@@ -96,7 +96,8 @@ export const logout = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select("-password")
+        const user = req.user ? req.user : req.guest
+        
         console.log("getMe Controller: getUser:", user)
         if(!user){
             return res.status(400).json({error: "Aucun utilisateur"})

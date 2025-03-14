@@ -41,6 +41,7 @@ const HomePage = () => {
   };
 
   useEffect(() => {
+    console.log("Current user: ", currentUser)
     if(serverResponse?.family && serverResponse.family._id){
       navigate(`/family/${serverResponse.family._id}`)
       setServerResponse(null); 
@@ -104,7 +105,7 @@ const HomePage = () => {
       {/* Header with Logo */}
       <header className="relative py-4 px-4 flex justify-center">
 
-        { successLogin && (
+        { successLogin && !currentUser.sessionId && (
           <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
             <div role="alert" className="alert alert-success alert-soft shadow-lg maw-w-md">
               <CheckCircle />
@@ -124,7 +125,7 @@ const HomePage = () => {
         {/* LOGO */}
         <img src="/src/assets/img/logo/logo white.png" className='w-40 h-auto'/>
         
-        { currentUser ? (
+        { currentUser && !currentUser.sessionId ? (
           <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
                 onClick={handleLogout}
         >
@@ -150,7 +151,7 @@ const HomePage = () => {
       </header>
 
       {/* Navigation panel */}
-      {currentUser && (
+      {currentUser && !currentUser.sessionId &&(
         <div className="bg-base-100 p-4 mb-4 rounded-lg shadow-md">
           <h3 className="text-lg font-bold mb-2">Welcome, {currentUser.username}!</h3>
           <div className="flex space-x-4">
@@ -218,6 +219,8 @@ const HomePage = () => {
                 placeholder="Smith Family" 
                 className="input input-bordered w-full" 
                 value={familyName}
+                title="Entrer le nom de votre Famille" 
+
                 onChange={(e) => setFamilyName(e.target.value)}
                 required
               />

@@ -61,7 +61,7 @@ const FamilyHome = () => {
 
     return (
         <div>
-            { currentUser && (
+            { currentUser && !(currentUser.sessionId) &&(
           <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
                 onClick={handleLogout}
         >
