@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import User from '../models/user.model.js'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
+import Family from '../models/family.model.js'
 
 export const signup = async (req, res) => {
     try {
@@ -96,11 +97,21 @@ export const logout = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        const user = req.user ? req.user : req.guest
+        let user = req.user ? req.user : req.guest
         
-        console.log("getMe Controller: getUser:", user)
         if(!user){
             return res.status(400).json({error: "Aucun utilisateur"})
+        }
+
+        if(req.user){
+            const familiesData = await Family.find({
+                _id: { $in: user.families }
+            })
+
+            user = {
+                ...user,
+                familiesData
+            }
         }
         res.status(200).json(user)
     }catch (error){

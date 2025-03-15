@@ -133,10 +133,7 @@ export const join = async (req, res) => {
 export const getAlbums = async (req, res) => {
     try{
         const familyId = req.params.id
-        console.log("familyId reçu dans API:", familyId);
-
         const albums = await Album.find({ familyId: new ObjectId(familyId) })
-        console.log("résultat requète getAlbums:", albums);
 
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });

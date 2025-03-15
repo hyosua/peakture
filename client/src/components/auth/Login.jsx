@@ -20,7 +20,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
     
     try {
       const userData = await login(username, password)
-
+      console.log("UserData after login:",userData )
       // si le login réussi, on notifie le parent
       onLoginSuccess(userData)
     } catch (error) {

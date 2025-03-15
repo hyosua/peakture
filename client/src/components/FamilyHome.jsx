@@ -5,7 +5,7 @@ import AlbumList from './AlbumList'
 import { useAuth } from '../context/AuthContext.jsx';
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from 'react-router-dom'
-import { Share2, Copy, ArrowBigLeft } from 'lucide-react'
+import { Share2, Copy, ArrowBigLeft, LogOut } from 'lucide-react'
 
 const FamilyHome = () => {
     const [family,setFamily] = useState(null)
@@ -39,7 +39,6 @@ const FamilyHome = () => {
         try {
           await logout()
           navigate('/')
-          console.log("Logout: ", currentUser)
         } catch (error) {
           console.error("Erreur lors du logout: ", error);
           setErrorMessage("Une erreur lors de la déconnexion s'est produite.");
@@ -64,8 +63,9 @@ const FamilyHome = () => {
             { currentUser && !(currentUser.sessionId) &&(
           <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
                 onClick={handleLogout}
+                title='Déconnexion'
         >
-                  Se Déconnecter
+                <LogOut />
         </button>
         )}
 

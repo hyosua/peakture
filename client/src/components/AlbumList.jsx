@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Plus, X, Check, Edit, Trash } from 'lucide-react'
 import EditDropdown from './EditDropdown.jsx'
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from '../context/AuthContext.jsx';
+
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -17,7 +19,7 @@ const AlbumList = () => {
     })
     const [errorMessage, setErrorMessage] = useState('')
     
-
+    const {isAdmin} = useAuth()
     const navigate = useNavigate()
 
     const monthsList = [
@@ -160,7 +162,7 @@ const AlbumList = () => {
   
     
     return (
-        <div className=' mx-auto p-4'> 
+        <div className=' mx-auto p-4 mb-24'> 
             <div className='flex justify-between items-center mb-6'>
                 <h1 className='text-2xl text-white font-bold'>Albums</h1>
             </div>
@@ -321,14 +323,18 @@ const AlbumList = () => {
 
                         </div>
                     ))}
-                    <div className='flex items-center justify-center'>
-                        <button
-                            className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
-                            onClick={() => setShowAddForm(true)}
-                        >
-                            <Plus size={24} />
-                        </button>
-                    </div>
+
+                    { isAdmin && (
+                        <div className='flex items-center justify-center'>
+                            <button
+                                className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
+                                onClick={() => setShowAddForm(true)}
+                            >
+                                <Plus size={24} />
+                            </button>
+                        </div>
+                    )}
+                    
                      
                 </div>
             </div>

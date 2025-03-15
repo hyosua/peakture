@@ -8,6 +8,7 @@ import '../App.css'
 import Auth from './auth/Auth.jsx'
 import HomePage from './auth/HomePage'
 import Login from './auth/Login'
+import Layout from './Layout.jsx'
 
 // Protection des routes enfants
 const ProtectedRoute = ({ children }) => {
@@ -32,28 +33,31 @@ const AppRoutes = () => {
   }
   
   return (
-    <Routes>
-      <Route 
-        path="/" 
-        element={
-          currentUser && currentUser.familyId ? 
-          <Navigate to={`/family/${currentUser.familyId}`} /> : 
-          <HomePage />
-        } 
-      />
-      <Route 
-        path="/family/:familyId" 
-        element={ 
-          // Possibilité de protéger l'accès à une famille 
-          // <ProtectedRoute>
-            <FamilyHome />
-          // </ProtectedRoute>
-        } 
-      />
-      <Route path="/auth" element={<Auth />} /> 
-      <Route path="/login" element={<Login />} /> 
-      <Route path="/album/:id" element={<AlbumGallery />} />
-    </Routes>
+    <Layout>
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            currentUser && currentUser.familyId ? 
+            <Navigate to={`/family/${currentUser.familyId}`} /> : 
+            <HomePage />
+          } 
+        />
+        <Route 
+          path="/family/:familyId" 
+          element={ 
+            // Possibilité de protéger l'accès à une famille 
+            // <ProtectedRoute>
+              <FamilyHome />
+            // </ProtectedRoute>
+          } 
+        />
+        <Route path="/auth" element={<Auth />} /> 
+        <Route path="/login" element={<Login />} /> 
+        <Route path="/album/:id" element={<AlbumGallery />} />
+      </Routes>
+    </Layout>
+    
   )
 }
 

@@ -1,10 +1,11 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext, useMemo } from "react";
 import PropTypes from 'prop-types';
 
 const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null)
+    const [currentFamily, setCurrentFamily] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }) => {
             if(!response.ok){
                 // User not logged in ou autre erreur
                 setCurrentUser(null)
+                setCurrentFamily(null)
                 setLoading(false)
                 return
             }
@@ -26,9 +28,11 @@ export const AuthProvider = ({ children }) => {
             const userData = await response.json()
             setCurrentUser(userData)
             
-            if(userData.families.length > 0){
+            if(userData.families?.length > 0){
+                const defaultFamily = userData.families[0]
                 const currentPath = window.location.pathname
 
+                setCurrentFamily(defaultFamily)
                 if(currentPath === '/' || currentPath.includes('login') || currentPath.includes('signup')){
                     window.location.href = `/family/${userData.families[0]}`
                 }
@@ -67,14 +71,32 @@ export const AuthProvider = ({ children }) => {
         }
 
         // Maj des données utilisateur après login réussi
-        setCurrentUser(response)
+        setCurrentUser(response);
 
-        if (response.familyId) {
-            window.location.href = `/family/${response.families[0]}`;
+        if (response.families?.length > 0) {
+            setCurrentFamily(response.familyData)
+            window.location.href = `/family/${response.families[0]}`
         }
+        
         return response
     }
 
+    useEffect(() => {
+        if (currentUser && currentUser.families?.length > 0 && !currentFamily) {
+            setCurrentFamily(currentUser.families[0]);
+    
+            // Vérifie si on est déjà sur la bonne page avant de rediriger
+            const currentPath = window.location.pathname;
+            const targetPath = `/family/${currentUser.families[0]}`;
+            
+            if (currentPath !== targetPath) {
+                window.location.href = targetPath;
+            }
+        }
+    }, [currentUser, currentFamily]);
+    
+
+    
     const logout = async () => {
         try{
             const result = await fetch('http://localhost:5000/api/auth/logout', {
@@ -86,6 +108,7 @@ export const AuthProvider = ({ children }) => {
 
             // Nettoyer user data
             setCurrentUser(null)
+            setCurrentFamily(null)
             return response
         }catch(error) {
             console.error('Erreur lors de la déconnexion', error)
@@ -93,14 +116,29 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const isAdmin = useMemo(() => {
+        if (!currentUser || !currentFamily) return false
+        return currentUser._id === currentFamily.admin
+    }, [currentUser, currentFamily])
+
+    useEffect(() => {
+        console.log("currentUser:", currentUser);
+        console.log("currentFamily:", currentFamily);
+        console.log("isAdmin :", isAdmin);
+        console.log("family :", currentFamily);
+
+    }, [currentUser, currentFamily, isAdmin]);
+
     return (
         <AuthContext.Provider value={{
             currentUser,
+            currentFamily,
             loading,
             error,
             login,
             logout,
-            fetchCurrentUser
+            fetchCurrentUser,
+            isAdmin
         }}>
             {children}
         </AuthContext.Provider>

@@ -41,7 +41,6 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    console.log("Current user: ", currentUser)
     if(serverResponse?.family && serverResponse.family._id){
       navigate(`/family/${serverResponse.family._id}`)
       setServerResponse(null); 
@@ -149,31 +148,17 @@ const HomePage = () => {
         )}
 
       </header>
-
-      {/* Navigation panel */}
-      {currentUser && !currentUser.sessionId &&(
-        <div className="bg-base-100 p-4 mb-4 rounded-lg shadow-md">
-          <h3 className="text-lg font-bold mb-2">Welcome, {currentUser.username}!</h3>
-          <div className="flex space-x-4">
-            <button className="btn btn-sm btn-primary" onClick={() => navigate('/dashboard')}>
-              Dashboard
-            </button>
-            <button className="btn btn-sm btn-secondary" onClick={() => navigate('/profile')}>
-              Profile
-            </button>
-          </div>
-        </div>
-      )}
+      
 
       <main className="flex-grow flex flex-col md:flex-row px-4 py-2">
         
         {/* Join Family Side */}
         <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:mr-2  md:mb-0">
-          <h2 className="text-3xl font-bold mb-6 text-primary">Join a Family</h2>
+          <h2 className="text-3xl font-bold mb-6 text-primary">Rejoins une Family</h2>
           <form onSubmit={handleJoinFamily} className="w-full max-w-xs">
             <div className="form-control">
               <label className="label">
-                <span className="label-text mb-2">Enter Family Code</span>
+                <span className="label-text mb-2">Entre le Family Code</span>
               </label>
                 <input 
                   type="text" 
@@ -198,21 +183,21 @@ const HomePage = () => {
               </div>
             )}
             <button type="submit" className="btn btn-primary w-full mt-6 text-lg hover:bg-emerald-500">
-              Join 
+              Rejoindre 
             </button>
           </form>
 
         </div>
 
-        <div className="divider md:divider-horizontal text-xl text-white font-bold">OR</div>
+        <div className="divider md:divider-horizontal text-xl text-white font-bold">OU</div>
         
         {/* Create Family Side */}
         <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:ml-2">
-          <h2 className="text-3xl font-bold mb-6 text-secondary ">Create a Family</h2>
+          <h2 className="text-3xl font-bold mb-6 text-secondary ">Crée ta Family</h2>
           <form onSubmit={handleCreateFamily} className="w-full max-w-xs">
             <div className="form-control">
               <label className="label">
-                <span className="label-text mb-2">Family Name</span>
+                <span className="label-text mb-2">Nom de la Family</span>
               </label>
               <input 
                 type="text" 
@@ -231,7 +216,7 @@ const HomePage = () => {
             )}
             </div>
             <button type="submit" className="btn btn-secondary hover:bg-orange-500 w-full mt-6 text-lg">
-              Create 
+              Créer 
             </button>
           </form>
         </div>
@@ -251,7 +236,7 @@ const HomePage = () => {
       </main>
       
       <footer className="p-4 text-center text-sm opacity-70">
-        © 2025 Peakture - Share your family moments
+        © 2025 Peakture - Partage des moments avec ta famille
       </footer>
     </div>
   );
