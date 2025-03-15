@@ -31,6 +31,7 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
+                console.log("id from useParams: ",familyId)
                 const response = await fetch(`http://localhost:5000/api/family/albums/${familyId}`)
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
@@ -199,7 +200,7 @@ const AlbumList = () => {
                                         >
                                             <option className="font-semibold bg-base-100" value="">Sélectionner un mois</option>
                                             {monthsList.map((month, index) => (
-                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={month}>{month}</option>
+                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={`${familyId}-${month}`}>{month}</option>
                                             ))}   
                                         </motion.select>
                                     </label>

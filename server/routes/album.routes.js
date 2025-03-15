@@ -35,6 +35,31 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// Créer un album
+// router.get('/album/:month', async (req, res) => {
+//     try {
+//         const album = await db.collection('albums').findOne({ 
+//             month: req.params.month 
+//         });
+        
+//         if (!album) {
+//             return res.status(404).json({ message: 'Album not found' });
+//         }
+        
+//         // Récupérer les photos associées à cet album
+//         const photos = await db.collection('photos').find({ 
+//             albumId: album._id.toString() 
+//         }).toArray();
+        
+//         // Ajouter les photos à l'objet album
+//         album.photos = photos;
+        
+//         res.json(album);
+//     } catch (error) {
+//         console.error('Error fetching album by month:', error);
+//         res.status(500).json({ message: 'Error fetching album', error: error.message });
+//     }
+// });
 
 // Créer un album
 router.post("/", async (req, res) => {
