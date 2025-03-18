@@ -36,7 +36,7 @@ export const signup = async (req, res) => {
                 username: newUser.username,
                 role: newUser.role,
                 email: newUser.email,
-                families: newUser.familyId,
+                familyId: newUser.familyId,
                 profileImg: newUser.profileImg,
                 
             })
@@ -73,7 +73,7 @@ export const login = async (req, res) => {
             role: user.role,
             email: user.email,
             familyId: user.familyId,
-            profileImg: user.familyId,
+            profileImg: user.profileImgfamilyId,
             isGuest: user.isGuest
             
         })
@@ -104,13 +104,25 @@ export const getMe = async (req, res) => {
         }
 
         if(req.user){
-            const familiesData = await Family.find({
-                _id: { $in: user.families }
+
+             // Convertir le document Mongoose en objet JS standard
+             const userObj = user.toObject ? user.toObject() : user;
+            
+             // Récupérer les détails de la famille
+             const familyData = await Family.findOne({
+                 _id: { $in: userObj.familyId || [] } 
+             });
+ 
+             // Renvoyer l'utilisateur avec les données de famille
+             return res.status(200).json({
+                 ...userObj,
+                 family: userObj.familyId || [], 
+                 familyData
             })
 
             user = {
                 ...user,
-                familiesData
+                familyData
             }
         }
         res.status(200).json(user)

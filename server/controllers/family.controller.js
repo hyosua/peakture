@@ -45,10 +45,10 @@ export const create = async (req, res) => {
 
         if(newFamily){
             if(req.user){
-                await User.updateOne({_id: user._id}, {role: "admin"})
+                await User.updateOne({_id: req.user._id}, {role: "admin"})
             }
             if(req.guest){
-                await Guest.updateOne({_id: user._id}, {role: "admin"})
+                await Guest.updateOne({_id: req.guest._id}, {role: "admin"})
 
             }
             await newFamily.save()
@@ -82,9 +82,11 @@ export const join = async (req, res) => {
 
         if (req.user) {
             // Un utilisateur enregistré rejoint une famille
-            if (!req.user.families.includes(family._id)) {
-                req.user.families.push(family._id)
-                await req.user.save()
+            if (!req.user.familyId) {  
+                req.user.familyId = family._id;  
+                await req.user.save();  
+            } else {  
+                return res.status(400).json({ message: "L'utilisateur appartient déjà à une famille." });
             }
 
             if (!family.members.includes(req.user._id)) {
@@ -101,21 +103,23 @@ export const join = async (req, res) => {
 
         if (!sessionId) {
             sessionId = generateTokenAndSetCookie(res) // Générer un sessionId
-            guest = new Guest({ sessionId, families: [family._id] })
+            guest = new Guest({ sessionId, familyId: [family._id] })
             await guest.save()
         } else {
             // Vérifier si le guest existe déjà
             guest = await Guest.findOne({ sessionId })
             if (!guest) {
-                guest = new Guest({ sessionId, families: [family._id] })
+                guest = new Guest({ sessionId, familyId: [family._id] })
                 await guest.save()
             }
         }
 
         // Ajouter le guest à la famille
-        if (!guest.families.includes(family._id)) {
-            guest.families.push(family._id)
-            await guest.save()
+        if (!req.guest.familyId) {  
+            req.guest.familyId = family._id;  
+            await req.guest.save();  
+        } else {  
+            return res.status(400).json({ message: "L'utilisateur appartient déjà à une famille." });
         }
 
         if (!family.guestMembers.includes(guest._id)) {
@@ -133,7 +137,10 @@ export const join = async (req, res) => {
 export const getAlbums = async (req, res) => {
     try{
         const familyId = req.params.id
+        console.log("familyId reçu dans API:", familyId);
+
         const albums = await Album.find({ familyId: new ObjectId(familyId) })
+        console.log("résultat requète getAlbums:", albums);
 
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });

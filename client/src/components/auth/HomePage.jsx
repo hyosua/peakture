@@ -25,6 +25,7 @@ const HomePage = () => {
       setJoiningFamily(true)
       const result = await fetch('http://localhost:5000/api/family/join',{
         method : "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json"
         },
@@ -54,6 +55,7 @@ const HomePage = () => {
       
       const result = await fetch('http://localhost:5000/api/family/create',{
         method : "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/json"
         },

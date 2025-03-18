@@ -28,13 +28,12 @@ export const AuthProvider = ({ children }) => {
             const userData = await response.json()
             setCurrentUser(userData)
             
-            if(userData.families?.length > 0){
-                const defaultFamily = userData.families[0]
+            if(userData.familyId){
                 const currentPath = window.location.pathname
 
-                setCurrentFamily(defaultFamily)
+                setCurrentFamily(userData.familyId)
                 if(currentPath === '/' || currentPath.includes('login') || currentPath.includes('signup')){
-                    window.location.href = `/family/${userData.families[0]}`
+                    window.location.href = `/family/${userData.familyId}`
                 }
             }
         } catch (error) {
@@ -73,21 +72,34 @@ export const AuthProvider = ({ children }) => {
         // Maj des données utilisateur après login réussi
         setCurrentUser(response);
 
-        if (response.families?.length > 0) {
+        if (response.familyId) {
+            try {
+                const familyResponse = await fetch(`http://localhost:5000/api/family/${response.familyId}`, {
+                    credentials: 'include'
+                })
+
+                if(familyResponse.ok){
+                    const familyData = await familyResponse.json()
+                    setCurrentFamily(familyData)
+                    window.location.href = `/family/${response.familyId}`
+                }
+            } catch (error){
+                console.error("AuthContext, login: erreur lors de la récupération de données de la famille: ",error)
+            }
             setCurrentFamily(response.familyData)
-            window.location.href = `/family/${response.families[0]}`
+            window.location.href = `/family/${response.familyId}`
         }
         
         return response
     }
 
     useEffect(() => {
-        if (currentUser && currentUser.families?.length > 0 && !currentFamily) {
-            setCurrentFamily(currentUser.families[0]);
+        if (currentUser && currentUser.familyId && !currentFamily) {
+            setCurrentFamily(currentUser.familyId);
     
             // Vérifie si on est déjà sur la bonne page avant de rediriger
             const currentPath = window.location.pathname;
-            const targetPath = `/family/${currentUser.families[0]}`;
+            const targetPath = `/family/${currentUser.familyId}`;
             
             if (currentPath !== targetPath) {
                 window.location.href = targetPath;
@@ -125,7 +137,7 @@ export const AuthProvider = ({ children }) => {
         console.log("currentUser:", currentUser);
         console.log("currentFamily:", currentFamily);
         console.log("isAdmin :", isAdmin);
-        console.log("family :", currentFamily);
+        console.log("Current family :", currentFamily);
 
     }, [currentUser, currentFamily, isAdmin]);
 

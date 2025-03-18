@@ -7,7 +7,7 @@ export const identifyUserOrGuest = async (req, res, next) => {
     try {
         const token = req.cookies.jwt
         let sessionId = req.cookies.sessionId 
-
+console.log("Middleware - JWT:", !!token, "SessionId:", !!sessionId);
         if (token) {
             // utilisateur enregistré
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -21,6 +21,7 @@ export const identifyUserOrGuest = async (req, res, next) => {
             }
 
             req.user = user 
+            console.log("Utilisateur authentifié:", user._id);
             return next()
         }
 
@@ -30,7 +31,6 @@ export const identifyUserOrGuest = async (req, res, next) => {
             if (!guest) {
                 guest = new Guest({ 
                     sessionId, 
-                    families: []
                  })
                 await guest.save()
             }
@@ -42,11 +42,11 @@ export const identifyUserOrGuest = async (req, res, next) => {
         // si nouvel invité
         sessionId = generateTokenAndSetCookie(res)
 
-        const guest = new Guest({ sessionId, families: [] });
+        const guest = new Guest({ sessionId });
         await guest.save();
 
         req.guest = guest;
-        next();
+        return next();
 
     } catch (error) {
         console.error("Error in identifyUserOrGuest Middleware", error?.message || error)

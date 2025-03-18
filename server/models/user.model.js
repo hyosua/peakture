@@ -20,9 +20,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'user'], default: 'user'
     },
-    families:[{
+    familyId:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Family'
-    }],
+    },
     profileImg:{
         type: String,
         default: "",
