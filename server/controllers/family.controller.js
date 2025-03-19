@@ -34,10 +34,12 @@ export const create = async (req, res) => {
         }
 
         const inviteCode = crypto.randomBytes(3).toString('hex').toUpperCase()
-        const user = req.user ? req.user : req.guest
+        const user = req.user || req.guest
         const newFamily = new Family({
             name: familyName,
             admin: user._id,
+            members: req.user ? [user._id] : [],
+            guestMembers: req.guest ? [user._id] : [],
             inviteCode
         })
 
@@ -45,10 +47,21 @@ export const create = async (req, res) => {
 
         if(newFamily){
             if(req.user){
-                await User.updateOne({_id: req.user._id}, {role: "admin"})
+                await User.updateOne(
+                    {_id: req.user._id}, 
+                    {
+                        role: "admin",
+                        familyId: newFamily._id
+                    }
+                )
             }
             if(req.guest){
-                await Guest.updateOne({_id: req.guest._id}, {role: "admin"})
+                await Guest.updateOne(
+                    {_id: req.user._id}, 
+                    {
+                        role: "admin",
+                        familyId: newFamily._id
+                    })
 
             }
             await newFamily.save()

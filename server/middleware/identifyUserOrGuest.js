@@ -7,7 +7,6 @@ export const identifyUserOrGuest = async (req, res, next) => {
     try {
         const token = req.cookies.jwt
         let sessionId = req.cookies.sessionId 
-console.log("Middleware - JWT:", !!token, "SessionId:", !!sessionId);
         if (token) {
             // utilisateur enregistré
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -21,7 +20,6 @@ console.log("Middleware - JWT:", !!token, "SessionId:", !!sessionId);
             }
 
             req.user = user 
-            console.log("Utilisateur authentifié:", user._id);
             return next()
         }
 

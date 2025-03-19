@@ -26,12 +26,24 @@ export const AuthProvider = ({ children }) => {
             }
 
             const userData = await response.json()
+            console.log("User data from API:", userData) 
             setCurrentUser(userData)
             
             if(userData.familyId){
+                try {
+                    const familyResponse = await fetch(`http://localhost:5000/api/family/${userData.familyId}`, {
+                        credentials: 'include'
+                    })
+            
+                    if(familyResponse.ok){
+                        const familyData = await familyResponse.json()
+                        setCurrentFamily(familyData)
+                    }
+                } catch (error) {
+                    console.error("Error fetching family data:", error)
+                }
+                
                 const currentPath = window.location.pathname
-
-                setCurrentFamily(userData.familyId)
                 if(currentPath === '/' || currentPath.includes('login') || currentPath.includes('signup')){
                     window.location.href = `/family/${userData.familyId}`
                 }
@@ -86,7 +98,6 @@ export const AuthProvider = ({ children }) => {
             } catch (error){
                 console.error("AuthContext, login: erreur lors de la récupération de données de la famille: ",error)
             }
-            setCurrentFamily(response.familyData)
             window.location.href = `/family/${response.familyId}`
         }
         
@@ -130,7 +141,8 @@ export const AuthProvider = ({ children }) => {
 
     const isAdmin = useMemo(() => {
         if (!currentUser || !currentFamily) return false
-        return currentUser._id === currentFamily.admin
+        console.log("Admin ID:", currentFamily?.family?.admin);
+        return currentUser._id === currentFamily?.family?.admin
     }, [currentUser, currentFamily])
 
     useEffect(() => {

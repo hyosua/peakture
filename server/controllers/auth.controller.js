@@ -97,7 +97,7 @@ export const logout = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        let user = req.user ? req.user : req.guest
+        let user = req.user || req.guest
         
         if(!user){
             return res.status(400).json({error: "Aucun utilisateur"})
@@ -107,23 +107,21 @@ export const getMe = async (req, res) => {
 
              // Convertir le document Mongoose en objet JS standard
              const userObj = user.toObject ? user.toObject() : user;
+             console.log("User Object:", userObj);
+            console.log("Family ID:", userObj.familyId);
             
              // Récupérer les détails de la famille
-             const familyData = await Family.findOne({
-                 _id: { $in: userObj.familyId || [] } 
-             });
+             const familyData = userObj.familyId 
+                ? await Family.findById(userObj.familyId) 
+                : null;
  
              // Renvoyer l'utilisateur avec les données de famille
              return res.status(200).json({
                  ...userObj,
-                 family: userObj.familyId || [], 
+                 family: userObj.familyId || null,
                  familyData
             })
 
-            user = {
-                ...user,
-                familyData
-            }
         }
         res.status(200).json(user)
     }catch (error){
