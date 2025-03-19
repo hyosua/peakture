@@ -87,7 +87,7 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
       <div className="card-body relative">
         <h2 className="card-title">Créer un compte</h2>
         <button
-          className="absolute text-secondary top-4 right-4"
+          className="absolute cursor-pointer text-secondary top-4 right-4"
           onClick={onClose}
           aria-label="Fermer"
         >

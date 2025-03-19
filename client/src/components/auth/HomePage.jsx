@@ -14,6 +14,7 @@ const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [successLogin, setSuccessLogin] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [signupForm, setSignupForm] = useState(false)
 
   const {currentUser, loading, logout} = useAuth()
   const navigate = useNavigate()
@@ -141,6 +142,7 @@ const HomePage = () => {
               </button>
               <button className='btn btn-sm btn-soft hidden lg:block btn-accent absolute top-4 right-32'
                       onClick={() => {
+                        setSignupForm(true)
                         setShowLoginForm(true)
                       }}
               >
@@ -225,8 +227,12 @@ const HomePage = () => {
         
         
         { showLoginForm && (
-          <Auth 
-            onClose={() => setShowLoginForm(false)}
+          <Auth
+            signUp={signupForm} 
+            onClose={() => {
+              setShowLoginForm(false)
+              setSignupForm(false)
+            }}
             onLoginSuccess={() => {
               setSuccessLogin(true)
               setShowLoginForm(false)

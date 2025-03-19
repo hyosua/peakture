@@ -5,8 +5,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Login from './Login.jsx'
 import SignUp from './Signup.jsx'
 
-const Auth = ({ onClose, onLoginSuccess }) => {
-  const [isSignUp, setIsSignUp] = useState(false)
+const Auth = ({ onClose, onLoginSuccess, signUp }) => {
+  const [isSignUp, setIsSignUp] = useState(signUp)
 
   return (
     <AnimatePresence>
@@ -60,6 +60,7 @@ const Auth = ({ onClose, onLoginSuccess }) => {
 Auth.propTypes = {
   onClose: PropTypes.func.isRequired,
   onLoginSuccess: PropTypes.func.isRequired,
+  signUp: PropTypes.bool.isRequired,
 };
 
 export default Auth

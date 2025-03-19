@@ -4,6 +4,7 @@ import Masonry from "react-masonry-css"
 import { Upload, Plus, X, ArrowBigLeft } from "lucide-react"
 import Picture  from "./Picture.jsx"
 import { motion } from "framer-motion";
+import { useAuth } from '../context/AuthContext.jsx';
 
 
 const breakpointColumns = {
@@ -27,6 +28,8 @@ const AlbumGallery = () => {
     const [uploadProgress, setUploadProgress] = useState(0)
     const [likedPhotoId, setLikedPhotoId] = useState(null)
     const [cloudinaryURL, setCloudinaryUrl] = useState(null)
+
+      const {currentUser, loading, logout} = useAuth()
     
         
     // Fetch Album data
@@ -140,7 +143,8 @@ const AlbumGallery = () => {
                 },
                 body: JSON.stringify({
                     albumId: album._id,
-                    src: imageUrl
+                    src: imageUrl,
+                    user: currentUser._id
                 })
             })
 

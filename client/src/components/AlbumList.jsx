@@ -271,22 +271,24 @@ const AlbumList = () => {
                                 />
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
                                 {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
-                                <div className='absolute top-2 right-2'>
-                                    <EditDropdown
-                                        actions={[
-                                            {
-                                            label: "Modifier le thème",
-                                            icon: <Edit className="h-4 w-4" />,
-                                            onClick: () => handleEdit(album),
-                                            },
-                                            {
-                                            label: "Supprimer",
-                                            icon: <Trash className="h-4 w-4 text-red-500" />,
-                                            onClick: () => deleteAlbum(album._id),
-                                            },
-                                        ]}
-                                    />
-                                </div>
+                                { isAdmin && (
+                                    <div className='absolute top-2 right-2'>
+                                        <EditDropdown
+                                            actions={[
+                                                {
+                                                label: "Modifier le thème",
+                                                icon: <Edit className="h-4 w-4" />,
+                                                onClick: () => handleEdit(album),
+                                                },
+                                                {
+                                                label: "Supprimer",
+                                                icon: <Trash className="h-4 w-4 text-red-500" />,
+                                                onClick: () => deleteAlbum(album._id),
+                                                },
+                                            ]}
+                                        />
+                                    </div>
+                                )}
                                 
                             </div>
 

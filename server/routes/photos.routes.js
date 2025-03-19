@@ -32,7 +32,7 @@ router.get('/:albumId', async (req, res) => {
 // Ajouter une photo dans l'album
 router.post('/', async (req, res) => {
     try {
-        const { albumId, src } = req.body
+        const { albumId, src, user } = req.body
 
         if( !albumId || !src ) {
             return res.status(400).json({message: "Album Id and Image URL are required" })
@@ -43,6 +43,7 @@ router.post('/', async (req, res) => {
             albumId,
             src,
             votes: 0,
+            user,
             createdAt: new Date()
         }
         const result = await Photo.create(photoData)
