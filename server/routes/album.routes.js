@@ -2,6 +2,7 @@ import express from "express";
 import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb";
+import { identifyUserOrGuest } from '../middleware/identifyUserOrGuest.js'
 
 // The router will be added as a middleware and will take control of requests starting with the path we give it
 const router = express.Router();
@@ -35,31 +36,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Créer un album
-// router.get('/album/:month', async (req, res) => {
-//     try {
-//         const album = await db.collection('albums').findOne({ 
-//             month: req.params.month 
-//         });
-        
-//         if (!album) {
-//             return res.status(404).json({ message: 'Album not found' });
-//         }
-        
-//         // Récupérer les photos associées à cet album
-//         const photos = await db.collection('photos').find({ 
-//             albumId: album._id.toString() 
-//         }).toArray();
-        
-//         // Ajouter les photos à l'objet album
-//         album.photos = photos;
-        
-//         res.json(album);
-//     } catch (error) {
-//         console.error('Error fetching album by month:', error);
-//         res.status(500).json({ message: 'Error fetching album', error: error.message });
-//     }
-// });
 
 // Créer un album
 router.post("/", async (req, res) => {
@@ -89,8 +65,6 @@ router.patch("/:id", async (req, res) => {
                 theme: req.body.theme
             },
         };
-        
-        console.log(`Querying for document with _id:`, query);
         
         const result = await Album.updateOne(query, updates);
 
@@ -134,5 +108,25 @@ router.delete("/:id", async (req, res) => {
         res.status(500).send("Error deleting album");
     }
 });
+
+// Vérifier si un User a déjà soumis une photo dans l'album
+router.get("/:id/has-submitted", identifyUserOrGuest, async (req, res) => {
+    try {
+        const albumId = req.params.id
+        const userId = req.user.id
+        
+        const result = await Photo.findOne({ albumId, user: userId})
+
+        if(result){
+            return res.status(403).json({ message: "Tu as déjà participé dans cet album" })
+        }
+
+        return res.status(200).json({ message: "Tu peux ajouter une photo"})
+    
+    }catch(error){
+        console.error("Erreur dans album route:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+})
 
 export default router;

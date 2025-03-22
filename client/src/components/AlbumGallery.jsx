@@ -28,8 +28,9 @@ const AlbumGallery = () => {
     const [uploadProgress, setUploadProgress] = useState(0)
     const [likedPhotoId, setLikedPhotoId] = useState(null)
     const [cloudinaryURL, setCloudinaryUrl] = useState(null)
+    const [showError, setShowError] = useState(false)
 
-      const {currentUser, loading, logout} = useAuth()
+    const {currentUser} = useAuth()
     
         
     // Fetch Album data
@@ -108,6 +109,7 @@ const AlbumGallery = () => {
         reader.readAsDataURL(file);
     };
 
+    // Soumettre une Photo
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -262,6 +264,35 @@ const AlbumGallery = () => {
         }
     }
 
+    // Vérifie si l'user à déjà participé à l'album
+    const checkHasSubmitted = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/albums/${id}/has-submitted`, {
+                method: "GET",
+                credentials: "include" 
+            });
+    
+
+            if(response.status === 403){
+                return false
+            }
+
+            return true
+
+        }catch(error){
+            console.log(`Error checking if user has submitted already: ${error}`)
+            return false
+        }
+    }
+
+    const handleError = () => {
+        setShowError(true)
+
+        setTimeout(() => {
+            setShowError(false)
+        }, 3000)
+    }
+
     if (!album) {
         return <div className="text-white text-center p-8">Chargement...</div>;
     }    
@@ -269,6 +300,7 @@ const AlbumGallery = () => {
 
     return (
         <div className="lg:p-10">
+
             <button 
                 className="absolute left-4 top-4 btn btn-soft"
                 onClick={() => navigate(`/family/${album.familyId}`)}
@@ -294,6 +326,7 @@ const AlbumGallery = () => {
                             
                             <div key={photo._id} className="mb-4 break-inside-avoid">
                                 <Picture 
+                                    photo={photo}
                                     photoUrl={photo.src} 
                                     id={photo._id} 
                                     onLike={handleLike}
@@ -324,18 +357,29 @@ const AlbumGallery = () => {
                         <p>Soyez le premier!</p>                        
                     </div>
                 )} 
+
                 {/* Add Photo Button */}
-                <div className='mb-6'>
+                <div className={showError ? "tooltip tooltip-open tooltip-error" : ""} data-tip="Tu as déjà soumis une photo">
+                <div className='pb-20'>
                     <button
                         className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
-                        onClick={() => setShowUploadForm(true)}
+                        onClick={async () => {
+                            const canSubmit = await checkHasSubmitted()
+                            if(canSubmit){
+                                setShowUploadForm(true)
+                            }else{
+                                handleError()
+                            }
+                        }}
                     >
                         <Plus size={24} />
                     </button>
                 </div>
+                </div>
                 
-            </div>
 
+            </div>
+            
             
 
                 {showUploadForm && (

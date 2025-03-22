@@ -5,6 +5,7 @@ import albums from './routes/album.routes.js'
 import photos from './routes/photos.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import family from './routes/family.routes.js'
+import user from './routes/user.routes.js'
 import { errorHandler } from './errorHandler.js';
 import connectMongoDB from './db/connexion.js'
 import cookieParser from   'cookie-parser'
@@ -27,6 +28,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/family", family)
 app.use("/albums", albums)
 app.use("/photos", photos)
+app.use("/user", user)
 
 app.use(errorHandler)
 

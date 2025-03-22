@@ -107,8 +107,6 @@ export const getMe = async (req, res) => {
 
              // Convertir le document Mongoose en objet JS standard
              const userObj = user.toObject ? user.toObject() : user;
-             console.log("User Object:", userObj);
-            console.log("Family ID:", userObj.familyId);
             
              // Récupérer les détails de la famille
              const familyData = userObj.familyId 
