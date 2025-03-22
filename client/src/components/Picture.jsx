@@ -6,7 +6,7 @@
     import { useEffect, useState } from "react";
 
 
-    const Picture = ({ photo, deletePhoto, isLikedId, onLike, showUploadForm, replacingPhoto, cloudinaryURL }) => {
+    const Picture = ({ photo, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
 
@@ -39,9 +39,9 @@
                     key={photo._id} 
                     src={photo.src} 
                     alt={`Photo ${photo._id}`} 
-                    className={`rounded-xl ${isLikedId ? "border-primary  border-4" : "border-0"}`} 
+                    className={`rounded-xl ${isVotedId ? "border-primary  border-4" : "border-0"}`} 
                     initial={{ scale: 1 }}
-                    animate={{ scale: isLikedId ? 1.05 : 1 }}
+                    animate={{ scale: isVotedId ? 1.05 : 1 }}
                     transition={{ type: "spring", stiffness: 30, damping: 10, duration: 1.5 }}
                 />
 
@@ -69,13 +69,13 @@
 
                 { currentUser._id !== photo.user && (   
                     <motion.button 
-                        onClick={() => onLike(id)} 
+                        onClick={() => onVote(photo._id)} 
                         className="cursor-pointer flex items-center space-x-1 absolute bottom-4 right-4 bg-black/50 p-1 rounded"
                         whileHover={{ scale: 1.2 }}
                         transition={{ duration: 0.4 }}
                     >
                         <Heart
-                            className={`w-6 h-6 ${isLikedId ? "fill-primary stroke-none" : "stroke-white"}`}
+                            className={`w-6 h-6 ${isVotedId ? "fill-primary stroke-none" : "stroke-white"}`}
                         />
                         {/* Conteneur pour le compteur */}
                         <div className="relative h-6 w-4 overflow-hidden">
@@ -107,8 +107,8 @@
     };
 
     Picture.propTypes = {
-        isLikedId: PropTypes.bool,
-        onLike: PropTypes.func.isRequired,
+        isVotedId: PropTypes.bool,
+        onVote: PropTypes.func.isRequired,
         deletePhoto: PropTypes.func,
         cloudinaryURL: PropTypes.func,
         showUploadForm: PropTypes.func,

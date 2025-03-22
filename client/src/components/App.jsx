@@ -14,7 +14,9 @@ import Layout from './Layout.jsx'
 const ProtectedRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
   
-  if (loading) return <div><span className="loading loading-ring loading-xl"></span></div>;
+  if (loading) return  <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
+                        <span className="loading loading-infinity text-secondary loading-xl"></span>
+                      </div>
   
   if (!currentUser) return <Navigate to="/" />;
   
@@ -29,7 +31,9 @@ const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
   
   if (loading) {
-    return <div>Loading...</div>; // Or your loading spinner component
+    return  <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
+                <span className="loading loading-infinity text-secondary loading-xl"></span>
+            </div>
   }
   
   return (

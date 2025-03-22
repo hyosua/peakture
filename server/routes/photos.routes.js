@@ -3,6 +3,8 @@ import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb"
 import cloudinary from "../cloudinaryConfig.js"
+import { identifyUserOrGuest } from '../middleware/identifyUserOrGuest.js'
+import mongoose from 'mongoose'
 
 const router  = express.Router()
 
@@ -284,26 +286,40 @@ router.patch('/:id', async (req,res) => {
 })
 
 // Ajouter un Vote à une photo
-router.patch('/:id/like', async (req,res) => {
-    
+router.patch('/:id/vote', identifyUserOrGuest, async (req,res) => {
+    const session = await mongoose.startSession()
+    session.startTransaction()
+
     try {
         const photoId = new ObjectId(req.params.id)
-        
-        const result = await Photo.updateOne(
-            { _id: photoId},
-            { $inc: { votes: 1 } }
+        const userId = req.user._id
+        const {albumId} = req.body
+
+
+        const previousVote = await Photo.findOne({ albumId, votedBy: userId})
+
+        if(previousVote){
+            await Photo.updateOne(
+                { _id: previousVote._id },
+                { $inc: {votes: -1 }, $pull: { votedBy: userId }},
+                {session}
+            )
+        }
+
+        await Photo.updateOne(
+            { _id: photoId },
+            { $inc: { votes: 1 }, $push: { votedBy: userId }},
+            {session}
         )
 
-        if(result.matchedCount === 0) {
-            return res.status(404).json({ message: "Photo non trouvée" })
-        }
-        
-        const updatedPhoto = await Photo.findOne({
-            _id: photoId
-        })
+        await session.commitTransaction()
+        session.endSession()
+        const updatedPhotos = await Photo.find( { albumId })
 
-        res.json(updatedPhoto)
+        res.json(updatedPhotos)
     } catch (error) {
+        await session.abortTransaction()
+        session.endSession()
         res.status(500).json( {message: "Erreur lors du vote", error: error.message })
     }
 })

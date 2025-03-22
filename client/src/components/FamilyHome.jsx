@@ -99,15 +99,9 @@ const FamilyHome = () => {
                     <AlbumList />
                 </div>
             ) : (
-                <div className='min-h-screen flex items-center justify-center '>
-                    <button 
-                        className="absolute left-4 top-4 btn btn-soft"
-                        onClick={() => navigate(`/`)}
-                    >
-                        <ArrowBigLeft size={26}/>
-                    </button>
-                  <span className="loading loading-ring loading-xl "></span>
-                </div>
+                <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
+                    <span className="loading loading-infinity text-secondary loading-xl"></span>
+                 </div>
             )}
             
         </div>

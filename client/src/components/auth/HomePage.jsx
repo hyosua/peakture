@@ -15,8 +15,9 @@ const HomePage = () => {
   const [successLogin, setSuccessLogin] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [signupForm, setSignupForm] = useState(false)
+  const [loading, setLoading] = useState(true);
 
-  const {currentUser, loading, logout} = useAuth()
+  const {currentUser, logout} = useAuth()
   const navigate = useNavigate()
 
   const handleJoinFamily = async (e) => {
@@ -96,10 +97,18 @@ const HomePage = () => {
     }
   }
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   if(loading) return (
-    <div>
-      <span className="loading loading-ring loading-xl"></span>
-    </div>
+    <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
+                    <span className="loading loading-infinity text-secondary loading-xl"></span>
+                 </div>
     )
 
   return (

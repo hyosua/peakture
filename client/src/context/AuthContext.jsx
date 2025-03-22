@@ -9,7 +9,6 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
-
     const fetchCurrentUser = async () => {
         try {
             setLoading(true)
@@ -26,7 +25,6 @@ export const AuthProvider = ({ children }) => {
             }
 
             const userData = await response.json()
-            console.log("User data from API:", userData) 
             setCurrentUser(userData)
             
             if(userData.familyId){

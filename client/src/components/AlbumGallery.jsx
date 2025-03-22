@@ -26,7 +26,7 @@ const AlbumGallery = () => {
     const [preview, setPreview] = useState(null)
     const [uploading, setUploading] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(0)
-    const [likedPhotoId, setLikedPhotoId] = useState(null)
+    const [votedPhotoId, setVotedPhotoId] = useState(null)
     const [cloudinaryURL, setCloudinaryUrl] = useState(null)
     const [showError, setShowError] = useState(false)
 
@@ -187,36 +187,42 @@ const AlbumGallery = () => {
         }
     }
 
-    const handleLike = async (photo_id) => {
-        const cleanId = encodeURIComponent(photo_id) // assure les caractères spéciaux sont encodés
+    const handleVote = async (photo_id) => {
+        if(!currentUser){
+            alert('Tu dois avoir un compte pour pouvoir voter')
+            return
+        }
+        const photoId = encodeURIComponent(photo_id) // assure les caractères spéciaux sont encodés
         
+        if(votedPhotoId === photoId) return // On empêche de voter plusieurs fois la même photo
+
         // MAJ optimiste de l'UI
-        setLikedPhotoId(cleanId)
+        setVotedPhotoId(photoId)
 
         try {
-            const response = await fetch(`${API_BASE_URL}/photos/${cleanId}/like`, {
+            const response = await fetch(`${API_BASE_URL}/photos/${photoId}/vote`, {
                 method: "PATCH",
+                credentials: "include",
                 headers: {
                     "Content-Type" : "application/json"
-                }
+                },
+                body: JSON.stringify({
+                    albumId: id
+                })
             })
 
             if(!response.ok){
                 throw new Error(`Erreur: ${response.statusText}`)
             }
 
-            // Mettre à jour l'état des photos pour refléter le nouveau nombre de likes
-            const updatedPhoto = await response.json()
-            setPhotos(prevPhotos => 
-                prevPhotos.map(photo => 
-                    photo._id === cleanId ? updatedPhoto : photo
-                )
-            )
+            // MAJ des photos
+            const updatedPhotos = await response.json()
+            setPhotos(updatedPhotos)
         } catch (error) {
             console.error("Erreur lors du like:", error)
             console.log("ID problématique:", photo_id)
             // Annuler le like en cas d'erreur
-            setLikedPhotoId(null)
+            setVotedPhotoId(null)
         }
     }
 
@@ -293,8 +299,21 @@ const AlbumGallery = () => {
         }, 3000)
     }
 
-    if (!album) {
-        return <div className="text-white text-center p-8">Chargement...</div>;
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      // Simule un chargement minimum de 3 secondes
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 500);
+  
+      return () => clearTimeout(timer);
+    }, []);
+
+    if (loading || !album) {
+        return <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
+                    <span className="loading loading-infinity text-secondary loading-xl"></span>
+                 </div>
     }    
 
 
@@ -302,15 +321,15 @@ const AlbumGallery = () => {
         <div className="lg:p-10">
 
             <button 
-                className="absolute left-4 top-4 btn btn-soft"
+                className="absolute left-4 top-4 text-accent btn btn-soft"
                 onClick={() => navigate(`/family/${album.familyId}`)}
             >
                 <ArrowBigLeft size={26}/>
             </button>
                 
             <div className="flex pt-4 items-center flex-col ">
-                <h2 className="text-white text-7xl">{ album.month }</h2>
-                <h3 className="font-semibold text-white mb-6">{album.theme}</h3>
+                <h2 className="text-primary text-7xl">{ album.month }</h2>
+                <h3 className="font-semibold text-secondary mb-6">{album.theme}</h3>
             </div>
             
 
@@ -329,13 +348,13 @@ const AlbumGallery = () => {
                                     photo={photo}
                                     photoUrl={photo.src} 
                                     id={photo._id} 
-                                    onLike={handleLike}
+                                    onVote={handleVote}
                                     changePhoto={handleImageChange}
                                     deletePhoto={deletePhoto}
                                     showUploadForm={setShowUploadForm}
                                     replacingPhoto={setReplacingPhoto}
                                     cloudinaryURL={setCloudinaryUrl}
-                                    isLikedId={likedPhotoId === photo._id}
+                                    isVotedId={photo.votedBy.includes(currentUser._id)}
                                     votes={photo.votes || 0}
                                 />
     
@@ -359,7 +378,7 @@ const AlbumGallery = () => {
                 )} 
 
                 {/* Add Photo Button */}
-                <div className={showError ? "tooltip tooltip-open tooltip-error" : ""} data-tip="Tu as déjà soumis une photo">
+                <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip="Tu as déjà soumis une photo">
                 <div className='pb-20'>
                     <button
                         className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
