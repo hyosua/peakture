@@ -5,7 +5,7 @@ import { Upload, Plus, X, ArrowBigLeft } from "lucide-react"
 import Picture  from "./Picture.jsx"
 import { motion } from "framer-motion";
 import { useAuth } from '../context/AuthContext.jsx';
-
+import  Auth  from './auth/Auth.jsx'
 
 const breakpointColumns = {
     default: 3,
@@ -29,6 +29,10 @@ const AlbumGallery = () => {
     const [votedPhotoId, setVotedPhotoId] = useState(null)
     const [cloudinaryURL, setCloudinaryUrl] = useState(null)
     const [showError, setShowError] = useState(false)
+    const [showVoteError, setShowVoteError] = useState(false)
+    const [showSignupForm, setShowSignupForm] = useState(false)
+    const [successSignup, setSuccessSignup] = useState(false)
+
 
     const {currentUser} = useAuth()
     
@@ -188,8 +192,11 @@ const AlbumGallery = () => {
     }
 
     const handleVote = async (photo_id) => {
-        if(!currentUser){
-            alert('Tu dois avoir un compte pour pouvoir voter')
+        if(!currentUser.email){
+            setShowVoteError(true)
+            setTimeout(() => {
+                setShowVoteError(false)
+            }, 6000)
             return
         }
         const photoId = encodeURIComponent(photo_id) // assure les caractères spéciaux sont encodés
@@ -332,7 +339,52 @@ const AlbumGallery = () => {
                 <h3 className="font-semibold text-secondary mb-6">{album.theme}</h3>
             </div>
             
+            {/* Vote Error */}
+            { showVoteError && (
+                <div className="fixed z-50 top-4 left-1/2 transform -translate-x-1/2 font-semibold p-4 lg:max-w-md w-10/12">
+                    <div className=" p-2 bg-warning text-neutral rounded shadow-md flex items-center flex-col ">
+                        <span>
+                            Tu dois t&apos;inscrire avant de voter! 
+                        </span>
+                        <button
+                            type="button"
+                            className="btn btn-sm mt-2 btn-soft w-full font-semibold btn-warning text-sm"
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                setShowSignupForm(true)
+                            }}
+                            >
+                            S&apos;inscrire
+                        </button>
+                    </div>
+                </div>
+            )}
+            
+            { successSignup && (
+                <div role="alert" className="fixed z-50 alert alert-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Inscription réussie!</span>
+                </div>
+            )}
+                
+            { showSignupForm && (
+             <Auth 
+                signUp={true} 
+                onClose={() => {
+                    setShowSignupForm(false)
+                }}
+                onSignupSuccess={() => {
+                    setSuccessSignup(true)
+                    setTimeout(() => {setSuccessSignup(false)}, 3000)
+                    setShowSignupForm(false)
+                }}
 
+            />
+
+            )}
+            
             {/* Photo Gallery */}
             <div className=" flex flex-col items-center justify-center">
                 {photos.length > 0 ? (
@@ -354,7 +406,7 @@ const AlbumGallery = () => {
                                     showUploadForm={setShowUploadForm}
                                     replacingPhoto={setReplacingPhoto}
                                     cloudinaryURL={setCloudinaryUrl}
-                                    isVotedId={photo.votedBy.includes(currentUser._id)}
+                                    isVotedId={photo.votedBy.includes(currentUser?._id)}
                                     votes={photo.votes || 0}
                                 />
     
@@ -379,21 +431,21 @@ const AlbumGallery = () => {
 
                 {/* Add Photo Button */}
                 <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip="Tu as déjà soumis une photo">
-                <div className='pb-20'>
-                    <button
-                        className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
-                        onClick={async () => {
-                            const canSubmit = await checkHasSubmitted()
-                            if(canSubmit){
-                                setShowUploadForm(true)
-                            }else{
-                                handleError()
-                            }
-                        }}
-                    >
-                        <Plus size={24} />
-                    </button>
-                </div>
+                    <div className='pb-20'>
+                        <button
+                            className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
+                            onClick={async () => {
+                                const canSubmit = await checkHasSubmitted()
+                                if(canSubmit){
+                                    setShowUploadForm(true)
+                                }else{
+                                    handleError()
+                                }
+                            }}
+                        >
+                            <Plus size={24} />
+                        </button>
+                    </div>
                 </div>
                 
 

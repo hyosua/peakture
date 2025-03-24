@@ -16,6 +16,7 @@ const HomePage = () => {
   const [errorMessage, setErrorMessage] = useState('')
   const [signupForm, setSignupForm] = useState(false)
   const [loading, setLoading] = useState(true);
+  const [successSignup, setSuccessSignup] = useState(false)
 
   const {currentUser, logout} = useAuth()
   const navigate = useNavigate()
@@ -124,6 +125,15 @@ const HomePage = () => {
           </div>
         </div>
         )}
+
+        { successSignup && (
+                <div role="alert" className="fixed alert alert-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Inscription réussie!</span>
+                </div>
+            )}
         
         { errorMessage && (
           <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
@@ -246,6 +256,10 @@ const HomePage = () => {
               setSuccessLogin(true)
               setShowLoginForm(false)
             }}
+            onSignupSuccess={() => {
+              setSuccessSignup(true)
+              setTimeout(() => {setSuccessSignup(false)}, 3000)
+             }}
           />
         )}
         

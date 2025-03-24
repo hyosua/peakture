@@ -5,7 +5,6 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState } from "react";
 
-
     const Picture = ({ photo, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
@@ -29,9 +28,6 @@
                 getUserData();
             }
         }, [photo.user]);
-
-
-        
         
         return (
             <div className="relative m-4 p-2 group inline-block">
@@ -45,7 +41,7 @@
                     transition={{ type: "spring", stiffness: 30, damping: 10, duration: 1.5 }}
                 />
 
-                    { currentUser._id === photo.user && (
+                    { currentUser?._id === photo.user && (
                         <div className='absolute top-2 right-2'>
                             <EditDropdown
                                 actions={[
@@ -67,9 +63,10 @@
                         </div>
                     )}                
 
-                { currentUser._id !== photo.user && (   
+                { currentUser?._id !== photo.user && (   
+                    
                     <motion.button 
-                        onClick={() => onVote(photo._id)} 
+                        onClick={() => onVote(photo._id)}
                         className="cursor-pointer flex items-center space-x-1 absolute bottom-4 right-4 bg-black/50 p-1 rounded"
                         whileHover={{ scale: 1.2 }}
                         transition={{ duration: 0.4 }}
@@ -101,8 +98,9 @@
                     {   userData.username}
                     </div>
                 )}
+
+                </div>
                 
-            </div>
         );
     };
 
@@ -118,7 +116,7 @@
             _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
             user: PropTypes.string,
             votes: PropTypes.number
-        }).isRequired
+        }).isRequired,
     };
 
     export default Picture;

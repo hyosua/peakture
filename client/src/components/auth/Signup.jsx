@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { EyeOff,Eye, X } from 'lucide-react';
 
-const Signup = ({ onClose, onSwitchToLogin }) => {
+const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -52,7 +52,6 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
     setErrorMessage('');
     
     try {
-      // Remplacez par votre endpoint d'inscription
       const result = await fetch("http://localhost:5000/api/auth/signup", {
         method: "POST",
         headers: {
@@ -74,6 +73,7 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
       }
 
       // Si l'inscription réussit, on passe à la connexion
+      onSignupSuccess()
       onSwitchToLogin();
     } catch (error) {
       console.error("Erreur lors de l'inscription: ", error);
@@ -170,6 +170,8 @@ const Signup = ({ onClose, onSwitchToLogin }) => {
 Signup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onSwitchToLogin: PropTypes.func.isRequired,
+  onSignupSuccess: PropTypes.func.isRequired,
+  
 };
 
 export default Signup;

@@ -143,13 +143,7 @@ export const AuthProvider = ({ children }) => {
         return currentUser._id === currentFamily?.family?.admin
     }, [currentUser, currentFamily])
 
-    useEffect(() => {
-        console.log("currentUser:", currentUser);
-        console.log("currentFamily:", currentFamily);
-        console.log("isAdmin :", isAdmin);
-        console.log("Current family :", currentFamily);
 
-    }, [currentUser, currentFamily, isAdmin]);
 
     return (
         <AuthContext.Provider value={{
