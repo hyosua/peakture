@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
             const userData = await response.json()
             setCurrentUser(userData)
+            console.log("Current user: ", userData)
             
             if(userData.familyId){
                 try {
@@ -139,7 +140,6 @@ export const AuthProvider = ({ children }) => {
 
     const isAdmin = useMemo(() => {
         if (!currentUser || !currentFamily) return false
-        console.log("Admin ID:", currentFamily?.family?.admin);
         return currentUser._id === currentFamily?.family?.admin
     }, [currentUser, currentFamily])
 

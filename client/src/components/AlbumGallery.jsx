@@ -32,6 +32,7 @@ const AlbumGallery = () => {
     const [showVoteError, setShowVoteError] = useState(false)
     const [showSignupForm, setShowSignupForm] = useState(false)
     const [successSignup, setSuccessSignup] = useState(false)
+    const [error, setError] = useState('')
 
 
     const {currentUser} = useAuth()
@@ -287,6 +288,8 @@ const AlbumGallery = () => {
     
 
             if(response.status === 403){
+                const result = await response.json()
+                setError(result.message)
                 return false
             }
 
@@ -430,7 +433,7 @@ const AlbumGallery = () => {
                 )} 
 
                 {/* Add Photo Button */}
-                <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip="Tu as déjà soumis une photo">
+                <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip={error}>
                     <div className='pb-20'>
                         <button
                             className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'

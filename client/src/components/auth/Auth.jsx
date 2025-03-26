@@ -47,6 +47,7 @@ const Auth = ({ onClose, onLoginSuccess, signUp, onSignupSuccess }) => {
               <SignUp 
                 onClose={onClose}
                 onSignupSuccess={onSignupSuccess}
+                onLoginSucess={onLoginSuccess}
                 onSwitchToLogin={() => setIsSignUp(false)}
                 />
             </div>

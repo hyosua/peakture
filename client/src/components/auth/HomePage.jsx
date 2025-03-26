@@ -117,7 +117,7 @@ const HomePage = () => {
       {/* Header with Logo */}
       <header className="relative py-4 px-4 flex justify-center">
 
-        { successLogin && !currentUser.sessionId && (
+        { successLogin && (
           <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
             <div role="alert" className="alert alert-success alert-soft shadow-lg maw-w-md">
               <CheckCircle />
@@ -258,7 +258,9 @@ const HomePage = () => {
             }}
             onSignupSuccess={() => {
               setSuccessSignup(true)
+              setSuccessLogin(true)
               setTimeout(() => {setSuccessSignup(false)}, 3000)
+              setShowLoginForm(false)
              }}
           />
         )}

@@ -1,4 +1,4 @@
-    import { Heart, Edit, Trash  } from "lucide-react";
+    import { ChevronUp, Edit, Trash  } from "lucide-react";
     import PropTypes from 'prop-types';
     import { motion, AnimatePresence } from "framer-motion";
     import EditDropdown from "./EditDropdown.jsx"
@@ -17,7 +17,6 @@
                         throw new Error(`Erreur: ${response.statusText}`);
                     }
                     const data = await response.json();
-                    console.log("User Data:" , data)
                     setUserData(data); 
                 } catch (error) {
                     console.error("Erreur lors de la récupération des données utilisateur:", error);
@@ -71,7 +70,7 @@
                         whileHover={{ scale: 1.2 }}
                         transition={{ duration: 0.4 }}
                     >
-                        <Heart
+                        <ChevronUp
                             className={`w-6 h-6 ${isVotedId ? "fill-primary stroke-none" : "stroke-white"}`}
                         />
                         {/* Conteneur pour le compteur */}

@@ -113,9 +113,15 @@ router.delete("/:id", async (req, res) => {
 router.get("/:id/has-submitted", identifyUserOrGuest, async (req, res) => {
     try {
         const albumId = req.params.id
+        console.log(req.guest)
+        if(req.guest){
+            return res.status(403).json({ message: "Tu dois t'inscrire pour participer"})
+        }
+
         const userId = req.user.id
-        
         const result = await Photo.findOne({ albumId, user: userId})
+
+        
 
         if(result){
             return res.status(403).json({ message: "Tu as déjà participé dans cet album" })

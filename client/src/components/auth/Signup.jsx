@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { EyeOff,Eye, X } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
+  const { login } = useAuth()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -57,6 +59,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify({
           username: formData.username,
           email: formData.email,
@@ -72,9 +75,8 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
         return;
       }
 
-      // Si l'inscription réussit, on passe à la connexion
+      await login(formData.username, formData.password)
       onSignupSuccess()
-      onSwitchToLogin();
     } catch (error) {
       console.error("Erreur lors de l'inscription: ", error);
       setErrorMessage("Une erreur de connexion s'est produite.");
@@ -170,8 +172,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
 Signup.propTypes = {
   onClose: PropTypes.func.isRequired,
   onSwitchToLogin: PropTypes.func.isRequired,
-  onSignupSuccess: PropTypes.func.isRequired,
-  
+  onSignupSuccess: PropTypes.func.isRequired,  
 };
 
 export default Signup;

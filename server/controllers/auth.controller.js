@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 import User from '../models/user.model.js'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 import Family from '../models/family.model.js'
+import { sendSignupNotification } from '../lib/utils/sendEmail.js'
 
 export const signup = async (req, res) => {
     try {
@@ -30,6 +31,7 @@ export const signup = async (req, res) => {
         if(newUser){
             generateTokenAndSetCookie(res, newUser._id)
             await newUser.save()
+            await sendSignupNotification(email, username)
 
             res.status(201).json({
                 _id: newUser._id,
@@ -73,7 +75,7 @@ export const login = async (req, res) => {
             role: user.role,
             email: user.email,
             familyId: user.familyId,
-            profileImg: user.profileImgfamilyId,
+            profileImg: user.profileImg,
             isGuest: user.isGuest
             
         })
