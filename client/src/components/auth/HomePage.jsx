@@ -18,7 +18,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const [successSignup, setSuccessSignup] = useState(false)
 
-  const {currentUser, logout} = useAuth()
+  const {currentUser, logout, fetchCurrentUser} = useAuth()
   const navigate = useNavigate()
 
   const handleJoinFamily = async (e) => {
@@ -36,8 +36,10 @@ const HomePage = () => {
             inviteCode: joinCode
         })
       }) 
-  
+      
+
       const familyData = await result.json()
+      
       setServerResponse(familyData)
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
@@ -45,11 +47,16 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    if(serverResponse?.family && serverResponse.family._id){
-      navigate(`/family/${serverResponse.family._id}`)
-      setServerResponse(null); 
+    const handleFamilyJoin = async() => {
+      if(serverResponse?.family && serverResponse.family._id){
+        fetchCurrentUser()
+        navigate(`/family/${serverResponse.family._id}`)
+        setServerResponse(null); 
+      }
     }
-  },[serverResponse, navigate])
+    handleFamilyJoin()
+    
+  },[serverResponse, navigate, fetchCurrentUser])
 
   const handleCreateFamily = async (e) => {
     e.preventDefault();

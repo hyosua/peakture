@@ -19,6 +19,30 @@ export const getFamily = async (req, res) => {
     }
 }
 
+export const familyLogout = async (req, res) => {
+    try {
+        const id = req.params.id
+        const family = await Family.findById(new ObjectId(id));
+        const userOrGuest = req.user || req.guest
+
+        if(userOrGuest){
+            await userOrGuest.updateOne({ $unset: { familyId: 1 } })
+            await userOrGuest.save()  
+
+            if (family.members.includes(userOrGuest._id)) {
+                family.members.pull(userOrGuest._id)
+                await family.save()
+            }
+
+            return res.status(204).send()
+        }
+        
+    }catch (error){
+        console.log("Error in familyLogout controller", error.message)
+        return res.status(500).json({ error: "Internal Server Error"})
+    }
+}
+
 export const create = async (req, res) => {
     try {
         const familyName = req.body.name
@@ -106,7 +130,7 @@ export const join = async (req, res) => {
                 await family.save()
             }
 
-            return res.status(201).json({ message: "Bienvenue dans la famille !", family })
+            return res.status(201).json({ message: "Bienvenue dans la famille !", family, user: req.user })
         }
 
         // Gestion des invités avec un sessionId

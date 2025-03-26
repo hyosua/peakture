@@ -4,8 +4,9 @@ import '../App.css'
 import AlbumList from './AlbumList'
 import { useAuth } from '../context/AuthContext.jsx';
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from 'react-router-dom'
-import { Share2, Copy, ArrowBigLeft, LogOut } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { Share2, Copy } from 'lucide-react'
+import LogoutOptions from './auth/LogoutOptions.jsx';
 
 const FamilyHome = () => {
     const [family,setFamily] = useState(null)
@@ -14,8 +15,7 @@ const FamilyHome = () => {
     const [deviceNavigator, setDeviceNavigator] = useState('mobile')
     const [errorMessage, setErrorMessage] = useState('')
 
-    const navigate = useNavigate()
-    const {currentUser,logout} = useAuth()
+    const {currentUser} = useAuth()
 
     useEffect(() => {
         const device = navigator.share ? "mobile" : "pc"
@@ -33,17 +33,7 @@ const FamilyHome = () => {
         .catch((err) => console.error(err));
     }, [familyId])
 
-    const handleLogout = async (e) => {
-        e.preventDefault()
-        setErrorMessage('')
-        try {
-          await logout()
-          navigate('/')
-        } catch (error) {
-          console.error("Erreur lors du logout: ", error);
-          setErrorMessage("Une erreur lors de la déconnexion s'est produite.");
-        }
-      }
+    
 
     const handleShare = () => {
         if (navigator.share) {
@@ -60,13 +50,8 @@ const FamilyHome = () => {
 
     return (
         <div>
-            { currentUser && !(currentUser.sessionId) &&(
-          <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
-                onClick={handleLogout}
-                title='Déconnexion'
-        >
-                <LogOut />
-        </button>
+            { currentUser &&(
+                <LogoutOptions setErrorMessage={setErrorMessage}/>
         )}
 
         { errorMessage && (
