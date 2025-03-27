@@ -5,9 +5,12 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState } from "react";
 
-    const Picture = ({ photo, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL }) => {
+    const Picture = ({ photo, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumClosed }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
+        const [photoClickId, setPhotoClickId] = useState(null)
+        const [showToolTip, setShowToolTip] = useState(true)
+        const [shake, setShake] = useState(false);
 
         useEffect(() => {
             const getUserData = async () => {
@@ -29,7 +32,9 @@
         }, [photo.user]);
         
         return (
-            <div className="relative m-4 p-2 group inline-block">
+            <div className={showToolTip && photo._id === photoClickId ? "tooltip tooltip-open tooltip-error font-semibold relative" : ""} data-tip="Les votes sont clos!">
+
+            <div className="relative m-4 mb-20 p-2 group inline-block">
                 <motion.img 
                     key={photo._id} 
                     src={photo.src} 
@@ -63,48 +68,67 @@
                     )}                
 
                 { currentUser?._id !== photo.user && (   
-                    
-                    <motion.button 
-                        onClick={() => onVote(photo._id)}
-                        className="cursor-pointer flex items-center space-x-1 absolute bottom-4 right-4 bg-black/50 p-1 rounded"
-                        whileHover={{ scale: 1.2 }}
-                        transition={{ duration: 0.4 }}
-                    >
-                        <ChevronUp
-                            className={`w-6 h-6 ${isVotedId ? "fill-primary stroke-none" : "stroke-white"}`}
-                        />
-                        {/* Conteneur pour le compteur */}
-                        <div className="relative h-6 w-4 overflow-hidden">
-                            <AnimatePresence exitBeforeEnter>
-                                <motion.span
-                                    key={photo.votes} // La clé change à chaque mise à jour pour déclencher l'animation
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: -20, opacity: 0 }}
-                                    transition={{ duration: 0.5  }}
-                                    className="absolute inset-0 flex justify-center items-center text-primary font-bold text-sm"
-                                >
-                                    {photo.votes}
-                                </motion.span>
-                            </AnimatePresence>
-                        </div>
-                    </motion.button>
+                        <motion.button 
+                            onClick={() => {
+                                if(!albumClosed){
+                                    onVote(photo._id)
+                                }else{
+                                    setPhotoClickId(photo._id)
+                                    setShowToolTip(true)
+                                    setShake(true);
+
+                                    setTimeout(() => {
+                                        setShake(false)
+                                        setPhotoClickId(null)
+                                        setShowToolTip(false)
+                                    }, 3000)
+                                }
+                                
+                            }}
+                            className="cursor-pointer flex items-center space-x-1 absolute bottom-0 right-4 bg-black/50 p-1 rounded"
+                            whileHover={{ scale: 1.2 }}
+                            animate={shake ? { rotate: [0, -10, 10, -5, 5, 0] } : isVotedId ? { scale: [1, 1.3, 1]  } : {} }
+                            transition={{ duration: 0.4 }}
+                        
+                        >
+                            <ChevronUp
+                                className={`w-6 h-6 ${isVotedId ? "fill-primary stroke-none" : "stroke-white"}`}
+                            />
+                            {/* Conteneur pour le compteur */}
+                            <div className="relative h-6 w-4 overflow-hidden">
+                                <AnimatePresence exitBeforeEnter>
+                                    <motion.span
+                                        key={photo.votes} // La clé change à chaque mise à jour pour déclencher l'animation
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ y: -20, opacity: 0 }}
+                                        transition={{ duration: 0.5  }}
+                                        className="absolute inset-0 flex justify-center items-center text-primary font-bold text-sm"
+                                    >
+                                        {photo.votes}
+                                    </motion.span>
+                                </AnimatePresence>
+                            </div>
+                        </motion.button>
+                   
                 )}
 
                 {/*Username*/}
                 {userData && (
-                    <div className="text-primary font-bold">
+                    <div className="text-primary mt-4 font-bold">
                     {   userData.username}
                     </div>
                 )}
 
-                </div>
+            </div>
+            </div>
                 
         );
     };
 
     Picture.propTypes = {
         isVotedId: PropTypes.bool,
+        albumClosed: PropTypes.bool,
         onVote: PropTypes.func.isRequired,
         deletePhoto: PropTypes.func,
         cloudinaryURL: PropTypes.func,

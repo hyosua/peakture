@@ -109,11 +109,34 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+// Clotûrer un album
+router.patch("/:id/close", async (req, res) => {
+    try{    
+        const albumId = req.params.id
+
+        const album = await Album.findById(albumId)
+
+        if(!album){
+            return res.status(404).json({ error: "Album non trouvé"})
+        }
+
+        const closedAlbum = await Album.findByIdAndUpdate( 
+            albumId, 
+            { $set: {closed: !album.closed }},
+            { $new: true }
+        )
+
+        return res.json(closedAlbum)
+    }catch(error){
+        console.error("Erreur dans Close Album route:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+})
+
 // Vérifier si un User a déjà soumis une photo dans l'album
 router.get("/:id/has-submitted", identifyUserOrGuest, async (req, res) => {
     try {
         const albumId = req.params.id
-        console.log(req.guest)
         if(req.guest){
             return res.status(403).json({ message: "Tu dois t'inscrire pour participer"})
         }

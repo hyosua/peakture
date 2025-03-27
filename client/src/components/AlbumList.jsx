@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Plus, X, Check, Edit, Trash } from 'lucide-react'
+import { Plus, X, Check, Edit, Trash, Vote} from 'lucide-react'
 import EditDropdown from './EditDropdown.jsx'
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from '../context/AuthContext.jsx';
@@ -57,6 +57,33 @@ const AlbumList = () => {
     const handleEdit = (album) => {
         setEditingAlbum(album._id)
         setNewTheme(album.theme)
+    }
+
+    // Handle Vote Ending
+    const handleVoteEnding = async (id, closed) =>{
+
+
+        try{
+            const response = await fetch(`http://localhost:5000/albums/${id}/close`,{
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" }
+            })
+
+            const updatedAlbum = await response.json()
+            console.log("Updated album:", updatedAlbum)
+    
+            setAlbums(prevAlbums =>
+                prevAlbums.map(album =>
+                    album._id === id ? { ...album, closed: !closed } : album
+                )
+            )
+        }catch (error) {
+            console.error('Error Closing album:', error);
+            if (error.response) {
+                console.error('Error details:', error.response.data);
+                console.error('Status:', error.response.status);
+            }
+        }
     }
 
     // Save edited album
@@ -200,7 +227,7 @@ const AlbumList = () => {
                                         >
                                             <option className="font-semibold bg-base-100" value="">Sélectionner un mois</option>
                                             {monthsList.map((month, index) => (
-                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={`${familyId}-${month}`}>{month}</option>
+                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={`${month}`}>{month}</option>
                                             ))}   
                                         </motion.select>
                                     </label>
@@ -255,20 +282,25 @@ const AlbumList = () => {
             
             {/* Albums Grid */}
             <div className='flex'>
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
                     {albums.map((album) => (
                         <div
                             key={album._id}
                             className='relative'
                             onClick={() => handleAlbumClick(album._id)}
                         >
+                            
                             {/* Album Card */}
-                            <div className='p-4 cursor-pointer border-2 bg-base-200 border-primary rounded-lg group'>
+                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.closed ? "border-error" : "border-primary"} rounded-lg indicator group`}>
+                                    <span className={`indicator-item badge " + ${(album.closed ? "badge-error" : "badge-primary")}`}>
+                                        {album.closed ? "Closed" : "Open"}
+                                    </span>
                                 <h3 className='mb-2 font-semibold'>{album.month}</h3>
                                 <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"} 
                                     alt={album.month} 
                                     className='w-full h-48 object-cover mb-2' 
                                 />
+                                
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
                                 {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
                                 { isAdmin && (
@@ -281,10 +313,16 @@ const AlbumList = () => {
                                                 onClick: () => handleEdit(album),
                                                 },
                                                 {
+                                                    label: `${album.closed ? "Réouvrir" : "Cloturer"} les votes`,
+                                                    icon: <Vote className="h-4 w-4" />,
+                                                    onClick: () => handleVoteEnding(album._id, album.closed)
+                                                },
+                                                {
                                                 label: "Supprimer",
                                                 icon: <Trash className="h-4 w-4 text-red-500" />,
                                                 onClick: () => deleteAlbum(album._id),
                                                 },
+                                                
                                             ]}
                                         />
                                     </div>

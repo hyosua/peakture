@@ -329,18 +329,27 @@ const AlbumGallery = () => {
 
     return (
         <div className="lg:p-10">
+            <div className="flex items-center relative justify-center">
+                <button 
+                    className="absolute left-4 top-4 text-accent btn btn-soft"
+                    onClick={() => navigate(`/family/${album.familyId}`)}
+                >
+                    <ArrowBigLeft size={26}/>
+                </button>
+                    
+                <div className="relative flex pt-4 items-center flex-col ">
+                    <h2 className="text-primary text-5xl">{ album.month }</h2>
+                    <h3 className="font-semibold text-secondary mb-6">{album.theme}</h3>
+                    
+                </div>
 
-            <button 
-                className="absolute left-4 top-4 text-accent btn btn-soft"
-                onClick={() => navigate(`/family/${album.familyId}`)}
-            >
-                <ArrowBigLeft size={26}/>
-            </button>
-                
-            <div className="flex pt-4 items-center flex-col ">
-                <h2 className="text-primary text-7xl">{ album.month }</h2>
-                <h3 className="font-semibold text-secondary mb-6">{album.theme}</h3>
+                {album?.closed && (
+                        <div className="absolute top-4 right-4 bg-error text-neutral text-xs px-3 py-1 rounded-full">
+                            Votes clos
+                        </div>
+                     )}
             </div>
+            
             
             {/* Vote Error */}
             { showVoteError && (
@@ -411,6 +420,7 @@ const AlbumGallery = () => {
                                     cloudinaryURL={setCloudinaryUrl}
                                     isVotedId={photo.votedBy.includes(currentUser?._id)}
                                     votes={photo.votes || 0}
+                                    albumClosed={album?.closed}
                                 />
     
                             </div>
@@ -433,7 +443,8 @@ const AlbumGallery = () => {
                 )} 
 
                 {/* Add Photo Button */}
-                <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip={error}>
+                {!album?.closed && (
+                    <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip={error}>
                     <div className='pb-20'>
                         <button
                             className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
@@ -450,6 +461,8 @@ const AlbumGallery = () => {
                         </button>
                     </div>
                 </div>
+                )}
+                
                 
 
             </div>

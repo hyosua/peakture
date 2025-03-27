@@ -52,7 +52,7 @@ const FamilyHome = () => {
         <div>
             { currentUser &&(
                 <LogoutOptions setErrorMessage={setErrorMessage}/>
-        )}
+            )}
 
         { errorMessage && (
             <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>

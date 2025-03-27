@@ -12,6 +12,10 @@ const albumSchema = new mongoose.Schema({
     cover:{
         type: String,
     },
+    closed:{
+        type: Boolean,
+        default: false,
+    },
     familyId:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Family',required: true 
     },

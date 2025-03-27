@@ -19,7 +19,7 @@ export default function EditDropdown({ actions }) {
                   }}
                 className="lg:opacity-0 text-white group-hover:bg-black/20 group-hover:opacity-100 cursor-pointer transition-opacity duration-200 opacity-100 p-2 rounded-full"
                 >
-                <EllipsisVertical className="h-8 w-8" />
+                <EllipsisVertical className="h-6 w-6" />
             </button>
 
             {isOpen && (
