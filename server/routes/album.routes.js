@@ -84,6 +84,34 @@ router.patch("/:id", async (req, res) => {
     }
 });
 
+// Ajouter un winner
+router.patch("/:id/winner", async (req, res) => {
+    try {      
+        
+        const photos = await Photo.find({albumId: req.params.id}).sort({ votes: -1 })
+
+        if(photos){
+            const winner = photos[0]
+        }
+        
+        const result = await Album.findByIdAndUpdate({_id: req.params.id}, { $set: { winner }});
+
+        // Send back the updated document
+        if(result.matchedCount === 0) {
+            console.log(`No winner`);
+            return res.status(404).send("Aucun winner");
+        }
+
+        // Get the updated document
+        const updatedAlbum = await Album.findOne({ _id: req.params.id });
+
+        res.status(200).send(updatedAlbum);
+    } catch (error) {
+        console.error('Error in winner route:', error);
+        res.status(500).json({ message: 'Erreur pour trouver un gagnant:', error: error.message });
+    }
+});
+
 // Supprimer un album par id
 router.delete("/:id", async (req, res) => {
     try {

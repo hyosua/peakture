@@ -9,8 +9,9 @@
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
         const [photoClickId, setPhotoClickId] = useState(null)
-        const [showToolTip, setShowToolTip] = useState(true)
+        const [showToolTip, setShowToolTip] = useState(null)
         const [shake, setShake] = useState(false);
+        const [lastTap, setLastTap] = useState(0)
 
         useEffect(() => {
             const getUserData = async () => {
@@ -30,97 +31,144 @@
                 getUserData();
             }
         }, [photo.user]);
+
+        const handleVote = () => {
+            const now = Date.now();
+            if (now - lastTap < 300) { // Si deuxième tap rapide
+                if(!albumClosed){
+                    if(currentUser?._id !== photo.user ){
+                         onVote(photo._id);
+                    }else{
+                        setPhotoClickId(photo._id)
+                        setShowToolTip("Interdit de voter pour soi!")
+                        setShake(true);
+
+                        setTimeout(() => {
+                            setShake(false)
+                            setPhotoClickId(null)
+                            setShowToolTip(null)
+                        }, 3000)
+                   }
+                }else {
+                    setPhotoClickId(photo._id)
+                    setShowToolTip("Les votes sont clos")
+                    setShake(true);
+
+                    setTimeout(() => {
+                        setShake(false)
+                        setPhotoClickId(null)
+                        setShowToolTip(null)
+                    }, 3000)
+                }
+            }
+            setLastTap(now);
+        };
         
         return (
-            <div className={showToolTip && photo._id === photoClickId ? "tooltip tooltip-open tooltip-error font-semibold relative" : ""} data-tip="Les votes sont clos!">
+            <div className={showToolTip && photo._id === photoClickId ? "tooltip tooltip-open tooltip-error font-semibold relative" : ""} data-tip={showToolTip}>
+                <div className="w-full relative m-4 mb-20 p-2 group inline-block">
 
-            <div className="relative m-4 mb-20 p-2 group inline-block">
-                <motion.img 
-                    key={photo._id} 
-                    src={photo.src} 
-                    alt={`Photo ${photo._id}`} 
-                    className={`rounded-xl ${isVotedId ? "border-primary  border-4" : "border-0"}`} 
-                    initial={{ scale: 1 }}
-                    animate={{ scale: isVotedId ? 1.05 : 1 }}
-                    transition={{ type: "spring", stiffness: 30, damping: 10, duration: 1.5 }}
-                />
+                    {/*Username*/}
+                    {userData && (
+                        <div className="text-primary font-bold mb-2 text-center">
+                            {userData.username}
+                        </div>
+                    )}
 
-                    { currentUser?._id === photo.user && (
-                        <div className='absolute top-2 right-2'>
+                    
+                    
+                    {/* Modifier L'image */}
+                    {currentUser?._id === photo.user && (
+                        <div className='absolute top-2 right-2 z-20'>
                             <EditDropdown
                                 actions={[
                                     {
-                                    label: "Modifier l'image",
-                                    icon: <Edit className="h-4 w-4" />,
-                                    onClick: () => {
-                                        showUploadForm(true)
-                                        replacingPhoto(photo._id)
-                                        cloudinaryURL(photo.src)
-                                    }},
+                                        label: "Modifier l'image",
+                                        icon: <Edit className="h-4 w-4" />,
+                                        onClick: () => {
+                                            showUploadForm(true)
+                                            replacingPhoto(photo._id)
+                                            cloudinaryURL(photo.src)
+                                        }
+                                    },
                                     {
-                                    label: "Supprimer",
-                                    icon: <Trash className="h-4 w-4 text-red-500" />,
-                                    onClick: () => deletePhoto(photo._id, photo.src),
+                                        label: "Supprimer",
+                                        icon: <Trash className="h-4 w-4 text-red-500" />,
+                                        onClick: () => deletePhoto(photo._id, photo.src),
                                     },
                                 ]}
                             />
                         </div>
                     )}                
 
-                { currentUser?._id !== photo.user && (   
+                    {/*Bouton Voter*/}
                         <motion.button 
-                            onClick={() => {
+                            onDoubleClick={() => {
                                 if(!albumClosed){
-                                    onVote(photo._id)
-                                }else{
+                                    if(currentUser?._id !== photo.user ){
+                                        onVote(photo._id)
+                                    }else{
+                                        setPhotoClickId(photo._id)
+                                        setShowToolTip("Interdit de voter pour soi!")
+                                         setShake(true);
+
+                                        setTimeout(() => {
+                                            setShake(false)
+                                            setPhotoClickId(null)
+                                            setShowToolTip(null)
+                                        }, 3000)
+                                        
+                                    }
+                                    
+                                } else {
                                     setPhotoClickId(photo._id)
-                                    setShowToolTip(true)
+                                    setShowToolTip("Les votes sont clos")
                                     setShake(true);
 
                                     setTimeout(() => {
                                         setShake(false)
                                         setPhotoClickId(null)
-                                        setShowToolTip(false)
+                                        setShowToolTip(null)
                                     }, 3000)
                                 }
-                                
                             }}
-                            className="cursor-pointer flex items-center space-x-1 absolute bottom-0 right-4 bg-black/50 p-1 rounded"
-                            whileHover={{ scale: 1.2 }}
-                            animate={shake ? { rotate: [0, -10, 10, -5, 5, 0] } : isVotedId ? { scale: [1, 1.3, 1]  } : {} }
+                            onTouchEnd={handleVote}
+                            title="Double-Clique pour voter"
+                            className=""
+                            animate={shake ? { rotate: [0, -10, 10, -5, 5, 0] } : isVotedId ? { scale: [1, 1.3, 1] } : {}}
                             transition={{ duration: 0.4 }}
-                        
                         >
-                            <ChevronUp
-                                className={`w-6 h-6 ${isVotedId ? "fill-primary stroke-none" : "stroke-white"}`}
-                            />
-                            {/* Conteneur pour le compteur */}
-                            <div className="relative h-6 w-4 overflow-hidden">
-                                <AnimatePresence exitBeforeEnter>
-                                    <motion.span
-                                        key={photo.votes} // La clé change à chaque mise à jour pour déclencher l'animation
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: -20, opacity: 0 }}
-                                        transition={{ duration: 0.5  }}
-                                        className="absolute inset-0 flex justify-center items-center text-primary font-bold text-sm"
-                                    >
-                                        {photo.votes}
-                                    </motion.span>
-                                </AnimatePresence>
+                            {/*Nombre de Votes avec Image*/}
+                            <div className="indicator inline-block w-full">
+                                
+                            <AnimatePresence exitBeforeEnter>
+                                <motion.span
+                                    key={photo.votes} // La clé change à chaque mise à jour pour déclencher l'animation
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    exit={{ y: -20, opacity: 0 }}
+                                    transition={{ duration: 0.3  }}
+                                    className="indicator-item indicator-bottom indicator-center badge badge-primary text-neutral font-bold text-sm"
+                                >
+                                    {photo.votes}
+                                </motion.span>
+                            </AnimatePresence>
+                                        
+                                <motion.img 
+                                    key={photo._id} 
+                                    src={photo.src} 
+                                    alt={`Photo ${photo._id}`} 
+                                    className={`rounded-xl w-full h-auto max-w-[300px] ${isVotedId ? "border-primary border-4" : "border-0"}`} 
+                                    initial={{ scale: 1 }}
+                                    animate={{ scale: isVotedId ? 1.05 : 1 }}
+                                    transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
+                                />
                             </div>
                         </motion.button>
-                   
-                )}
+                
 
-                {/*Username*/}
-                {userData && (
-                    <div className="text-primary mt-4 font-bold">
-                    {   userData.username}
-                    </div>
-                )}
-
-            </div>
+                    
+                </div>
             </div>
                 
         );

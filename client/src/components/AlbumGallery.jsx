@@ -407,7 +407,7 @@ const AlbumGallery = () => {
                         >
                         {photos.map((photo) => (
                             
-                            <div key={photo._id} className="mb-4 break-inside-avoid">
+                            <div key={photo._id} className="m-4 break-inside-avoid">
                                 <Picture 
                                     photo={photo}
                                     photoUrl={photo.src} 

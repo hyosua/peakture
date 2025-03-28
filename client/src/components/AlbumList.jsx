@@ -11,6 +11,7 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
+    const [classement, setClassement] = useState(null)
     const { familyId } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: '',
@@ -183,6 +184,26 @@ const AlbumList = () => {
         }
     }
 
+    const handleWinner = async (albumId) => {
+        try{
+            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/winner`, {
+                method: 'POST',
+            })
+
+            const result = await response.json()
+
+            setAlbums(prevAlbums =>
+                prevAlbums.map(album =>
+                    album._id === albumId ? { ...album, winner: result.updatedAlbum.winner } : album
+                )
+            )
+
+            setClassement(result.classementPhotos)
+        }catch(error){
+            console.error('Impossible de récupérer le gagnant:', error)
+        }
+    }
+
     // Navigate to album page
     const handleAlbumClick = (id) => {
         navigate(`/album/${id}`)
@@ -315,7 +336,12 @@ const AlbumList = () => {
                                                 {
                                                     label: `${album.closed ? "Réouvrir" : "Cloturer"} les votes`,
                                                     icon: <Vote className="h-4 w-4" />,
-                                                    onClick: () => handleVoteEnding(album._id, album.closed)
+                                                    onClick: () => {
+                                                        handleVoteEnding(album._id, album.closed)
+                                                        if(album.closed){
+                                                            handleWinner(album._id)
+                                                        }
+                                                    }
                                                 },
                                                 {
                                                 label: "Supprimer",
