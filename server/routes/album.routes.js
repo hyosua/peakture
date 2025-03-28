@@ -8,17 +8,6 @@ import { identifyUserOrGuest } from '../middleware/identifyUserOrGuest.js'
 // The router will be added as a middleware and will take control of requests starting with the path we give it
 const router = express.Router();
 
-// Récupérer tous les albums
-router.get("/", async (req, res) => {
-    try {
-        let results = await Album.find({});
-        res.status(200).send(results);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error fetching albums");
-    }
-});
-
 // Récupérer un album par son id
 router.get('/:id', async (req, res) => {
     try {
@@ -96,13 +85,16 @@ router.patch("/:id/winner", async (req, res) => {
         }
 
         const winningPhoto = classementPhotos[0]
-        const winner = await User.findOne(winningPhoto.user)
+        const winner = await User.findOne({_id: winningPhoto.user})
         
+        if(!winner){
+            return res.status(404).json({ message: "Utilisateur gagnant non trouvé"})
+        }
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winner._id }},
-            { $new: true }
+            { $set: { winner: winner}},
+            { new: true }
         ).populate('winner')
 
         if(!result) {

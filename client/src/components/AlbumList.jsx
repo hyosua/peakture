@@ -32,7 +32,6 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
-                console.log("id from useParams: ",familyId)
                 const response = await fetch(`http://localhost:5000/api/family/albums/${familyId}`)
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
@@ -321,8 +320,8 @@ const AlbumList = () => {
                         >
                             
                             {/* Album Card */}
-                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.closed ? "border-error" : "border-primary"} rounded-lg indicator group`}>
-                                    <span className={`indicator-item badge " + ${(album.closed ? "badge-error" : "badge-primary")}`}>
+                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.closed ? "border-accent" : "border-primary"} rounded-lg indicator group`}>
+                                    <span className={`indicator-item badge " + ${(album.closed ? "badge-accent" : "badge-primary")}`}>
                                         {album.closed ? "Closed" : "Open"}
                                     </span>
                                 <h3 className='mb-2 font-semibold'>{album.month}</h3>
@@ -332,7 +331,7 @@ const AlbumList = () => {
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
-                                {album.winner && <h4>Winner: <i>{album.winner.username}</i></h4>}
+                                {album.winner && <h4 className='font-semibold'>Winner: <span className='text-primary'><i>{album.winner.username}</i></span></h4>}
                                 { isAdmin && (
                                     <div className='absolute top-2 right-2'>
                                         <EditDropdown

@@ -174,6 +174,11 @@ export const getAlbums = async (req, res) => {
     try{
         const familyId = req.params.id
         const albums = await Album.find({ familyId: new ObjectId(familyId) })
+            .populate({
+                path: 'winner',
+                model: 'User',
+                select: '-password'
+            })
 
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });
