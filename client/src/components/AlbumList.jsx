@@ -186,19 +186,28 @@ const AlbumList = () => {
 
     const handleWinner = async (albumId) => {
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/winner`, {
-                method: 'POST',
+            const response = await fetch(`http://localhost:5000/albums/${albumId}/winner`, {
+                method: 'PATCH',
+                headers: {
+                    "Content-Type": "application/json",
+                },
             })
 
-            const result = await response.json()
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server response:', errorText);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const {updatedAlbum, classementPhotos } = await response.json()
 
             setAlbums(prevAlbums =>
                 prevAlbums.map(album =>
-                    album._id === albumId ? { ...album, winner: result.updatedAlbum.winner } : album
+                    album._id === albumId ? { ...album, winner: updatedAlbum.winner } : album
                 )
             )
 
-            setClassement(result.classementPhotos)
+            setClassement(classementPhotos)
         }catch(error){
             console.error('Impossible de récupérer le gagnant:', error)
         }
@@ -323,7 +332,7 @@ const AlbumList = () => {
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
-                                {album.winner && <h4>Winner: <i>{album.winner}</i></h4>}
+                                {album.winner && <h4>Winner: <i>{album.winner.username}</i></h4>}
                                 { isAdmin && (
                                     <div className='absolute top-2 right-2'>
                                         <EditDropdown
@@ -338,7 +347,7 @@ const AlbumList = () => {
                                                     icon: <Vote className="h-4 w-4" />,
                                                     onClick: () => {
                                                         handleVoteEnding(album._id, album.closed)
-                                                        if(album.closed){
+                                                        if(!album.closed){
                                                             handleWinner(album._id)
                                                         }
                                                     }

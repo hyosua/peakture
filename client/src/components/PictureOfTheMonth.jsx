@@ -7,7 +7,7 @@ const Picture = ({winner,photo, id, voteCount, avatar, month}) => {
 
     return (
         
-        <div className='m-8 p-8 w-[300px] md:w-[500px] lg:w-[700px] flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg'>
+        <div className='m-8 p-8 w-80 md:w-[500px] lg:w-96 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg'>
             <h1 className='font-bold text-4xl text-center mb-10'>Peakture of the Month</h1>
             <img key={id} 
                 src={photo} 

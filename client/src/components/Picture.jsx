@@ -1,4 +1,4 @@
-    import { ChevronUp, Edit, Trash  } from "lucide-react";
+    import { Edit, Trash  } from "lucide-react";
     import PropTypes from 'prop-types';
     import { motion, AnimatePresence } from "framer-motion";
     import EditDropdown from "./EditDropdown.jsx"
@@ -65,7 +65,7 @@
         };
         
         return (
-            <div className={showToolTip && photo._id === photoClickId ? "tooltip tooltip-open tooltip-error font-semibold relative" : ""} data-tip={showToolTip}>
+            
                 <div className="w-full relative m-4 mb-20 p-2 group inline-block">
 
                     {/*Username*/}
@@ -99,77 +99,75 @@
                                 ]}
                             />
                         </div>
-                    )}                
+                    )}  
 
-                    {/*Bouton Voter*/}
-                        <motion.button 
-                            onDoubleClick={() => {
-                                if(!albumClosed){
-                                    if(currentUser?._id !== photo.user ){
-                                        onVote(photo._id)
-                                    }else{
+                    <div className={showToolTip && photo._id === photoClickId ? "tooltip tooltip-open p-2 tooltip-bottom tooltip-error font-semibold relative" : ""} data-tip={showToolTip}>
+                        {/*Bouton Voter*/}
+                            <motion.button 
+                                onDoubleClick={() => {
+                                    if(!albumClosed){
+                                        if(currentUser?._id !== photo.user ){
+                                            onVote(photo._id)
+                                        }else{
+                                            setPhotoClickId(photo._id)
+                                            setShowToolTip("Interdit de voter pour soi!")
+                                            setShake(true);
+
+                                            setTimeout(() => {
+                                                setShake(false)
+                                                setPhotoClickId(null)
+                                                setShowToolTip(null)
+                                            }, 3000)
+                                            
+                                        }
+                                        
+                                    } else {
                                         setPhotoClickId(photo._id)
-                                        setShowToolTip("Interdit de voter pour soi!")
-                                         setShake(true);
+                                        setShowToolTip("Les votes sont clos")
+                                        setShake(true);
 
                                         setTimeout(() => {
                                             setShake(false)
                                             setPhotoClickId(null)
                                             setShowToolTip(null)
                                         }, 3000)
-                                        
                                     }
+                                }}
+                                onTouchEnd={handleVote}
+                                title="Double-Clique pour voter"
+                                className=""
+                                animate={shake ? { rotate: [0, -10, 10, -5, 5, 0] } : isVotedId ? { scale: [1, 1.3, 1] } : {}}
+                                transition={{ duration: 0.4 }}
+                            >
+                                {/*Nombre de Votes avec Image*/}
+                                <div className="indicator inline-block w-full">
                                     
-                                } else {
-                                    setPhotoClickId(photo._id)
-                                    setShowToolTip("Les votes sont clos")
-                                    setShake(true);
-
-                                    setTimeout(() => {
-                                        setShake(false)
-                                        setPhotoClickId(null)
-                                        setShowToolTip(null)
-                                    }, 3000)
-                                }
-                            }}
-                            onTouchEnd={handleVote}
-                            title="Double-Clique pour voter"
-                            className=""
-                            animate={shake ? { rotate: [0, -10, 10, -5, 5, 0] } : isVotedId ? { scale: [1, 1.3, 1] } : {}}
-                            transition={{ duration: 0.4 }}
-                        >
-                            {/*Nombre de Votes avec Image*/}
-                            <div className="indicator inline-block w-full">
-                                
-                            <AnimatePresence exitBeforeEnter>
-                                <motion.span
-                                    key={photo.votes} // La clé change à chaque mise à jour pour déclencher l'animation
-                                    initial={{ y: 20, opacity: 0 }}
-                                    animate={{ y: 0, opacity: 1 }}
-                                    exit={{ y: -20, opacity: 0 }}
-                                    transition={{ duration: 0.3  }}
-                                    className="indicator-item indicator-bottom indicator-center badge badge-primary text-neutral font-bold text-sm"
-                                >
-                                    {photo.votes}
-                                </motion.span>
-                            </AnimatePresence>
-                                        
-                                <motion.img 
-                                    key={photo._id} 
-                                    src={photo.src} 
-                                    alt={`Photo ${photo._id}`} 
-                                    className={`rounded-xl w-full h-auto max-w-[300px] ${isVotedId ? "border-primary border-4" : "border-0"}`} 
-                                    initial={{ scale: 1 }}
-                                    animate={{ scale: isVotedId ? 1.05 : 1 }}
-                                    transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
-                                />
-                            </div>
-                        </motion.button>
-                
-
-                    
+                                <AnimatePresence exitBeforeEnter>
+                                    <motion.span
+                                        key={photo.votes} // La clé change à chaque mise à jour pour déclencher l'animation
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
+                                        exit={{ y: -20, opacity: 0 }}
+                                        transition={{ duration: 0.3  }}
+                                        className="indicator-item indicator-bottom indicator-center badge badge-primary text-neutral font-bold text-sm"
+                                    >
+                                        {photo.votes}
+                                    </motion.span>
+                                </AnimatePresence>
+                                            
+                                    <motion.img 
+                                        key={photo._id} 
+                                        src={photo.src} 
+                                        alt={`Photo ${photo._id}`} 
+                                        className={`rounded-xl w-full h-auto max-w-96 ${isVotedId ? "border-primary border-4" : "border-0"}`} 
+                                        initial={{ scale: 1 }}
+                                        animate={{ scale: isVotedId ? 1.05 : 1 }}
+                                        transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
+                                    />
+                                </div>
+                            </motion.button>
+                    </div>
                 </div>
-            </div>
                 
         );
     };

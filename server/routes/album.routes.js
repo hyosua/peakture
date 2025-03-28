@@ -1,6 +1,7 @@
 import express from "express";
 import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
+import User from "../models/user.model.js"
 import { ObjectId } from "mongodb";
 import { identifyUserOrGuest } from '../middleware/identifyUserOrGuest.js'
 
@@ -88,24 +89,34 @@ router.patch("/:id", async (req, res) => {
 router.patch("/:id/winner", async (req, res) => {
     try {      
         
-        const photos = await Photo.find({albumId: req.params.id}).sort({ votes: -1 })
+        const classementPhotos = await Photo.find({albumId: req.params.id}).sort({ votes: -1 })
 
-        if(photos){
-            const winner = photos[0]
+        if(!classementPhotos || classementPhotos.length === 0){
+            return res.status(404).send("Aucun winner")
         }
+
+        const winningPhoto = classementPhotos[0]
+        const winner = await User.findOne(winningPhoto.user)
         
-        const result = await Album.findByIdAndUpdate({_id: req.params.id}, { $set: { winner }});
+        
+        const result = await Album.findByIdAndUpdate(
+            req.params.id, 
+            { $set: { winner: winner._id }},
+            { $new: true }
+        ).populate('winner')
 
-        // Send back the updated document
-        if(result.matchedCount === 0) {
-            console.log(`No winner`);
-            return res.status(404).send("Aucun winner");
+        if(!result) {
+            console.log("Erreur lors de l'ajout du winner")
+            return res.status(404).json({ message: "Album non trouvé" });
         }
 
-        // Get the updated document
-        const updatedAlbum = await Album.findOne({ _id: req.params.id });
+        const albumUpdated = await Album.findById({ _id: req.params.id })
 
-        res.status(200).send(updatedAlbum);
+        res.status(200).json({
+            updatedAlbum: result, 
+            classementPhotos
+        })
+
     } catch (error) {
         console.error('Error in winner route:', error);
         res.status(500).json({ message: 'Erreur pour trouver un gagnant:', error: error.message });
