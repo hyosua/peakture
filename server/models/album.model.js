@@ -17,7 +17,8 @@ const albumSchema = new mongoose.Schema({
         default: false,
     },
     winner:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        type: Object,
+        default: null
     },
     familyId:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Family',required: true 

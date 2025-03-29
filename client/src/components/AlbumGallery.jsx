@@ -42,7 +42,7 @@ const AlbumGallery = () => {
     useEffect(() => {
         async function getAlbumData() {
             try {
-                const response = await fetch(`${API_BASE_URL}/albums/${id}`)
+                const response = await fetch(`${API_BASE_URL}/api/albums/${id}`)
                 if(!response.ok){
                     throw new Error(`Erreur: ${response.statusText}`)
                 }
@@ -51,7 +51,7 @@ const AlbumGallery = () => {
                 setAlbum(albumData)
 
                 // Fetch photos from this album
-                const photosResponse = await fetch(`${API_BASE_URL}/photos/${albumData._id}`)
+                const photosResponse = await fetch(`${API_BASE_URL}/api/photos/${albumData._id}`)
                 if(!photosResponse.ok){
                     throw new Error(`Erreur: ${photosResponse.statusText}`)
                 }
@@ -143,7 +143,7 @@ const AlbumGallery = () => {
             setUploadProgress(70)
 
             // save to database
-            const response = await fetch(`${API_BASE_URL}/photos${endRoute}`, {
+            const response = await fetch(`${API_BASE_URL}/api/photos${endRoute}`, {
                 method : fetchMethod,
                 headers: {
                     'Content-Type': 'application/json'
@@ -208,7 +208,7 @@ const AlbumGallery = () => {
         setVotedPhotoId(photoId)
 
         try {
-            const response = await fetch(`${API_BASE_URL}/photos/${photoId}/vote`, {
+            const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}/vote`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {
@@ -236,7 +236,7 @@ const AlbumGallery = () => {
 
     const handleCloudinaryDelete = async (cloudinaryUrl) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/photos/cloudinary/delete`, {
+            const response = await fetch(`${API_BASE_URL}/api/photos/cloudinary/delete`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -265,7 +265,7 @@ const AlbumGallery = () => {
                 console.warn('Suppression de cloudinary échouée')
             }
             
-            const response = await fetch(`${API_BASE_URL}/photos/${photoId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}`, {
                 method: "DELETE" 
             })
             if(!response.ok) {
@@ -281,7 +281,7 @@ const AlbumGallery = () => {
     // Vérifie si l'user à déjà participé à l'album
     const checkHasSubmitted = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/albums/${id}/has-submitted`, {
+            const response = await fetch(`${API_BASE_URL}/api/albums/${id}/has-submitted`, {
                 method: "GET",
                 credentials: "include" 
             });
@@ -331,10 +331,10 @@ const AlbumGallery = () => {
         <div className="lg:p-10">
             <div className="flex items-center relative justify-center">
                 <button 
-                    className="absolute left-4 top-4 text-accent btn btn-soft"
+                    className="fixed left-4 top-4 text-accent btn btn-sm btn-soft"
                     onClick={() => navigate(`/family/${album.familyId}`)}
                 >
-                    <ArrowBigLeft size={26}/>
+                    <ArrowBigLeft size={22}/>
                 </button>
                     
                 <div className="relative flex pt-4 items-center flex-col ">
@@ -470,7 +470,7 @@ const AlbumGallery = () => {
             
 
                 {showUploadForm && (
-                    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+                    <div className="fixed inset-0 bg-black/70 flex items-center p-2 justify-center z-50">
                         <div className="bg-base-100 p-6 w-full max-w-sm lg:max-w-lg rounded-lg">
                                 <form className="space-y-4"
                                       onSubmit={handleSubmit} 

@@ -5,6 +5,10 @@ import avatarPic from "../assets/img/avatars/avatar.jpg";
 const Picture = ({winner,photo, id, voteCount, avatar, month}) => {
     const navigate = useNavigate();
 
+    // const getPeakture = async () => {
+    //     const response = await fetch('http://localhost:5000/',)
+    // }
+
     return (
         
         <div className='m-8 p-8 w-80 md:w-[500px] lg:w-96 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg'>

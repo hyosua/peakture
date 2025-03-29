@@ -16,7 +16,7 @@
         useEffect(() => {
             const getUserData = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5000/user/${photo.user}`);
+                    const response = await fetch(`http://localhost:5000/api/user/${photo.user}`);
                     if (!response.ok) {
                         throw new Error(`Erreur: ${response.statusText}`);
                     }

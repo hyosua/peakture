@@ -48,9 +48,19 @@ const AlbumList = () => {
     // Delete an album
     const deleteAlbum = async (id) => {
 
-        await fetch(`http://localhost:5000/albums/${id}`, {
-            method: 'DELETE',
-        })  
+       const response =  await fetch(`http://localhost:5000/api/albums/${id}/cloudinary/delete`, {
+            method: "DELETE"
+        })
+
+        if(response.ok){
+            try{
+                await fetch(`http://localhost:5000/api/albums/${id}`, {
+                    method: 'DELETE',
+                })  
+            }catch(error){
+                console.error("Impossible de supprimer l'album de la database:", error)
+            }
+        }
         setAlbums(albums.filter((album) => album._id !== id))   
     }
 
@@ -60,11 +70,10 @@ const AlbumList = () => {
     }
 
     // Handle Vote Ending
-    const handleVoteEnding = async (id, closed) =>{
-
+    const handleAlbumClose = async (id, closed) =>{
 
         try{
-            const response = await fetch(`http://localhost:5000/albums/${id}/close`,{
+            const response = await fetch(`http://localhost:5000/api/albums/${id}/close`,{
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }
             })
@@ -97,7 +106,7 @@ const AlbumList = () => {
         try {
             console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
             
-            const response = await fetch(`http://localhost:5000/albums/${id}`, {
+            const response = await fetch(`http://localhost:5000/api/albums/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -154,7 +163,7 @@ const AlbumList = () => {
     const handleSubmitNewAlbum = async (e) => {
         e.preventDefault()
         try {
-            const response = await fetch('http://localhost:5000/albums',{
+            const response = await fetch('http://localhost:5000/api/albums',{
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -183,9 +192,10 @@ const AlbumList = () => {
         }
     }
 
+    // Album Winner
     const handleWinner = async (albumId) => {
         try{
-            const response = await fetch(`http://localhost:5000/albums/${albumId}/winner`, {
+            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/winner`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -345,7 +355,7 @@ const AlbumList = () => {
                                                     label: `${album.closed ? "Réouvrir" : "Cloturer"} les votes`,
                                                     icon: <Vote className="h-4 w-4" />,
                                                     onClick: () => {
-                                                        handleVoteEnding(album._id, album.closed)
+                                                        handleAlbumClose(album._id, album.closed)
                                                         if(!album.closed){
                                                             handleWinner(album._id)
                                                         }

@@ -63,10 +63,14 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
               value={password}
               required
             />
-            <button className='absolute right-4 top-3'
-                    onClick={(e) => {
-                      e.preventDefault()
-                      setShowPassword(!showPassword)}}
+            <button 
+              type="button" 
+              className='absolute right-4 top-2 hover:border cursor-pointer hover:border-accent rounded-md p-1'
+              title="Voir/Masquer mdp"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowPassword(!showPassword);
+              }}
             >
               {showPassword ? <EyeOff size={18}/> : <Eye size={18} />}
             </button>

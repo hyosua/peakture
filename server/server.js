@@ -26,9 +26,9 @@ app.use(cookieParser())
 // Routes
 app.use("/api/auth", authRoutes)
 app.use("/api/family", family)
-app.use("/albums", albums)
-app.use("/photos", photos)
-app.use("/user", user)
+app.use("/api/albums", albums)
+app.use("/api/photos", photos)
+app.use("/api/user", user)
 
 app.use(errorHandler)
 
