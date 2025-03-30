@@ -26,7 +26,7 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 - **Authentification** : JWT
 - **Stockage d'images** : Cloudinary
 - **Envoi d'e-mails** : SendGrid
-- **Autres** : Axios, React Router DOM, React Masonry CSS, Motion
+- **Autres** : React Router DOM, React Masonry CSS, Motion
 
 ## Installation et Configuration
 
@@ -36,19 +36,19 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 
 ### Installation
 1. **Cloner le projet**
-   ```sh
+   ```
    git clone https://github.com/ton-utilisateur/peakture.git
    cd peakture
    ```
 
 2. **Installer les dépendances**
    - Pour le serveur :
-     ```sh
+     ```
      cd server
      npm install
      ```
    - Pour le client :
-     ```sh
+     ```
      cd client
      npm install
      ```
@@ -70,12 +70,12 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 
 ### Lancer l'application
 - **Démarrer le serveur** :
-  ```sh
+  ```
   cd server
   npm run dev
   ```
 - **Démarrer le client** :
-  ```sh
+  ```
   cd client
   npm run dev
   ```
