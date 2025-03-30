@@ -29,7 +29,7 @@ export const getPhotosFromAlbum = async (req, res) => {
 
 export const addPhoto = async (req, res) => {
     try {
-        const { albumId, src, user } = req.body
+        const { albumId, src, userId, username } = req.body
 
         if( !albumId || !src ) {
             return res.status(400).json({message: "Album Id and Image URL are required" })
@@ -40,7 +40,8 @@ export const addPhoto = async (req, res) => {
             albumId,
             src,
             votes: 0,
-            user,
+            userId,
+            username,
             createdAt: new Date()
         }
         const result = await Photo.create(photoData)
@@ -249,61 +250,39 @@ export const replacePhoto = async (req,res) => {
 }
 
 export const votePhoto = async (req,res) => {
-    const photoId = new ObjectId(req.params.id)
-    const { src, albumId } = req.body
-
-    if(!src || !albumId){
-        return res.status(404).json({
-            message: "Img Url ou AlbumId manquant"
-        })
-    }
-
-    const updatedPhoto = {
-        src: src,
-        albumId: albumId,
-        votes: 0
-    }
-    
-    // récupération de l'ancienne photo
-    const photo = await Photo.findOne({ _id: photoId });
-    const albumCover = await Album.findOne({
-        _id: new ObjectId(albumId),
-        cover: photo.src
-    })
+    const session = await mongoose.startSession()
+    session.startTransaction()
 
     try {
-        const result = await Photo.updateOne(
-            { _id: photoId },
-            { $set: updatedPhoto }
-        )
+        const photoId = new ObjectId(req.params.id)
+        const userId = req.user._id
+        const {albumId} = req.body
 
-        if(result.matchedCount === 0){
-            return res.status(404).json({
-                message: "Photo non trouvée"
-            })
-        }
 
-        if(albumCover){
-            await Album.updateOne(
-                {_id: new ObjectId(albumId) },
-                { $set: { cover: updatedPhoto.src } }
+        const previousVote = await Photo.findOne({ albumId, votedBy: userId})
+
+        if(previousVote){
+            await Photo.updateOne(
+                { _id: previousVote._id },
+                { $inc: {votes: -1 }, $pull: { votedBy: userId }},
+                {session}
             )
         }
 
-        const newPhoto = await Photo.findOne({
-            _id:  photoId
-        })
+        await Photo.updateOne(
+            { _id: photoId },
+            { $inc: { votes: 1 }, $push: { votedBy: userId }},
+            {session}
+        )
 
-        res.json({
-            message: "L'image a bien été mise à jour",
-            photo: newPhoto 
-        })
-    
-    } catch (error){
-        console.error('Erreur lors du changement de la photo:', error)
-        res.status(500).json({
-            message: 'Erreur lors du changement de la photo',
-            error: error.message
-        })
+        await session.commitTransaction()
+        session.endSession()
+        const updatedPhotos = await Photo.find( { albumId })
+
+        res.json(updatedPhotos)
+    } catch (error) {
+        await session.abortTransaction()
+        session.endSession()
+        res.status(500).json( {message: "Erreur lors du vote", error: error.message })
     }
 }

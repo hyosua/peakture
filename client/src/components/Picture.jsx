@@ -16,7 +16,7 @@
         useEffect(() => {
             const getUserData = async () => {
                 try {
-                    const response = await fetch(`http://localhost:5000/api/user/${photo.user}`);
+                    const response = await fetch(`http://localhost:5000/api/user/${photo.userId}`);
                     if (!response.ok) {
                         throw new Error(`Erreur: ${response.statusText}`);
                     }
@@ -27,16 +27,16 @@
                 }
             };
     
-            if (photo.user) {
+            if (photo.userId) {
                 getUserData();
             }
-        }, [photo.user]);
+        }, [photo.userId]);
 
         const handleVote = () => {
             const now = Date.now();
             if (now - lastTap < 300) { // Si deuxième tap rapide
                 if(!albumClosed){
-                    if(currentUser?._id !== photo.user ){
+                    if(currentUser?._id !== photo.userId ){
                          onVote(photo._id);
                     }else{
                         setPhotoClickId(photo._id)
@@ -66,7 +66,7 @@
         
         return (
             
-                <div className="w-full relative m-4 mb-20 p-2 group inline-block">
+                <div className="w-full relative mb-20 p-2 group inline-block">
 
                     {/*Username*/}
                     {userData && (
@@ -78,7 +78,7 @@
                     
                     
                     {/* Modifier L'image */}
-                    {currentUser?._id === photo.user && (
+                    {currentUser?._id === photo.userId && (
                         <div className='absolute top-2 right-2 z-20'>
                             <EditDropdown
                                 actions={[
@@ -106,7 +106,7 @@
                             <motion.button 
                                 onDoubleClick={() => {
                                     if(!albumClosed){
-                                        if(currentUser?._id !== photo.user ){
+                                        if(currentUser?._id !== photo.userId ){
                                             onVote(photo._id)
                                         }else{
                                             setPhotoClickId(photo._id)
@@ -183,7 +183,7 @@
         photo: PropTypes.shape({
             src: PropTypes.string.isRequired,
             _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-            user: PropTypes.string,
+            userId: PropTypes.string,
             votes: PropTypes.number
         }).isRequired,
     };

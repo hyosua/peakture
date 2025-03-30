@@ -13,8 +13,11 @@ const photoSchema = new mongoose.Schema({
     votes:{
         type: Number,
     },
-    user:{ 
+    userId:{ 
         type: mongoose.Schema.Types.ObjectId, ref: 'User'
+    },
+    username:{
+        type: String, ref: 'User'
     },
     votedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
     

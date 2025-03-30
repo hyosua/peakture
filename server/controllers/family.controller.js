@@ -7,6 +7,7 @@ import me from '../routes/auth.routes.js'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
+import Photo from '../models/photo.model.js'
 
 export const getFamily = async (req, res) => {
     try {
@@ -187,6 +188,27 @@ export const getAlbums = async (req, res) => {
         res.json(albums)
     } catch (error){
         console.error("Erreur dans getAlbums Family Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
+
+export const getPeakture = async (req, res) => {
+    try{
+        const familyId = req.params.id
+        const lastClosedAlbum = await Album.findOne(
+            {familyId, closed: true}
+        ).sort({ createdAt: -1})
+        
+        if(!lastClosedAlbum){
+            return res.status(404).json({ message: 'Aucun album cloturé' })
+        }
+        const peakture = await Photo.findOne({
+            _id: lastClosedAlbum.photoWin
+    })
+
+        return res.json(peakture)
+    }catch (error){
+        console.error("Erreur dans getPeakture Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }

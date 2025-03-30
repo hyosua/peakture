@@ -78,17 +78,17 @@ export const getWinner = async (req, res) => {
         }
 
         const winningPhoto = classementPhotos[0]
-        const winner = await User.findOne({_id: winningPhoto.user})
-        
-        if(!winner){
-            return res.status(404).json({ message: "Utilisateur gagnant non trouvé"})
+        console.log("Winning photo:", winningPhoto)
+        const winner = await User.findById(winningPhoto.userId);
+        if (!winner) {
+            return res.status(404).json({ message: "Utilisateur gagnant non trouvé" });
         }
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winner}},
+            { $set: { winner: winningPhoto.userId, photoWin: winningPhoto._id }},
             { new: true }
-        ).populate('winner')
+        ).populate('winner').populate('photoWin')
 
         if(!result) {
             console.log("Erreur lors de l'ajout du winner")
@@ -163,7 +163,7 @@ export const hasSubmitted = async (req, res) => {
         }
 
         const userId = req.user.id
-        const result = await Photo.findOne({ albumId, user: userId})
+        const result = await Photo.findOne({ albumId, userId})
 
         
 

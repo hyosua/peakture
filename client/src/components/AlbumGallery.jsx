@@ -151,7 +151,8 @@ const AlbumGallery = () => {
                 body: JSON.stringify({
                     albumId: album._id,
                     src: imageUrl,
-                    user: currentUser._id
+                    userId: currentUser._id,
+                    username: currentUser.username
                 })
             })
 
@@ -331,7 +332,7 @@ const AlbumGallery = () => {
         <div className="lg:p-10">
             <div className="flex items-center relative justify-center">
                 <button 
-                    className="fixed left-4 top-4 text-accent btn btn-sm btn-soft"
+                    className="fixed z-30 left-4 top-4 text-accent btn btn-sm btn-soft"
                     onClick={() => navigate(`/family/${album.familyId}`)}
                 >
                     <ArrowBigLeft size={22}/>

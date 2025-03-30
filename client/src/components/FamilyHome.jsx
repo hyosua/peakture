@@ -1,7 +1,7 @@
 import localAlbums from '../data/albumsData'
-import PictureOfTheMonth from './PictureOfTheMonth'
+import Peakture from './Peakture.jsx'
 import '../App.css'
-import AlbumList from './AlbumList'
+import AlbumList from './AlbumList.jsx'
 import { useAuth } from '../context/AuthContext.jsx';
 import { useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
@@ -74,7 +74,7 @@ const FamilyHome = () => {
                     </button>
                     </p>
                     
-                    <PictureOfTheMonth winner='Alaina' 
+                    <Peakture winner='Alaina' 
                                         photo={albumFevrier.photos[0].src} 
                                         id='0' 
                                         voteCount='35' 

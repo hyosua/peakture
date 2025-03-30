@@ -320,8 +320,8 @@ const AlbumList = () => {
             
             
             {/* Albums Grid */}
-            <div className='flex'>
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
+            <div className='flex '>
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
                     {albums.map((album) => (
                         <div
                             key={album._id}
@@ -337,7 +337,7 @@ const AlbumList = () => {
                                 <h3 className='mb-2 font-semibold'>{album.month}</h3>
                                 <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"} 
                                     alt={album.month} 
-                                    className='w-full h-48 object-cover mb-2' 
+                                    className='w-full h-60  max-w-60 max-h-60 rounded-md object-cover mb-2' 
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
