@@ -7,6 +7,8 @@ import me from '../routes/auth.routes.js'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
+import { sendFamilyNotification } from '../lib/utils/sendEmail.js'
+
 import Photo from '../models/photo.model.js'
 
 export const getFamily = async (req, res) => {
@@ -67,8 +69,6 @@ export const create = async (req, res) => {
             inviteCode
         })
 
-
-
         if(newFamily){
             if(req.user){
                 await User.updateOne(
@@ -81,7 +81,7 @@ export const create = async (req, res) => {
             }
             if(req.guest){
                 await Guest.updateOne(
-                    {_id: req.user._id}, 
+                    {_id: user._id}, 
                     {
                         role: "admin",
                         familyId: newFamily._id
@@ -90,6 +90,11 @@ export const create = async (req, res) => {
             }
             await newFamily.save()
             const family = newFamily
+
+            if (req.user) { // Envoi de l'email de notification à l'utilisateur enregistré
+                 sendFamilyNotification(user.email, user.username, family.name, family._id, family.inviteCode)
+            }
+
             res.status(201).json({
                 _id: newFamily._id,
                 family,
@@ -200,7 +205,8 @@ export const getPeakture = async (req, res) => {
         ).sort({ createdAt: -1})
         
         if(!lastClosedAlbum){
-            return res.status(404).json({ message: 'Aucun album cloturé' })
+            console.log("Pas d'album trouvé")
+            return res.status(404).json({ message: 'Aucun album trouvé' })
         }
         const peakture = await Photo.findOne({
             _id: lastClosedAlbum.photoWin

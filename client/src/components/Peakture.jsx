@@ -12,6 +12,10 @@ const Peakture = () => {
             fetch(`http://localhost:5000/api/family/${familyId}/peakture`)
             .then((res) => {
                 if (!res.ok) {
+                    if(res.status === 404) {
+                        console.log("Aucun album trouvé")
+                        return null
+                    }
                     throw new Error(`HTTP error! Status: ${res.status}`);
                 }
 
