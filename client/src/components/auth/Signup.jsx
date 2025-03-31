@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { EyeOff,Eye, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import InviteCode from '../InviteCode.jsx';
 
 const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
   const { login } = useAuth()
@@ -114,15 +115,27 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
             onChange={handleChange}
             required 
           />
-          <input 
-            type="password" 
-            name="password"
-            placeholder="Mot de passe" 
-            className="input input-bordered w-full" 
-            value={formData.password}
-            onChange={handleChange}
-            required 
-          />
+          <div className='relative'>
+            <input 
+              type={showPassword ? "text" : "password"} 
+              name="password"
+              placeholder="Entrer le mot de passe" 
+              className="input input-bordered w-full" 
+              value={formData.password}
+              onChange={handleChange}
+              required 
+            />
+            <button 
+                  type="button"
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer'
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setShowPassword(!showPassword)
+                  }}
+                  >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}        
+            </button>
+          </div>
           <div className='relative'>
             <input 
               type={showPassword ? "text" : "password"} 
@@ -144,6 +157,8 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}        
             </button>
           </div>
+
+          <InviteCode />
           
           <button 
             type="submit" 

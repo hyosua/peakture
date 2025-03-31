@@ -217,3 +217,23 @@ export const getPeakture = async (req, res) => {
         return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }
+
+export const validateInviteCode = async (req, res) => {
+    try{
+        const {inviteCode} = req.body
+        const existingFamily = await Family.findOne(
+            {inviteCode: inviteCode}
+        )
+        
+        if(!existingFamily){
+            return res.status(404).json({ message: 'Aucune famille ne correspond' })
+        }
+
+        const familyName = existingFamily.name
+        return res.status(200).json({ message: `Code valide, la famille ${familyName} t'attend!`})
+
+    }catch (error){
+        console.error("Erreur dans getPeakture Family Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
