@@ -282,7 +282,7 @@ const AlbumGallery = () => {
     // Vérifie si l'user à déjà participé à l'album
     const checkHasSubmitted = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/albums/${id}/has-submitted`, {
+            const response = await fetch(`${API_BASE_URL}/api/photos/${id}/has-submitted`, {
                 method: "GET",
                 credentials: "include" 
             });
@@ -439,7 +439,7 @@ const AlbumGallery = () => {
                             <Upload size={64} className="mb-4" />
                         </motion.button>
                         <p className="text-xl mb-2">Aucune Photo pour le moment.</p> 
-                        <p>Soyez le premier!</p>                        
+                        <p>Sois le premier !</p>                        
                     </div>
                 )} 
 

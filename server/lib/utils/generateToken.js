@@ -19,7 +19,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         const sessionId = uuidv4()
 
         res.cookie("sessionId", sessionId,{
-            maxAge: 30 * 60 * 1000, // 30 minutes
+            maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
             sameSite:"strict", // CSRF attacks cross-site request forgery attacks
             secure: process.env.NODE_ENV !== "development", 

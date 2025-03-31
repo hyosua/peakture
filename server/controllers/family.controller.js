@@ -205,7 +205,6 @@ export const getPeakture = async (req, res) => {
         ).sort({ createdAt: -1})
         
         if(!lastClosedAlbum){
-            console.log("Pas d'album trouvé")
             return res.status(404).json({ message: 'Aucun album trouvé' })
         }
         const peakture = await Photo.findOne({

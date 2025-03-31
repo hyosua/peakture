@@ -155,29 +155,7 @@ export const closeAlbum = async (req, res) => {
     }
 }
 
-export const hasSubmitted = async (req, res) => {
-    try {
-        const albumId = req.params.id
-        if(req.guest){
-            return res.status(403).json({ message: "Tu dois t'inscrire pour participer"})
-        }
 
-        const userId = req.user.id
-        const result = await Photo.findOne({ albumId, userId})
-
-        
-
-        if(result){
-            return res.status(403).json({ message: "Tu as déjà participé dans cet album" })
-        }
-
-        return res.status(200).json({ message: "Tu peux ajouter une photo"})
-    
-    }catch(error){
-        console.error("Erreur dans album route:", error.message)
-        return res.status(500).json({ error: "Erreur interne du serveur." })
-    }
-}
 
 export const deleteAlbumFromCloudinary = async (req, res) => {
     try {

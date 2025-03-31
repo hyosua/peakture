@@ -100,7 +100,6 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
                             color: white;
                             text-align: center;
                             text-decoration: none;
-                            color: white;
                             border-radius: 5px;
                             font-weight: bold;
                         }

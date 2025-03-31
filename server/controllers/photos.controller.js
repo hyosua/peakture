@@ -286,3 +286,23 @@ export const votePhoto = async (req,res) => {
         res.status(500).json( {message: "Erreur lors du vote", error: error.message })
     }
 }
+
+export const hasSubmitted = async (req, res) => {
+    try {
+        const albumId = req.params.id
+
+        const user = req.user || req.guest
+        const result = await Photo.findOne({ albumId, userId: user._id})
+        console.log("userid: has submitted:", user._id, result)
+
+        if(result){
+            return res.status(403).json({ message: "Tu as déjà participé dans cet album" })
+        }
+
+        return res.status(200).json({ message: "Tu peux ajouter une photo"})
+    
+    }catch(error){
+        console.error("Erreur dans photos hasSubmitted controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}

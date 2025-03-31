@@ -1,13 +1,18 @@
 import User from "../models/user.model.js"
+import Guest from "../models/guest.model.js"
 import { ObjectId } from "mongodb";
 
 export const getUserData = async (req, res) => {
     try{
         const userId = req.params.userid
-        const user = await User.findOne({ _id: new ObjectId(userId) })
+        let user = await User.findOne({ _id: new ObjectId(userId) })
 
         if(!user){
-            return res.status(404).json({ message: "Utilisateur introuvable"})
+            user = await Guest.findOne({ _id: new ObjectId(userId) })
+            if(!user){
+                console.log("Oops Utilisateur non trouvé")
+                return res.status(404).json({message: "Utilisateur non trouvé"})
+            }
         }
         return res.status(200).json(user)
     }catch(error){

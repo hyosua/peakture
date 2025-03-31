@@ -229,7 +229,7 @@ const AlbumList = () => {
   
     
     return (
-        <div className=' mx-auto p-4 mb-24'> 
+        <div className='flex flex-col justify-center items-center mx-auto p-4 mb-24'> 
             <div className='flex justify-between items-center mb-6'>
                 <h1 className='text-2xl text-white font-bold'>Albums</h1>
             </div>
@@ -320,7 +320,6 @@ const AlbumList = () => {
             
             
             {/* Albums Grid */}
-            <div className='flex '>
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
                     {albums.map((album) => (
                         <div
@@ -409,21 +408,18 @@ const AlbumList = () => {
                         </div>
                     ))}
 
-                    { isAdmin && (
-                        <div className='flex items-center justify-center'>
-                            <button
-                                className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
-                                onClick={() => setShowAddForm(true)}
-                            >
-                                <Plus size={24} />
-                            </button>
-                        </div>
-                    )}
                     
                      
                 </div>
-            </div>
             
+                { isAdmin && (
+                        <button
+                            className='p-6 btn btn-primary mt-6 rounded-full hover:text-neutral flex items-center cursor-pointer'
+                            onClick={() => setShowAddForm(true)}
+                        >
+                            <Plus size={24} />
+                        </button>
+                    )}
            
         </div>
     )
