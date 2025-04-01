@@ -6,7 +6,7 @@ import { sendSignupNotification } from '../lib/utils/sendEmail.js'
 
 export const signup = async (req, res) => {
     try {
-        const { username, email, password } = req.body
+        const { username, email, password, inviteCode } = req.body
         
         const existingUser = await User.findOne({ username })
         if(existingUser){
@@ -27,6 +27,22 @@ export const signup = async (req, res) => {
             email,
             password: hashedPassword
         })
+
+        console.log("Invite code", inviteCode)
+        if(inviteCode){
+            const result = await Family.findOneAndUpdate(
+                { inviteCode },
+                { $push: { members: newUser._id }},
+                { new: true }
+            )
+            console.log("Family update Result:", result)
+            if(!result){
+                return res.status(400).json({error: "Code d'invitation invalide"})
+            }
+            
+            newUser.familyId = result._id
+            
+        }
 
         if(newUser){
             generateTokenAndSetCookie(res, newUser._id)

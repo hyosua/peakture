@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
+import PropTypes from "prop-types";
 
-
-export default function InviteCode() {
+export default function InviteCode({ onInputChange }) {
   const [inviteCode, setInviteCode] = useState("")
   const [validation, setValidation] = useState(null)
   const [showInviteCode, setShowInviteCode] = useState(false)
@@ -30,6 +30,12 @@ export default function InviteCode() {
       console.error("Erreur lors de la validation du code d'invitation:", error);
     }
   }
+
+  const handleChange = (event) => {
+    setInviteCode(event.target.value)
+    onInputChange(event.target.value)
+    console.log("Invite code:", event.target.value)
+  }
   
     return (
       <>
@@ -48,9 +54,7 @@ export default function InviteCode() {
                   className="input input-bordered w-full validator" 
                   pattern="[A-F0-9]{6}" 
                   value={inviteCode}
-                  onChange={
-                    (e) => {setInviteCode(e.target.value)
-                  }}
+                  onChange={(e) => handleChange(e)}
                   title="Code hexadécimal (6 caractères, A-F, 0-9)" 
                   onInput={(e) => e.target.value = e.target.value.toUpperCase()}
               />
@@ -80,6 +84,9 @@ export default function InviteCode() {
     
 }
 
+InviteCode.propTypes = {
+  onInputChange: PropTypes.func.isRequired,
+};
 
 
   

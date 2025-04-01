@@ -18,6 +18,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -64,7 +65,8 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
         body: JSON.stringify({
           username: formData.username,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          inviteCode: formData.inviteCode
         })
       });
 
@@ -84,6 +86,15 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
       setIsLoading(false);
     }
   };
+
+  const handleInviteInputChange = (value) => {
+    console.log("handleinviteinputchange: ", value)
+    setFormData(prev => ({
+      ...prev,
+      inviteCode: value
+    }));
+    console.log("Form data: ", formData)
+  }
 
   return (
     <div className="card w-full bg-base-100 shadow-2xl">
@@ -158,7 +169,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
             </button>
           </div>
 
-          <InviteCode />
+          <InviteCode onInputChange={handleInviteInputChange}/>
           
           <button 
             type="submit" 
