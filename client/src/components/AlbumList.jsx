@@ -4,6 +4,7 @@ import { Plus, X, Check, Edit, Trash, Vote} from 'lucide-react'
 import EditDropdown from './EditDropdown.jsx'
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from '../context/AuthContext.jsx';
+import ConfirmMessage from './ConfirmMessage.jsx'
 
 
 const AlbumList = () => {
@@ -12,6 +13,8 @@ const AlbumList = () => {
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
     const [classement, setClassement] = useState(null)
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
     const { familyId } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: '',
@@ -340,7 +343,11 @@ const AlbumList = () => {
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
-                                {album.winner && <h4 className='font-semibold'>Winner: <span className='text-primary'><i>{album.winner.username}</i></span></h4>}
+                                {album.winner && 
+                                    <div className='flex gap-2 items-center'>
+                                        <img src='https://img.icons8.com/?size=100&id=uveiovUxXKW2&format=png&color=000000 ' className='w-5 h-5'/>
+                                        <span className='font-semibold text-warning'><i>{album.winner.username}</i> </span>
+                                    </div> }
                                 { isAdmin && (
                                     <div className='absolute top-2 right-2'>
                                         <EditDropdown
@@ -363,7 +370,7 @@ const AlbumList = () => {
                                                 {
                                                 label: "Supprimer",
                                                 icon: <Trash className="h-4 w-4 text-red-500" />,
-                                                onClick: () => deleteAlbum(album._id),
+                                                onClick: () => setIsConfirmOpen(true),
                                                 },
                                                 
                                             ]}
@@ -405,10 +412,26 @@ const AlbumList = () => {
 
                             )}
 
+                        <ConfirmMessage
+                            title="Supprimer cet album ?"
+                            message="Es-tu sûr(e) de vouloir supprimer cet album ? Cette action est irréversible et tout son contenu sera perdu."
+                            onConfirm={(e) => {
+                                deleteAlbum(album._id)
+                                setIsConfirmOpen(false)
+                                e.stopPropagation()
+                            }}
+                            onCancel={(e) => {
+                                setIsConfirmOpen(false)
+                                e.stopPropagation()
+                            }}
+                            isOpen={isConfirmOpen}
+                        />     
+
                         </div>
+                        
                     ))}
 
-                    
+                                   
                      
                 </div>
             

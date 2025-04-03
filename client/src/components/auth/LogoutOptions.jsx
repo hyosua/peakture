@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { useParams, useNavigate } from 'react-router-dom'
 import { useClickAway } from "react-use";
 import PropTypes from "prop-types";
-
+import ConfirmMessage from '../ConfirmMessage.jsx';
 
 
 
@@ -15,6 +15,7 @@ const LogoutOptions = ({ setErrorMessage }) => {
     const dropdownRef = useRef(null);
     const navigate = useNavigate()
     const { familyId } = useParams()
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     useClickAway(dropdownRef, () => setIsOpen(false));
 
     const {currentUser,logout, fetchCurrentUser} = useAuth()
@@ -94,7 +95,7 @@ const LogoutOptions = ({ setErrorMessage }) => {
                           <button
                           onClick={(e) => {
                               e.stopPropagation() 
-                              handleFamilyLogout(e)
+                              setIsConfirmOpen(true)
                               setIsOpen(false)
                           }}
                           className="flex cursor-pointer font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100"
@@ -107,7 +108,14 @@ const LogoutOptions = ({ setErrorMessage }) => {
                   </ul>
                   </motion.div>
                 )}
-            
+
+                <ConfirmMessage
+                  title="Quitter cette Family ?"
+                  message="Attention, si tu te déconnectes de cette famille, tu devras entrer le code d’invitation pour revenir. Es-tu sûr(e) de vouloir partir ?"
+                  onConfirm={(e) => handleFamilyLogout(e)}
+                  onCancel={() => setIsConfirmOpen(false)}
+                  isOpen={isConfirmOpen}
+                />
           </div>
       )
 }
