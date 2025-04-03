@@ -5,7 +5,7 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState } from "react";
 
-    const Picture = ({ photo, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumClosed }) => {
+    const Picture = ({ photo, album, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumClosed }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
         const [photoClickId, setPhotoClickId] = useState(null)
@@ -149,7 +149,7 @@
                                         animate={{ y: 0, opacity: 1 }}
                                         exit={{ y: -20, opacity: 0 }}
                                         transition={{ duration: 0.3  }}
-                                        className="indicator-item indicator-bottom indicator-center badge badge-primary text-neutral font-bold text-sm"
+                                        className={`indicator-item indicator-bottom indicator-center badge ${photo._id === album?.photoWin ? "badge-warning" : "badge-primary"} text-neutral font-bold text-sm`}
                                     >
                                         {photo.votes}
                                     </motion.span>
@@ -159,7 +159,7 @@
                                         key={photo._id} 
                                         src={photo.src} 
                                         alt={`Photo ${photo._id}`} 
-                                        className={`rounded-xl w-full h-auto max-w-96 ${isVotedId ? "border-primary border-4" : "border-0"}`} 
+                                        className={`rounded-xl w-full h-auto max-w-96 ${isVotedId ? "border-primary border-4" : photo._id === album?.photoWin ? "border-amber-500 border-6" : "border-0"}`} 
                                         initial={{ scale: 1 }}
                                         animate={{ scale: isVotedId ? 1.05 : 1 }}
                                         transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
@@ -185,6 +185,9 @@
             _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
             userId: PropTypes.string,
             votes: PropTypes.number
+        }).isRequired,
+        album: PropTypes.shape({
+            photoWin: PropTypes.bool
         }).isRequired,
     };
 

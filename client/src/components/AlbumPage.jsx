@@ -6,6 +6,7 @@ import Picture  from "./Picture.jsx"
 import { motion } from "framer-motion";
 import { useAuth } from '../context/AuthContext.jsx';
 import  Auth  from './auth/Auth.jsx'
+import ContestResults from "./ContestResults.jsx"
 
 const breakpointColumns = {
     default: 3,
@@ -14,7 +15,7 @@ const breakpointColumns = {
     500: 1
 };
 
-const AlbumGallery = () => {
+const AlbumPage = () => {
     const API_BASE_URL = 'http://localhost:5000'
     const { id } = useParams()
     const navigate = useNavigate()
@@ -33,6 +34,7 @@ const AlbumGallery = () => {
     const [showSignupForm, setShowSignupForm] = useState(false)
     const [successSignup, setSuccessSignup] = useState(false)
     const [error, setError] = useState('')
+    const [voteResultsData, setVoteResultsData] = useState([])
 
 
     const {currentUser} = useAuth()
@@ -58,6 +60,14 @@ const AlbumGallery = () => {
                 const photosData = await photosResponse.json()
                 setPhotos(photosData.photos || [])
                 
+                // Set the vote results data
+                if(albumData.closed){
+                    const results = photosData.photos.map(photo => ({
+                        name: photo.username,
+                        votes: photo.votes || 0
+                    }))
+                    setVoteResultsData(results)
+                }
 
             } catch(error){
                 console.error("Error while fetching album data:", error)
@@ -330,6 +340,7 @@ const AlbumGallery = () => {
 
     return (
         <div className="lg:p-10">
+            {/* Header */}
             <div className="flex items-center relative justify-center">
                 <button 
                     className="fixed z-30 left-4 top-4 text-accent btn btn-sm btn-soft"
@@ -373,6 +384,7 @@ const AlbumGallery = () => {
                 </div>
             )}
             
+            {/* Signup Success */}
             { successSignup && (
                 <div role="alert" className="fixed z-50 alert alert-success">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
@@ -381,7 +393,8 @@ const AlbumGallery = () => {
                     <span>Inscription réussie!</span>
                 </div>
             )}
-                
+            
+            {/* Signup Form */}
             { showSignupForm && (
              <Auth 
                 signUp={true} 
@@ -400,6 +413,10 @@ const AlbumGallery = () => {
             
             {/* Photo Gallery */}
             <div className=" flex flex-col items-center justify-center">
+                 {/* Contest Results */}
+                 {album?.closed && (
+                    <ContestResults results={voteResultsData} />
+                )}
                 {photos.length > 0 ? (
                     <Masonry 
                             breakpointCols={breakpointColumns}
@@ -411,6 +428,7 @@ const AlbumGallery = () => {
                             <div key={photo._id} className="m-4 break-inside-avoid">
                                 <Picture 
                                     photo={photo}
+                                    album={album}
                                     photoUrl={photo.src} 
                                     id={photo._id} 
                                     onVote={handleVote}
@@ -464,89 +482,90 @@ const AlbumGallery = () => {
                 </div>
                 )}
                 
+               
                 
 
             </div>
             
             
-
-                {showUploadForm && (
-                    <div className="fixed inset-0 bg-black/70 flex items-center p-2 justify-center z-50">
-                        <div className="bg-base-100 p-6 w-full max-w-sm lg:max-w-lg rounded-lg">
-                                <form className="space-y-4"
-                                      onSubmit={handleSubmit} 
-                                    >
-                                    <div className='border-2 border-dashed border-secondary rounded-lg p-4 text-center'>
-                                        {preview ? (
-                                            <div className="relative">
-                                                <img 
-                                                    src={preview}
-                                                    alt="Preview"
-                                                    className="max-h-64 mx-auto rounded"
+            {/* Upload Form */}
+            {showUploadForm && (
+                <div className="fixed inset-0 bg-black/70 flex items-center p-2 justify-center z-50">
+                    <div className="bg-base-100 p-6 w-full max-w-sm lg:max-w-lg rounded-lg">
+                            <form className="space-y-4"
+                                    onSubmit={handleSubmit} 
+                                >
+                                <div className='border-2 border-dashed border-secondary rounded-lg p-4 text-center'>
+                                    {preview ? (
+                                        <div className="relative">
+                                            <img 
+                                                src={preview}
+                                                alt="Preview"
+                                                className="max-h-64 mx-auto rounded"
+                                            />
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    setPreview(null)
+                                                    setImage(null)
+                                                }}
+                                                className="absolute top-2 right-2 cursor-pointer bg-error hover:text-base-100  text-white rounded-full p-1"
+                                                >
+                                                <X size={20} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="py-8">
+                                            <Upload size={48} className="mx-auto text-white mb-2" />
+                                            <p className="text-gray-300 mb-6">Déposez votre image ici ou</p>
+                                            <label className="bg-white hover:bg-neutral text-black hover:text-white px-4 py-2 rounded cursor-pointer">
+                                                Parcourir
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageChange}
+                                                    className="hidden"
                                                 />
-                                                <button 
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setPreview(null)
-                                                        setImage(null)
-                                                    }}
-                                                    className="absolute top-2 right-2 cursor-pointer bg-error hover:text-base-100  text-white rounded-full p-1"
-                                                    >
-                                                    <X size={20} />
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="py-8">
-                                                <Upload size={48} className="mx-auto text-white mb-2" />
-                                                <p className="text-gray-300 mb-6">Déposez votre image ici ou</p>
-                                                <label className="bg-white hover:bg-neutral text-black hover:text-white px-4 py-2 rounded cursor-pointer">
-                                                    Parcourir
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={handleImageChange}
-                                                        className="hidden"
-                                                    />
-                                                </label>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {uploading && (
-                                        <div className="w-full bg-base-200 rounded-full h-2.5">
-                                            <div
-                                                className="bg-primary h-2.5 rounded-full"
-                                                style={{ width: `${uploadProgress}%`}}
-                                            ></div>
+                                            </label>
                                         </div>
                                     )}
+                                </div>
 
-                                    <div className="flex justify-end gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowUploadForm(false);
-                                                setPreview(null);
-                                                setImage(null);
-                                            }}
-                                            className="px-4 py-2 btn btn-ghost hover:text-base-100 hover:bg-error"
-                                            disabled={uploading}
-                                        >
-                                            Annuler
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="px-4 py-2 btn btn-primary disabled:opacity-50 hover:text-neutral hover:font-bold"
-                                            disabled={!image || uploading}
-                                        >
-                                            {uploading ? 'Chargement...' : 'Ajouter'}
-                                        </button>
+                                {uploading && (
+                                    <div className="w-full bg-base-200 rounded-full h-2.5">
+                                        <div
+                                            className="bg-primary h-2.5 rounded-full"
+                                            style={{ width: `${uploadProgress}%`}}
+                                        ></div>
                                     </div>
-                                </form>                            
-                        </div>
+                                )}
+
+                                <div className="flex justify-end gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowUploadForm(false);
+                                            setPreview(null);
+                                            setImage(null);
+                                        }}
+                                        className="px-4 py-2 btn btn-ghost hover:text-base-100 hover:bg-error"
+                                        disabled={uploading}
+                                    >
+                                        Annuler
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 btn btn-primary disabled:opacity-50 hover:text-neutral hover:font-bold"
+                                        disabled={!image || uploading}
+                                    >
+                                        {uploading ? 'Chargement...' : 'Ajouter'}
+                                    </button>
+                                </div>
+                            </form>                            
                     </div>
-                    
-                )}
+                </div>
+                
+            )}
             
 
         </div>
@@ -554,4 +573,4 @@ const AlbumGallery = () => {
     )
 }
 
-export default AlbumGallery
+export default AlbumPage

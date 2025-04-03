@@ -3,7 +3,7 @@ import { AuthProvider } from '../context/AuthContext';
 import { useAuth } from '../context/AuthContext';
 import PropTypes from 'prop-types';
 import FamilyHome from "./FamilyHome"
-import AlbumGallery from "./AlbumGallery"
+import AlbumPage from "./AlbumPage"
 import '../App.css'
 import Auth from './auth/Auth.jsx'
 import HomePage from './auth/HomePage'
@@ -60,7 +60,7 @@ const AppRoutes = () => {
         />
         <Route path="/auth" element={<Auth />} /> 
         <Route path="/login" element={<Login />} /> 
-        <Route path="/album/:id" element={<AlbumGallery />} />
+        <Route path="/album/:id" element={<AlbumPage />} />
       </Routes>
     </Layout>
     
