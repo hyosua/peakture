@@ -66,6 +66,7 @@ const AlbumPage = () => {
                         name: photo.username,
                         votes: photo.votes || 0
                     }))
+                    results.sort((a, b) => b.votes - a.votes)
                     setVoteResultsData(results)
                 }
 

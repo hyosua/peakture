@@ -159,12 +159,23 @@
                                         key={photo._id} 
                                         src={photo.src} 
                                         alt={`Photo ${photo._id}`} 
-                                        className={`rounded-xl w-full h-auto max-w-96 ${isVotedId ? "border-primary border-4" : photo._id === album?.photoWin ? "border-amber-500 border-6" : "border-0"}`} 
+                                        className={`rounded-xl relative w-full h-auto max-w-96 ${isVotedId ? "border-primary border-4" : photo._id === album?.photoWin ? "border-amber-500 border-6" : "border-0"}`} 
                                         initial={{ scale: 1 }}
                                         animate={{ scale: isVotedId ? 1.05 : 1 }}
                                         transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
                                     />
-                                </div>
+
+                                    { album?.photoWin === photo._id && (
+                                        <div>
+                                            <img 
+                                                src="https://img.icons8.com/?size=100&id=nwC3hqJGfjkT&format=png&color=000000" 
+                                                alt="Trophy" 
+                                                className="absolute -bottom-10 left-2 w-12 h-12"
+                                            />
+                                        </div>)}
+                                    </div>
+
+                                
                             </motion.button>
                     </div>
                 </div>
