@@ -14,7 +14,14 @@ import Photo from '../models/photo.model.js'
 export const getFamily = async (req, res) => {
     try {
         const id = req.params.id
+        console.log("Looking for family with ID:", id);
         const family = await Family.findById(new ObjectId(id));
+        console.log("Family found:", family ? "yes" : "no", family);
+        if(!family){
+            console.log("Returning 404 - Family not found");
+            return res.status(404).json({ message: "Famille non trouvée" })
+        }
+        console.log("Returning 200 with family data");
         res.status(200).json({ family })
     }catch (error){
         console.log("Error in getFamily controller", error.message)

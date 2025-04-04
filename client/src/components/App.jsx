@@ -9,6 +9,7 @@ import Auth from './auth/Auth.jsx'
 import HomePage from './auth/HomePage'
 import Login from './auth/Login'
 import Layout from './Layout.jsx'
+import { useState, useEffect } from 'react';
 
 // Protection des routes enfants
 const ProtectedRoute = ({ children }) => {
@@ -31,6 +32,26 @@ ProtectedRoute.propTypes = {
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
+  const [familyExists, setFamilyExists] = useState(null);
+
+  useEffect(() => {
+    const checkFamilyExists = async () => {
+      if(currentUser?.familyId){
+        try {
+          const response = await fetch(`http://localhost:5000/api/family/${currentUser.familyId}`)
+          if(response.ok){
+            setFamilyExists(true)
+          }else{
+            setFamilyExists(false)
+          }
+        }catch (error) {
+          console.error("Erreur lors de la vérification de l'existence de la famille", error)
+          setFamilyExists(false)
+        }
+      }
+    }
+    checkFamilyExists()
+  }, [currentUser])
   
   if (loading) {
     return  <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
@@ -44,9 +65,11 @@ const AppRoutes = () => {
         <Route 
           path="/" 
           element={
-            currentUser && currentUser.familyId ? 
-            <Navigate to={`/family/${currentUser.familyId}`} /> : 
-            <HomePage />
+            currentUser?.familyId && familyExists !== null
+              ? familyExists
+                ? <Navigate to={`/family/${currentUser.familyId}`} />
+                : <HomePage />
+              : <HomePage />
           } 
         />
         <Route 

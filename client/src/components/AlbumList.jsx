@@ -81,6 +81,11 @@ const AlbumList = () => {
                 headers: { "Content-Type": "application/json" }
             })
 
+            if(response.message === "égalité"){
+                console.log("Il y'a une égalité")
+                // handleTie()
+                return
+            }
             const updatedAlbum = await response.json()
             console.log("Updated album:", updatedAlbum)
     
@@ -96,6 +101,16 @@ const AlbumList = () => {
                 console.error('Status:', error.response.status);
             }
         }
+    }
+
+    // Gérer une égalité
+    const handleTie = async () => {
+        const response = await fetch(`http://localhost:5000/api/albums/${id}/tie`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" }
+        })
+        const updatedAlbum = await response.json()
+        console.log("Updated album:", updatedAlbum) 
     }
 
     // Save edited album

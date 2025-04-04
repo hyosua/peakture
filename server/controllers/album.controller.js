@@ -77,8 +77,11 @@ export const getWinner = async (req, res) => {
             return res.status(404).send("Aucun winner")
         }
 
+        if(classementPhotos[0] === classementPhotos[1]){
+            return res.status(404).json({ message: "égalité" })
+        }
+
         const winningPhoto = classementPhotos[0]
-        console.log("Winning photo:", winningPhoto)
         const winner = await User.findById(winningPhoto.userId);
         if (!winner) {
             return res.status(404).json({ message: "Utilisateur gagnant non trouvé" });

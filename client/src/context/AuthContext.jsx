@@ -9,6 +9,13 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    // empêche le rechargement de la page si l'utilisateur est déjà sur la bonne page
+    const safeNavigate = (path) => {
+        if (window.location.pathname !== path) {
+            window.location.href = path;
+        }
+    };
+
     const fetchCurrentUser = async () => {
         try {
             setLoading(true)
@@ -30,25 +37,51 @@ export const AuthProvider = ({ children }) => {
             
             if(userData.familyId){
                 try {
+                    console.log("Fetching family data for familyId:", userData.familyId)
                     const familyResponse = await fetch(`http://localhost:5000/api/family/${userData.familyId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
                         credentials: 'include'
                     })
-            
-                    if(familyResponse.ok){
+                    console.log("Family response status:", familyResponse.status);
+                    console.log("Family response ok:", familyResponse.ok);
+                    const responseText = await familyResponse.text();
+                    console.log("Family response body:", responseText);
+                    let familyData;
+                    try {
+                        familyData = JSON.parse(responseText);
+                        console.log("Parsed family data:", familyData);
+                    } catch (e) {
+                        console.error("Failed to parse response as JSON:", e);
+                    }
+                    if(familyResponse.status === 200){
+                        console.log("Family data fetched successfully:", familyData)
                         const familyData = await familyResponse.json()
                         setCurrentFamily(familyData)
+                        // Redirige l'utilisateur vers la page de la famille si il n'est pas déjà dessus
+                        const currentPath = window.location.pathname
+                        if(currentPath === '/' || currentPath.includes('login') || currentPath.includes('signup')){
+                            
+                            safeNavigate(`/family/${userData.familyId}`);
+                        }
+                    }else{
+                        console.error("Erreur lors de la récupération des données de la famille")
+                        setCurrentFamily(null)
+                        setCurrentUser(prev => ({...prev, familyId: null}))
+                        setLoading(false)
                     }
                 } catch (error) {
-                    console.error("Error fetching family data:", error)
-                }
-                
-                const currentPath = window.location.pathname
-                if(currentPath === '/' || currentPath.includes('login') || currentPath.includes('signup')){
-                    window.location.href = `/family/${userData.familyId}`
+                    setLoading(false)
+
+                    console.error("AuthContext Error fetching family data:", error)
                 }
             }
         } catch (error) {
-            console.error('Erreur en fetchant l\'utilisateur actuel:', error)
+            setLoading(false)
+
+            console.error('AuthContext Erreur en fetchant l\'utilisateur actuel:', error)
             setError('Echec lors de la récupération des données utilisateur')
         } finally {
             setLoading(false)
@@ -61,6 +94,8 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     const login = async (username, password) => {
+        setLoading(true)
+        setError(null)
         const result = await fetch('http://localhost:5000/api/auth/login', {
             method: 'POST',
             credentials: "include",
@@ -92,30 +127,19 @@ export const AuthProvider = ({ children }) => {
                 if(familyResponse.ok){
                     const familyData = await familyResponse.json()
                     setCurrentFamily(familyData)
-                    window.location.href = `/family/${response.familyId}`
+                   safeNavigate(`/family/${response.familyId}`)
+                }else{
+                    setLoading(false)
+                    console.error("Erreur lors de la récupération des données de la famille")
+                    setCurrentFamily(null)
                 }
             } catch (error){
                 console.error("AuthContext, login: erreur lors de la récupération de données de la famille: ",error)
             }
-            window.location.href = `/family/${response.familyId}`
         }
         
         return response
     }
-
-    useEffect(() => {
-        if (currentUser && currentUser.familyId && !currentFamily) {
-            setCurrentFamily(currentUser.familyId);
-    
-            // Vérifie si on est déjà sur la bonne page avant de rediriger
-            const currentPath = window.location.pathname;
-            const targetPath = `/family/${currentUser.familyId}`;
-            
-            if (currentPath !== targetPath) {
-                window.location.href = targetPath;
-            }
-        }
-    }, [currentUser, currentFamily]);
     
 
     
