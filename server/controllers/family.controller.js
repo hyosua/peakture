@@ -14,14 +14,10 @@ import Photo from '../models/photo.model.js'
 export const getFamily = async (req, res) => {
     try {
         const id = req.params.id
-        console.log("Looking for family with ID:", id);
         const family = await Family.findById(new ObjectId(id));
-        console.log("Family found:", family ? "yes" : "no", family);
         if(!family){
-            console.log("Returning 404 - Family not found");
             return res.status(404).json({ message: "Famille non trouvée" })
         }
-        console.log("Returning 200 with family data");
         res.status(200).json({ family })
     }catch (error){
         console.log("Error in getFamily controller", error.message)
@@ -126,7 +122,7 @@ export const join = async (req, res) => {
         // Vérification du code d'invitation
         const family = await Family.findOne({ inviteCode })
         if (!family) {
-            return res.status(400).json({ message: "Aucune famille ne correspond à ce code...", family: null })
+            return res.status(404).json({ message: "Aucune famille ne correspond à ce code...", family: null })
         }
 
         if (req.user) {
@@ -179,6 +175,67 @@ export const join = async (req, res) => {
         return res.status(201).json({ message: "Invité ajouté à la famille", family, sessionId })
     } catch (error) {
         console.error("Erreur dans join Family Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
+
+export const change = async (req, res) => {
+    try {
+        const { inviteCode } = req.body
+
+        // Vérification du code d'invitation
+        const family = await Family.findOne({ inviteCode })
+        const previousFamily = await Family.findById(req.user.familyId)
+        if (!family) {
+            return res.status(404).json({ message: "Aucune famille ne correspond à ce code...", family: null })
+        }
+
+        if (req.user) {
+            // Un utilisateur enregistré change de famille
+            req.user.familyId = family._id;  
+            await req.user.save();  
+
+            family.members.push(req.user._id)
+            await family.save()
+            if(previousFamily){
+                previousFamily.members.pull(req.user._id)
+                await previousFamily.save()
+            }
+
+            return res.status(201).json({ message: `Bienvenue dans la famille !`, family, user: req.user })
+        }
+
+        // Gestion des invités avec un sessionId
+        let sessionId = req.cookies.sessionId
+        let guest
+
+        if (!sessionId) {
+            sessionId = generateTokenAndSetCookie(res) // Générer un sessionId
+            guest = new Guest({ sessionId, familyId: [family._id] })
+            await guest.save()
+        } else {
+            // Vérifier si le guest existe déjà
+            guest = await Guest.findOne({ sessionId })
+            if (!guest) {
+                guest = new Guest({ sessionId, familyId: [family._id] })
+                await guest.save()
+            }
+        }
+
+        // Ajouter le guest à la famille
+            req.guest.familyId = family._id;  
+            await req.guest.save();  
+
+        if (!family.guestMembers.includes(guest._id)) {
+            family.guestMembers.push(guest._id)
+            await family.save()
+            previousFamily.guestMembers.pull(guest._id)
+            await previousFamily.save()
+        }
+
+        return res.status(201).json({ message: "Invité ajouté à la famille", family, sessionId })
+    } catch (error) {
+        console.error("Erreur dans change Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }

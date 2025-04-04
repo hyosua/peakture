@@ -45,19 +45,8 @@ export const AuthProvider = ({ children }) => {
                         },
                         credentials: 'include'
                     })
-                    console.log("Family response status:", familyResponse.status);
-                    console.log("Family response ok:", familyResponse.ok);
-                    const responseText = await familyResponse.text();
-                    console.log("Family response body:", responseText);
-                    let familyData;
-                    try {
-                        familyData = JSON.parse(responseText);
-                        console.log("Parsed family data:", familyData);
-                    } catch (e) {
-                        console.error("Failed to parse response as JSON:", e);
-                    }
+                    
                     if(familyResponse.status === 200){
-                        console.log("Family data fetched successfully:", familyData)
                         const familyData = await familyResponse.json()
                         setCurrentFamily(familyData)
                         // Redirige l'utilisateur vers la page de la famille si il n'est pas déjà dessus

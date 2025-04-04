@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import Auth from './Auth.jsx'
 import { CheckCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import ConfirmMessage from '../ConfirmMessage.jsx';
 
 const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');
@@ -17,6 +18,7 @@ const HomePage = () => {
   const [signupForm, setSignupForm] = useState(false)
   const [loading, setLoading] = useState(true);
   const [successSignup, setSuccessSignup] = useState(false)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const {currentUser, logout, fetchCurrentUser} = useAuth()
   const navigate = useNavigate()
@@ -37,14 +39,51 @@ const HomePage = () => {
         })
       }) 
       
+      if(result.status === 400){
+        setIsConfirmOpen(true)
+        return
+      }
 
       const familyData = await result.json()
       
       setServerResponse(familyData)
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
+    }finally{
+      if (!isConfirmOpen) {
+        setJoiningFamily(false);
+      }
     }
   };
+
+  const handleChangeFamily = async () => {
+    try{
+      const result = await fetch('http://localhost:5000/api/family/change',{
+        method :"PATCH",
+        credentials: 'include',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          inviteCode: joinCode
+        })
+    })
+
+    if (!result.ok) {
+      const errorText = await result.text();
+      console.error("Erreur de réponse:", result.status, errorText);
+      throw new Error(`Erreur ${result.status}: ${result.statusText}`);
+    }
+    
+      const familyData = await result.json()
+      setServerResponse(familyData)
+      setIsConfirmOpen(false)
+    }catch(error){
+      console.error("Erreur lors du changement de famille: ", error)
+    }finally {
+      setJoiningFamily(false);
+    }
+  }
 
   useEffect(() => {
     const handleFamilyJoin = async() => {
@@ -78,9 +117,9 @@ const HomePage = () => {
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
     }
-
-
   };
+
+  
 
   useEffect(() => {
     let timer
@@ -115,8 +154,8 @@ const HomePage = () => {
 
   if(loading) return (
     <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
-                    <span className="loading loading-infinity text-secondary loading-xl"></span>
-                 </div>
+      <span className="loading loading-infinity text-secondary loading-xl"></span>
+    </div>
     )
 
   return (
@@ -149,6 +188,19 @@ const HomePage = () => {
           </div>
         </div>
         )}
+
+        <ConfirmMessage 
+          isOpen={isConfirmOpen}
+          onCancel={() => {
+            console.log("Set confirm open to false")
+            setIsConfirmOpen(false)
+            console.log("Set joining family to false")
+            setJoiningFamily(false)
+          }}
+          title={"Changement de Family"}
+          message="Hey ! Tu fais déjà partie d’une famille sur Peakture. Si tu rejoins celle-ci, tu perdras l’accès à l’ancienne. Es-tu sûr de vouloir continuer ?"
+          onConfirm={handleChangeFamily}
+        />
 
         {/* LOGO */}
         <img src="/src/assets/img/logo/logo white.png" className='w-40 h-auto'/>
