@@ -157,3 +157,93 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
         console.error('Erreur lors de l\'envoi du mail:', error.response ? error.response.body: error.message)
     }
 }
+
+export const sendTieNotification = async (userMail, username, albumId) => {
+    const msg = {
+        to: userMail,
+        from: 'colleterhyosua@gmail.com',
+        subject: `Il est temps de départager les votes !`,
+        text: `Salut ${username}, Ta Family a bien été créé! `,
+        html: `
+                <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8" />
+                    <title>Départage des votes</title>
+                    <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f6f9fc;
+                        padding: 20px;
+                        color: #333;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: auto;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+                        padding: 30px;
+                    }
+                    h1 {
+                        color: #1a73e8;
+                    }
+                    .button {
+                        display: inline-block;
+                        margin-top: 20px;
+                        padding: 12px 20px;
+                        background-color: #1a73e8;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 6px;
+                        font-weight: bold;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        font-size: 13px;
+                        color: #888;
+                        text-align: center;
+                    }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                    <h1>Il est temps de départager les votes !</h1>
+                    <p>Bonjour <strong>${username}</strong>,</p>
+
+                    <p>Félicitations encore pour ta victoire lors du dernier concours photo sur <strong>Peakture</strong> ! 🎉</p>
+
+                    <p>Ce mois-ci, les votes sont serrés!</p>
+
+                    <p>En tant que gagnant du mois précédent, tu as l’honneur de départager les finalistes et de désigner la photo qui, selon toi, mérite de décrocher la première place ce mois-ci.</p>
+
+                    <p><strong>Voici les photos en compétition :</strong></p>
+                    <a href="http://localhost:5173/album/${albumId}" class="button">Voir les finalistes</a>
+
+                    <p>Tu as <strong>24 heures</strong> pour départager les votes, après cela, le gagnant sera tiré au sort.</p>
+
+                    <p>On compte sur toi pour trancher avec justesse 📷✨</p>
+
+                    <p>À très vite,<br>
+                    <strong>Peakture</strong></p>
+
+                    <p><em>PS : Si tu as la moindre question ou un souci pour accéder à la galerie, réponds simplement à ce mail.</em></p>
+
+                    <div class="footer">
+                        © 2025 Peakture
+                    </div>
+                    </div>
+                </body>
+                </html>
+
+
+            `,
+    }
+
+    try {
+        const response = await sgMail.send(msg);
+        console.log("Mail d'enregistrement envoyé :", response);
+    }catch(error){
+        console.error('Erreur lors de l\'envoi du mail:', error.response ? error.response.body: error.message)
+    }
+}

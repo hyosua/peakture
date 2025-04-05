@@ -272,7 +272,7 @@ export const getPeakture = async (req, res) => {
             return res.status(404).json({ message: 'Aucun album trouvé' })
         }
         const peakture = await Photo.findOne({
-            _id: lastClosedAlbum.photoWin
+            _id: lastClosedAlbum.peakture
     })
 
         return res.json(peakture)

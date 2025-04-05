@@ -2,7 +2,7 @@ import express from "express";
 import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import User from "../models/user.model.js"
-import { getAlbum, createAlbum, editAlbum, getWinner, deleteAlbum, deleteAlbumFromCloudinary , closeAlbum} from '../controllers/album.controller.js'
+import { getAlbum, createAlbum, editAlbum, getWinner, handleTie, deleteAlbum, deleteAlbumFromCloudinary , closeVotes} from '../controllers/album.controller.js'
 
 import { ObjectId } from "mongodb";
 import { identifyUserOrGuest } from '../middleware/identifyUserOrGuest.js'
@@ -15,8 +15,9 @@ router.get('/:id', getAlbum);
 router.post("/", createAlbum);
 router.patch("/:id", editAlbum);
 router.patch("/:id/winner", getWinner);
+router.patch("/:id/tie", handleTie);
 router.delete("/:id", deleteAlbum);
-router.patch("/:id/close", closeAlbum)
+router.patch("/:id/close", closeVotes)
 
 router.delete('/:id/cloudinary/delete', deleteAlbumFromCloudinary)
 

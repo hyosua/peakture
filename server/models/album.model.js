@@ -12,14 +12,20 @@ const albumSchema = new mongoose.Schema({
     cover:{
         type: String,
     },
-    closed:{
-        type: Boolean,
-        default: false,
+    status: {
+        type: String,
+        enum: ["open", "needsTieBreak", "closed"],
+        default: "open",
+        required: true,
+    },
+    tieBreakJudge: { // l'utilisateur qui doit départager (ancien gagnant)
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User", 
     },
     winner:{
         type: mongoose.Schema.Types.ObjectId, ref: 'User'
     },
-    photoWin:{
+    peakture:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Photo'
     },
     familyId:{

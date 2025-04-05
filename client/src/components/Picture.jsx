@@ -5,64 +5,79 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState } from "react";
 
-    const Picture = ({ photo, album, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumClosed }) => {
+    const Picture = ({ photo, album, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
-        const [photoClickId, setPhotoClickId] = useState(null)
-        const [showToolTip, setShowToolTip] = useState(null)
+        const [tooltip, setTooltip] = useState(null)
         const [shake, setShake] = useState(false);
         const [lastTap, setLastTap] = useState(0)
 
         useEffect(() => {
-            const getUserData = async () => {
+            const fetchUserData = async () => {
+                if(!photo.userId) return;
                 try {
                     const response = await fetch(`http://localhost:5000/api/user/${photo.userId}`);
                     if (!response.ok) {
                         throw new Error(`Erreur: ${response.statusText}`);
                     }
-                    const data = await response.json();
-                    setUserData(data); 
+                    setUserData(await response.json());
                 } catch (error) {
                     console.error("Erreur lors de la récupération des données utilisateur:", error);
                 }
             };
     
-            if (photo.userId) {
-                getUserData();
-            }
+            fetchUserData();
+            
         }, [photo.userId]);
 
         const handleVote = () => {
             const now = Date.now();
-            if (now - lastTap < 300) { // Si deuxième tap rapide
-                if(!albumClosed){
-                    if(currentUser?._id !== photo.userId ){
-                         onVote(photo._id);
-                    }else{
-                        setPhotoClickId(photo._id)
-                        setShowToolTip("Interdit de voter pour soi!")
-                        setShake(true);
-
-                        setTimeout(() => {
-                            setShake(false)
-                            setPhotoClickId(null)
-                            setShowToolTip(null)
-                        }, 3000)
-                   }
-                }else {
-                    setPhotoClickId(photo._id)
-                    setShowToolTip("Les votes sont clos")
-                    setShake(true);
-
-                    setTimeout(() => {
-                        setShake(false)
-                        setPhotoClickId(null)
-                        setShowToolTip(null)
-                    }, 3000)
-                }
-            }
+            const isDoubleTap = now - lastTap < 300; // 300ms pour considérer comme double-tap
             setLastTap(now);
+            if(!isDoubleTap) return;
+            processVote();
         };
+
+        const processVote = () => {
+            const isSelfVote = currentUser?._id === photo.userId;
+            const isTieVote = currentUser?._id === album?.tieBreakJudge && photo.isTied && albumStatus === "tie";
+
+            if (isSelfVote) {
+                onVote(photo._id);
+                return
+            }
+
+            if(isTieVote) {
+                onVote(photo._id);
+                return
+            }
+
+            let errorMessage;
+            if(isSelfVote) {
+                errorMessage = "Interdit de voter pour soi!";
+            }else if(albumStatus === "close") {
+                errorMessage = "Les votes sont clos";
+            }else if(albumStatus === "tie" && !isTieVote) {
+                errorMessage = "Seul le dernier vainqueur peut voter!";
+            }
+
+            if(errorMessage) {
+                showError(errorMessage);
+            }
+        }
+
+        const showError = (message) => {
+            setTooltip(message);
+            setShake(true);
+
+            setTimeout(() => {
+                setShake(false)
+                setTooltip(null)
+            }, 3000)
+        }
+
+        const isPeakture = isPeakture
+        const isPhotoOwner = currentUser?._id === photo.userId
         
         return (
             
@@ -78,7 +93,7 @@
                     
                     
                     {/* Modifier L'image */}
-                    {currentUser?._id === photo.userId && (
+                    { isPhotoOwner && (
                         <div className='absolute top-2 right-2 z-20'>
                             <EditDropdown
                                 actions={[
@@ -101,38 +116,11 @@
                         </div>
                     )}  
 
-                    <div className={showToolTip && photo._id === photoClickId ? "tooltip tooltip-open p-2 tooltip-bottom tooltip-error font-semibold relative" : ""} data-tip={showToolTip}>
+                    {/*Image*/}
+                    <div className={tooltip ? "tooltip tooltip-open p-2 tooltip-bottom tooltip-error font-semibold relative" : ""} data-tip={tooltip}>
                         {/*Bouton Voter*/}
                             <motion.button 
-                                onDoubleClick={() => {
-                                    if(!albumClosed){
-                                        if(currentUser?._id !== photo.userId ){
-                                            onVote(photo._id)
-                                        }else{
-                                            setPhotoClickId(photo._id)
-                                            setShowToolTip("Interdit de voter pour soi!")
-                                            setShake(true);
-
-                                            setTimeout(() => {
-                                                setShake(false)
-                                                setPhotoClickId(null)
-                                                setShowToolTip(null)
-                                            }, 3000)
-                                            
-                                        }
-                                        
-                                    } else {
-                                        setPhotoClickId(photo._id)
-                                        setShowToolTip("Les votes sont clos")
-                                        setShake(true);
-
-                                        setTimeout(() => {
-                                            setShake(false)
-                                            setPhotoClickId(null)
-                                            setShowToolTip(null)
-                                        }, 3000)
-                                    }
-                                }}
+                                onDoubleClick={ processVote }
                                 onTouchEnd={handleVote}
                                 title="Double-Clique pour voter"
                                 className=""
@@ -149,7 +137,7 @@
                                         animate={{ y: 0, opacity: 1 }}
                                         exit={{ y: -20, opacity: 0 }}
                                         transition={{ duration: 0.3  }}
-                                        className={`indicator-item indicator-bottom indicator-center badge ${photo._id === album?.photoWin ? "badge-warning" : "badge-primary"} text-neutral font-bold text-sm`}
+                                        className={`indicator-item indicator-bottom indicator-center badge ${isPeakture ? "badge-warning" : "badge-primary"} text-neutral font-bold text-sm`}
                                     >
                                         {photo.votes}
                                     </motion.span>
@@ -159,13 +147,16 @@
                                         key={photo._id} 
                                         src={photo.src} 
                                         alt={`Photo ${photo._id}`} 
-                                        className={`rounded-xl relative w-full h-auto max-w-96 ${isVotedId ? "border-primary border-4" : photo._id === album?.photoWin ? "border-amber-500 border-6" : "border-0"}`} 
+                                        className={`rounded-xl relative w-full h-auto max-w-96 ${
+                                            isVotedId ? "border-primary border-4" : 
+                                            isPeakture ? "border-amber-500 border-6" : "border-0"
+                                        }`} 
                                         initial={{ scale: 1 }}
                                         animate={{ scale: isVotedId ? 1.05 : 1 }}
                                         transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
                                     />
 
-                                    { album?.photoWin === photo._id && (
+                                    { isPeakture && (
                                         <div>
                                             <img 
                                                 src="https://img.icons8.com/?size=100&id=nwC3hqJGfjkT&format=png&color=000000" 
@@ -185,7 +176,7 @@
 
     Picture.propTypes = {
         isVotedId: PropTypes.bool,
-        albumClosed: PropTypes.bool,
+        albumStatus: PropTypes.string,
         onVote: PropTypes.func.isRequired,
         deletePhoto: PropTypes.func,
         cloudinaryURL: PropTypes.func,
@@ -195,10 +186,12 @@
             src: PropTypes.string.isRequired,
             _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
             userId: PropTypes.string,
-            votes: PropTypes.number
+            votes: PropTypes.number,
+            isTied: PropTypes.bool
         }).isRequired,
         album: PropTypes.shape({
-            photoWin: PropTypes.bool
+            peakture: PropTypes.bool,
+            tieBreakJudge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         }).isRequired,
     };
 

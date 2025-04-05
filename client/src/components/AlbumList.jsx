@@ -12,7 +12,6 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
-    const [classement, setClassement] = useState(null)
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
     const { familyId } = useParams() 
@@ -83,7 +82,7 @@ const AlbumList = () => {
 
             if(response.message === "égalité"){
                 console.log("Il y'a une égalité")
-                // handleTie()
+                handleTie()
                 return
             }
             const updatedAlbum = await response.json()
@@ -104,13 +103,37 @@ const AlbumList = () => {
     }
 
     // Gérer une égalité
-    const handleTie = async () => {
-        const response = await fetch(`http://localhost:5000/api/albums/${id}/tie`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" }
-        })
-        const updatedAlbum = await response.json()
-        console.log("Updated album:", updatedAlbum) 
+    const handleTie = async (albumId) => {
+        try{
+            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/tie`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify({ familyId})
+            })
+            const tieResult = await response.json()
+            console.log("Updated album after tieHandling:", tieResult) 
+            if(!response.ok){
+                console.error("Erreur lors de la gestion de l'égalité:", tieResult)
+                return
+            }
+            // Maj de l'état de l'album 
+            if(tieResult.updatedTiedPhotos){
+                setAlbums(prevAlbums =>
+                    prevAlbums.map(album =>
+                        album._id === albumId ? { ...album, status: true } : album
+                    )
+                )
+            }else{
+                setAlbums(prevAlbums =>
+                    prevAlbums.map(album =>
+                        album._id === albumId ? { ...album, closed: true } : album
+                    )
+                )
+            }
+        }catch(error){
+            console.error('Error handling tie:', error)
+        }
+        
     }
 
     // Save edited album
@@ -223,18 +246,19 @@ const AlbumList = () => {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Server response:', errorText);
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if(response.status === 400){
+                    handleTie(albumId)
+                    return
+                }
             }
 
-            const {updatedAlbum, classementPhotos } = await response.json()
+            const {updatedAlbum} = await response.json()
 
             setAlbums(prevAlbums =>
                 prevAlbums.map(album =>
                     album._id === albumId ? { ...album, winner: updatedAlbum.winner } : album
                 )
             )
-
-            setClassement(classementPhotos)
         }catch(error){
             console.error('Impossible de récupérer le gagnant:', error)
         }
@@ -347,9 +371,9 @@ const AlbumList = () => {
                         >
                             
                             {/* Album Card */}
-                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.closed ? "border-accent" : "border-primary"} rounded-lg indicator group`}>
-                                    <span className={`indicator-item badge " + ${(album.closed ? "badge-accent" : "badge-primary")}`}>
-                                        {album.closed ? "Closed" : "Open"}
+                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.status === "closed" ? "border-accent" : album.status === "needsTieBreak" ? "border-info" : "border-primary"} rounded-lg indicator group`}>
+                                    <span className={`indicator-item badge " + ${(album.status === "closed" ? "badge-accent" : album.status === "needsTieBreak" ? "badge-info" :"badge-primary")}`}>
+                                        {album.status === "closed" ? "Closed" : album.status === "needsTieBreak" ? "Départage": "Open"}
                                     </span>
                                 <h3 className='mb-2 font-semibold'>{album.month}</h3>
                                 <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"} 
@@ -373,11 +397,11 @@ const AlbumList = () => {
                                                 onClick: () => handleEdit(album),
                                                 },
                                                 {
-                                                    label: `${album.closed ? "Réouvrir" : "Cloturer"} les votes`,
+                                                    label: `${album.status === "closed" ? "Réouvrir" : "Cloturer"} les votes`,
                                                     icon: <Vote className="h-4 w-4" />,
                                                     onClick: () => {
-                                                        handleAlbumClose(album._id, album.closed)
-                                                        if(!album.closed){
+                                                        handleAlbumClose(album._id, album.status === "closed")
+                                                        if(!album.status === "closed"){
                                                             handleWinner(album._id)
                                                         }
                                                     }

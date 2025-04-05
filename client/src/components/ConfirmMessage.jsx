@@ -11,16 +11,16 @@ const ConfirmMessage = ({ message, onConfirm, onCancel, isOpen, title }) => {
                 <p className='mb-4'>{message}</p>
                 <div className='flex justify-around'>
                     <button
-                        onClick={onConfirm}
-                        className='btn btn-outline  btn-primary'
-                    >
-                        Oui
-                    </button>
-                    <button
                         onClick={onCancel}
-                        className=' btn btn-secondary'
+                        className=' btn-outline btn btn-secondary'
                     >
                         Non
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className='btn  btn-primary'
+                    >
+                        Oui
                     </button>
                 </div>
             </div>

@@ -356,7 +356,7 @@ const AlbumPage = () => {
                     
                 </div>
 
-                {album?.closed && (
+                {album?.status === "closed" && (
                         <div className="absolute top-4 right-4 bg-error text-neutral text-xs px-3 py-1 rounded-full">
                             Votes clos
                         </div>
@@ -415,7 +415,7 @@ const AlbumPage = () => {
             {/* Photo Gallery */}
             <div className=" flex flex-col items-center justify-center">
                  {/* Contest Results */}
-                 {album?.closed && (
+                 {album?.status === "closed" && (
                     <ContestResults results={voteResultsData} />
                 )}
                 {photos.length > 0 ? (
@@ -440,7 +440,7 @@ const AlbumPage = () => {
                                     cloudinaryURL={setCloudinaryUrl}
                                     isVotedId={photo.votedBy.includes(currentUser?._id)}
                                     votes={photo.votes || 0}
-                                    albumClosed={album?.closed}
+                                    albumStatus={album?.status}
                                 />
     
                             </div>
@@ -463,7 +463,7 @@ const AlbumPage = () => {
                 )} 
 
                 {/* Add Photo Button */}
-                {!album?.closed && (
+                {album?.status === "open" && (
                     <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip={error}>
                     <div className='pb-20'>
                         <button
