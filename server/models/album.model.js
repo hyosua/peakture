@@ -14,7 +14,7 @@ const albumSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["open", "needsTieBreak", "closed"],
+        enum: ["open", "tie-break", "closed"],
         default: "open",
         required: true,
     },

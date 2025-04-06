@@ -5,7 +5,7 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState } from "react";
 
-    const Picture = ({ photo, album, deletePhoto, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
+    const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
         const [tooltip, setTooltip] = useState(null)
@@ -40,14 +40,8 @@
 
         const processVote = () => {
             const isSelfVote = currentUser?._id === photo.userId;
-            const isTieVote = currentUser?._id === album?.tieBreakJudge && photo.isTied && albumStatus === "tie";
 
-            if (isSelfVote) {
-                onVote(photo._id);
-                return
-            }
-
-            if(isTieVote) {
+            if (!isSelfVote && albumStatus === "open") {
                 onVote(photo._id);
                 return
             }
@@ -55,10 +49,8 @@
             let errorMessage;
             if(isSelfVote) {
                 errorMessage = "Interdit de voter pour soi!";
-            }else if(albumStatus === "close") {
+            }else if(albumStatus === "closed") {
                 errorMessage = "Les votes sont clos";
-            }else if(albumStatus === "tie" && !isTieVote) {
-                errorMessage = "Seul le dernier vainqueur peut voter!";
             }
 
             if(errorMessage) {
@@ -76,7 +68,8 @@
             }, 3000)
         }
 
-        const isPeakture = isPeakture
+        const isPeakture = photo._id === album?.peakture
+        const isTieBreakJudge = currentUser?._id === album?.tieBreakJudge
         const isPhotoOwner = currentUser?._id === photo.userId
         
         return (

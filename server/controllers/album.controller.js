@@ -119,39 +119,41 @@ export const handleTie = async (req, res) => {
         const tiePhotos = classementPhotos.filter(photo => photo.votes === classementPhotos[0].votes)
         const { familyId } = req.body
         let message = ""
-        if (!winner) {
-            return res.status(404).json({ message: "Utilisateur gagnant non trouvé" });
-        }
+
         const lastClosedAlbum = await Album.findOne(
                     {familyId, closed: true}
             ).sort({ createdAt: -1})
 
         if(lastClosedAlbum){
-            const lastWinner = await User.findById(lastClosedAlbum.winner)
-            sendTieNotification(
-                lastWinner.email,
-                lastWinner.name,
-                req.params.id
-            )
+            const lastWinner = await User.findById(lastClosedAlbum.winner)  
+            const lastWinnerIsFinalist = tiePhotos.some(photo => photo.userId === lastClosedAlbum.winner)
 
-            const updatedTiedPhotos = await Photo.updateMany(
-                { _id: { $in: tiePhotos.map(photo => photo._id) } },
-                { $set: { isTied: true } },
-                { new: true }
-            )
-            if (!updatedTiedPhotos) {
-                return res.status(404).json({ message: "Erreur lors de la mise à jour des photos" });
-            }
+            if(!lastWinnerIsFinalist){
+                sendTieNotification(
+                    lastWinner.email,
+                    lastWinner.username,
+                    req.params.id
+                )
 
-            const pendingTieAlbum = await Album.findByIdAndUpdate( 
-                {albumId: req.params.id}, 
-                { $set: {status: "needsTieBreak", tieBreakJudge: lastWinner._id }},
-                { $new: true }
-            )
-            if(!pendingTieAlbum){
-                return res.status(404).json({ message: "Album non trouvé" });
+                const updatedTiedPhotos = await Photo.updateMany(
+                    { _id: { $in: tiePhotos.map(photo => photo._id) } },
+                    { $set: { isTied: true } },
+                    { new: true }
+                )
+                if (!updatedTiedPhotos) {
+                    return res.status(404).json({ message: "Erreur lors de la mise à jour des photos" });
+                }
+
+                const pendingTieAlbum = await Album.findByIdAndUpdate( 
+                    { _id: req.params.id}, 
+                    { $set: {status: "tie-break", tieBreakJudge: lastWinner._id }},
+                    { $new: true }
+                )
+                if(!pendingTieAlbum){
+                    return res.status(404).json({ message: "Album non trouvé" });
+                }
+                return res.status(200).json({ message: "Le gagnant a été prévenu par email", updatedTiedPhotos })
             }
-            return res.status(200).json({ message: "Le gagnant a été prévenu par email", updatedTiedPhotos })
         }
 
         const indexGagnant = Math.floor(Math.random() * tiePhotos.length)

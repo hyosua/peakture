@@ -72,10 +72,10 @@ const AlbumList = () => {
     }
 
     // Handle Vote Ending
-    const handleAlbumClose = async (id, closed) =>{
+    const handleAlbumClose = async (albumId) =>{
 
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/${id}/close`,{
+            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/close`,{
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }
             })
@@ -90,9 +90,11 @@ const AlbumList = () => {
     
             setAlbums(prevAlbums =>
                 prevAlbums.map(album =>
-                    album._id === id ? { ...album, closed: !closed } : album
+                    album._id === albumId ? { ...album, status: "closed" } : album
                 )
             )
+            handleWinner(albumId)
+
         }catch (error) {
             console.error('Error Closing album:', error);
             if (error.response) {
@@ -371,9 +373,9 @@ const AlbumList = () => {
                         >
                             
                             {/* Album Card */}
-                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.status === "closed" ? "border-accent" : album.status === "needsTieBreak" ? "border-info" : "border-primary"} rounded-lg indicator group`}>
-                                    <span className={`indicator-item badge " + ${(album.status === "closed" ? "badge-accent" : album.status === "needsTieBreak" ? "badge-info" :"badge-primary")}`}>
-                                        {album.status === "closed" ? "Closed" : album.status === "needsTieBreak" ? "Départage": "Open"}
+                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.status === "closed" ? "border-secondary" : album.status === "tie-break" ? "border-accent" : "border-primary"} rounded-lg indicator group`}>
+                                    <span className={`indicator-item badge " + ${(album.status === "closed" ? "badge-secondary" : album.status === "tie-break" ? "badge-accent" :"badge-primary")}`}>
+                                        {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
                                     </span>
                                 <h3 className='mb-2 font-semibold'>{album.month}</h3>
                                 <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"} 
@@ -399,12 +401,8 @@ const AlbumList = () => {
                                                 {
                                                     label: `${album.status === "closed" ? "Réouvrir" : "Cloturer"} les votes`,
                                                     icon: <Vote className="h-4 w-4" />,
-                                                    onClick: () => {
-                                                        handleAlbumClose(album._id, album.status === "closed")
-                                                        if(!album.status === "closed"){
-                                                            handleWinner(album._id)
-                                                        }
-                                                    }
+                                                    onClick: () => handleAlbumClose(album._id)
+                                                    
                                                 },
                                                 {
                                                 label: "Supprimer",

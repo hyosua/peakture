@@ -242,7 +242,7 @@ export const sendTieNotification = async (userMail, username, albumId) => {
 
     try {
         const response = await sgMail.send(msg);
-        console.log("Mail d'enregistrement envoyé :", response);
+        console.log("Mail de notification de Tie Break envoyé :", response);
     }catch(error){
         console.error('Erreur lors de l\'envoi du mail:', error.response ? error.response.body: error.message)
     }

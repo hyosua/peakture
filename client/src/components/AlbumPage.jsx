@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { useAuth } from '../context/AuthContext.jsx';
 import  Auth  from './auth/Auth.jsx'
 import ContestResults from "./ContestResults.jsx"
+import TieBreakView from "./TieBreakView.jsx"
+import ConfirmMessage from "./ConfirmMessage.jsx"
 
 const breakpointColumns = {
     default: 3,
@@ -35,6 +37,10 @@ const AlbumPage = () => {
     const [successSignup, setSuccessSignup] = useState(false)
     const [error, setError] = useState('')
     const [voteResultsData, setVoteResultsData] = useState([])
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [photoToConfirm, setPhotoToConfirm] = useState(null);
+
+
 
 
     const {currentUser} = useAuth()
@@ -205,6 +211,7 @@ const AlbumPage = () => {
     }
 
     const handleVote = async (photo_id) => {
+        // si l'utilisateur n'est pas connecté impossible de voter
         if(!currentUser.email){
             setShowVoteError(true)
             setTimeout(() => {
@@ -239,10 +246,36 @@ const AlbumPage = () => {
             const updatedPhotos = await response.json()
             setPhotos(updatedPhotos)
         } catch (error) {
-            console.error("Erreur lors du like:", error)
+            console.error("Erreur lors du vote:", error)
             console.log("ID problématique:", photo_id)
             // Annuler le like en cas d'erreur
             setVotedPhotoId(null)
+        }
+    }
+
+    const handleTieBreak = async (photoId) => {
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}/tie-break`, {
+                method: "PATCH",
+                credentials: "include",
+                headers: {
+                    "Content-Type" : "application/json"
+                },
+                body: JSON.stringify({
+                    albumId: id
+                })
+            })
+
+            if(!response.ok){
+                throw new Error(`Erreur: ${response.statusText}`)
+            }
+
+            // MAJ des photos
+            const result = await response.json()
+            setAlbum(result.album)
+        } catch (error) {
+            console.error("Erreur lors du Tie Break:", error)
         }
     }
 
@@ -321,6 +354,16 @@ const AlbumPage = () => {
         }, 3000)
     }
 
+    const handleTieBreakClick = (photoId) => {
+        setPhotoToConfirm(photoId)
+        setIsConfirmOpen(true)
+    }
+
+    const confirmVote = async () => {
+        handleTieBreak(photoToConfirm)
+        setIsConfirmOpen(false)
+    }
+
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -394,6 +437,17 @@ const AlbumPage = () => {
                     <span>Inscription réussie!</span>
                 </div>
             )}
+
+            {/* Tie Break Vote*/}
+            <ConfirmMessage
+                title="Es-tu sûr(e) de ton choix?"
+                message="Tu vas élire cette photo comme grande gagnante de l'album. Le vote sera définitif."
+                onConfirm={confirmVote}
+                onCancel={() => {
+                    setIsConfirmOpen(false)
+                }}
+                isOpen={isConfirmOpen}
+            />   
             
             {/* Signup Form */}
             { showSignupForm && (
@@ -424,7 +478,15 @@ const AlbumPage = () => {
                             className="flex"
                             columnClassName="bg-clip-paddin"
                         >
-                        {photos.map((photo) => (
+                        {album?.status === "tie-break" ? (
+                            <TieBreakView 
+                                album={album}
+                                tiedPhotos={photos.filter(photo => photo.isTied)}
+                                otherPhotos={photos.filter(photo => !photo.isTied)}
+                                onTieBreakVote={handleTieBreakClick}
+                                disabled={false}
+                            />
+                        ) : (photos.map((photo) => (
                             
                             <div key={photo._id} className="m-4 break-inside-avoid">
                                 <Picture 
@@ -433,6 +495,7 @@ const AlbumPage = () => {
                                     photoUrl={photo.src} 
                                     id={photo._id} 
                                     onVote={handleVote}
+                                    onTieBreak={handleTieBreak}
                                     changePhoto={handleImageChange}
                                     deletePhoto={deletePhoto}
                                     showUploadForm={setShowUploadForm}
@@ -444,7 +507,7 @@ const AlbumPage = () => {
                                 />
     
                             </div>
-                        ))}
+                        )))}
                     </Masonry>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 text-white">
