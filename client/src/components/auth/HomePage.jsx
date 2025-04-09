@@ -126,7 +126,7 @@ const HomePage = () => {
     if(successLogin){
       timer = setTimeout(() => {
         setSuccessLogin(false)
-      },5000)
+      },2000)
     }
     return () => clearTimeout(timer)
   },[successLogin])
@@ -147,7 +147,7 @@ const HomePage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);

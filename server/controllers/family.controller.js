@@ -265,7 +265,7 @@ export const getPeakture = async (req, res) => {
     try{
         const familyId = req.params.id
         const lastClosedAlbum = await Album.findOne(
-            {familyId, closed: true}
+            {familyId, status: "closed"}
         ).sort({ createdAt: -1})
         
         if(!lastClosedAlbum){

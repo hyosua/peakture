@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }) => {
 
             const userData = await response.json()
             setCurrentUser(userData)
-            console.log("Current user: ", userData)
             
             if(userData.familyId){
                 try {
@@ -101,6 +100,8 @@ export const AuthProvider = ({ children }) => {
         
 
         if(response.error) {
+            setLoading(false)
+            setError(response.error)
             throw new Error(response.error)
         }
 

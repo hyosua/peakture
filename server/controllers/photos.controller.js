@@ -301,7 +301,7 @@ export const tieBreak = async (req,res) => {
 
        const updatedAlbum = await Album.findByIdAndUpdate(
             { _id: albumId },
-            { $set: { winner: peakture.userId, peakture: peakture._id, status: "closed" }},
+            { $set: { winner: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src }},
             { new: true }
         )
 

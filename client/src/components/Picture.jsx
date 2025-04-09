@@ -74,7 +74,7 @@
         
         return (
             
-                <div className="w-full relative mb-20 p-2 group inline-block">
+                <div className="w-full relative mb-20 p-1 group inline-block">
 
                     {/*Username*/}
                     {userData && (

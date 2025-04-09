@@ -13,7 +13,7 @@ router.delete('/:id', deletePhoto);
 router.post('/cloudinary/delete', deleteFromCloudinary)
 router.patch('/:id', replacePhoto)
 router.patch('/:id/vote', identifyUserOrGuest, votePhoto)
-router.patch('/:id/tie-break', identifyUserOrGuest, tieBreak)
+router.patch('/:id/vote/tie-break', identifyUserOrGuest, tieBreak)
 router.get("/:id/has-submitted", identifyUserOrGuest, hasSubmitted)
 
 export default router

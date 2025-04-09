@@ -24,6 +24,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
       // si le login réussi, on notifie le parent
       onLoginSuccess(userData)
     } catch (error) {
+      setIsLoading(false)
       console.error("Erreur lors du login: ", error);
       setErrorMessage(error.message || "Une erreur de connexion s'est produite.");
     } finally{

@@ -4,7 +4,6 @@ const photoSchema = new mongoose.Schema({
     albumId:{
         type: String,
         required: true,
-        unique: true,
     },
     src:{
         type: String,

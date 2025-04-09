@@ -104,40 +104,6 @@ const AlbumList = () => {
         }
     }
 
-    // Gérer une égalité
-    const handleTie = async (albumId) => {
-        try{
-            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/tie`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify({ familyId})
-            })
-            const tieResult = await response.json()
-            console.log("Updated album after tieHandling:", tieResult) 
-            if(!response.ok){
-                console.error("Erreur lors de la gestion de l'égalité:", tieResult)
-                return
-            }
-            // Maj de l'état de l'album 
-            if(tieResult.updatedTiedPhotos){
-                setAlbums(prevAlbums =>
-                    prevAlbums.map(album =>
-                        album._id === albumId ? { ...album, status: true } : album
-                    )
-                )
-            }else{
-                setAlbums(prevAlbums =>
-                    prevAlbums.map(album =>
-                        album._id === albumId ? { ...album, closed: true } : album
-                    )
-                )
-            }
-        }catch(error){
-            console.error('Error handling tie:', error)
-        }
-        
-    }
-
     // Save edited album
     const handleSave = async (id, e) => {
         e.stopPropagation()
@@ -248,7 +214,7 @@ const AlbumList = () => {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Server response:', errorText);
-                if(response.status === 400){
+                if(response.message === "égalité"){
                     handleTie(albumId)
                     return
                 }
@@ -264,6 +230,40 @@ const AlbumList = () => {
         }catch(error){
             console.error('Impossible de récupérer le gagnant:', error)
         }
+    }
+
+    // Gérer une égalité
+    const handleTie = async (albumId) => {
+        try{
+            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/tie`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify({ familyId})
+            })
+            const tieResult = await response.json()
+            console.log("Updated album after tieHandling:", tieResult) 
+            if(!response.ok){
+                console.error("Erreur lors de la gestion de l'égalité:", tieResult)
+                return
+            }
+            // Maj de l'état de l'album 
+            if(tieResult.updatedTiedPhotos){
+                setAlbums(prevAlbums =>
+                    prevAlbums.map(album =>
+                        album._id === albumId ? { ...album, status: "tie-break" } : album
+                    )
+                )
+            }else{
+                setAlbums(prevAlbums =>
+                    prevAlbums.map(album =>
+                        album._id === albumId ? { ...album, status: "closed"} : album
+                    )
+                )
+            }
+        }catch(error){
+            console.error('Error handling tie:', error)
+        }
+        
     }
 
     // Navigate to album page
@@ -384,10 +384,10 @@ const AlbumList = () => {
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
-                                {album.winner && 
+                                {album?.winner && 
                                     <div className='flex gap-2 items-center'>
                                         <img src='https://img.icons8.com/?size=100&id=uveiovUxXKW2&format=png&color=000000 ' className='w-5 h-5'/>
-                                        <span className='font-semibold text-warning'><i>{album.winner.username}</i> </span>
+                                        <span className='font-semibold text-warning'><i>{album?.winner?.username}</i> </span>
                                     </div> }
                                 { isAdmin && (
                                     <div className='absolute top-2 right-2'>
@@ -396,17 +396,20 @@ const AlbumList = () => {
                                                 {
                                                 label: "Modifier le thème",
                                                 icon: <Edit className="h-4 w-4" />,
+                                                disabled: false,
                                                 onClick: () => handleEdit(album),
                                                 },
                                                 {
-                                                    label: `${album.status === "closed" ? "Réouvrir" : "Cloturer"} les votes`,
+                                                    label: "Cloturer les votes",
                                                     icon: <Vote className="h-4 w-4" />,
+                                                    disabled: album.status === "closed" || album.status === "tie-break",
                                                     onClick: () => handleAlbumClose(album._id)
                                                     
                                                 },
                                                 {
                                                 label: "Supprimer",
                                                 icon: <Trash className="h-4 w-4 text-red-500" />,
+                                                disabled: false,
                                                 onClick: () => setIsConfirmOpen(true),
                                                 },
                                                 

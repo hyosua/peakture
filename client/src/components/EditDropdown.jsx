@@ -33,14 +33,18 @@ export default function EditDropdown({ actions }) {
                     {actions.map((action, index) => (
                     <li key={index}>
                         <button
-                        onClick={(e) => {
-                            e.stopPropagation() 
-                            action.onClick()
-                            setIsOpen(false)
-                        }}
-                        className="flex cursor-pointer font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100"
-                        >
-                        {action.icon} {action.label}
+                          onClick={(e) => {
+                              e.stopPropagation() 
+                              action.onClick()
+                              setIsOpen(false)
+                          }}
+                          className={`flex font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100 ${
+                          action.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                          }`}
+                          disabled={action.disabled}
+                          title={action.label}
+                          >
+                          {action.icon} {action.label}
                         </button>
                     </li>
                     ))}
@@ -58,6 +62,7 @@ EditDropdown.propTypes = {
         label: PropTypes.string.isRequired,
         icon: PropTypes.element.isRequired,
         onClick: PropTypes.func.isRequired,
+        disabled: PropTypes.bool,
       })
     ).isRequired,
   };

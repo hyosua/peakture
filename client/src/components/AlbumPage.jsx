@@ -14,7 +14,7 @@ const breakpointColumns = {
     default: 3,
     1024: 3,
     768: 2,
-    500: 1
+    500: 2
 };
 
 const AlbumPage = () => {
@@ -58,7 +58,7 @@ const AlbumPage = () => {
                 const albumData = await response.json()
                 setAlbum(albumData)
 
-                // Fetch photos from this album
+                // Fetch photos de l'album
                 const photosResponse = await fetch(`${API_BASE_URL}/api/photos/${albumData._id}`)
                 if(!photosResponse.ok){
                     throw new Error(`Erreur: ${photosResponse.statusText}`)
@@ -66,14 +66,15 @@ const AlbumPage = () => {
                 const photosData = await photosResponse.json()
                 setPhotos(photosData.photos || [])
                 
-                // Set the vote results data
-                if(albumData.closed){
-                    const results = photosData.photos.map(photo => ({
+                // Calcul des votes pour afficher le classement
+                if(albumData.status === "closed"){
+                    // On récupère les résultats de votes
+                    const classement = photosData.photos.map(photo => ({
                         name: photo.username,
                         votes: photo.votes || 0
                     }))
-                    results.sort((a, b) => b.votes - a.votes)
-                    setVoteResultsData(results)
+                    classement.sort((a, b) => b.votes - a.votes)
+                    setVoteResultsData(classement)
                 }
 
             } catch(error){
@@ -253,10 +254,10 @@ const AlbumPage = () => {
         }
     }
 
-    const handleTieBreak = async (photoId) => {
+    const handleTieBreakVote = async (photoId) => {
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}/tie-break`, {
+            const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}/vote/tie-break`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {
@@ -274,6 +275,11 @@ const AlbumPage = () => {
             // MAJ des photos
             const result = await response.json()
             setAlbum(result.album)
+            console.log(result.peakture)
+            setPhotos(prevPhotos => 
+                        prevPhotos.map(photo =>
+                        photo._id === result.peakture._id ? result.peakture : photo
+                    ))
         } catch (error) {
             console.error("Erreur lors du Tie Break:", error)
         }
@@ -354,13 +360,13 @@ const AlbumPage = () => {
         }, 3000)
     }
 
-    const handleTieBreakClick = (photoId) => {
+    const handleTieBreakVoteClick = (photoId) => {
         setPhotoToConfirm(photoId)
         setIsConfirmOpen(true)
     }
 
     const confirmVote = async () => {
-        handleTieBreak(photoToConfirm)
+        handleTieBreakVote(photoToConfirm)
         setIsConfirmOpen(false)
     }
 
@@ -483,19 +489,19 @@ const AlbumPage = () => {
                                 album={album}
                                 tiedPhotos={photos.filter(photo => photo.isTied)}
                                 otherPhotos={photos.filter(photo => !photo.isTied)}
-                                onTieBreakVote={handleTieBreakClick}
+                                onTieBreakVote={handleTieBreakVoteClick}
                                 disabled={false}
                             />
                         ) : (photos.map((photo) => (
                             
-                            <div key={photo._id} className="m-4 break-inside-avoid">
+                            <div key={photo._id} className="m-2 break-inside-avoid">
                                 <Picture 
                                     photo={photo}
                                     album={album}
                                     photoUrl={photo.src} 
                                     id={photo._id} 
                                     onVote={handleVote}
-                                    onTieBreak={handleTieBreak}
+                                    onTieBreak={handleTieBreakVote}
                                     changePhoto={handleImageChange}
                                     deletePhoto={deletePhoto}
                                     showUploadForm={setShowUploadForm}
