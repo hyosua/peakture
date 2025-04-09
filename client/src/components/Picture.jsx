@@ -75,15 +75,6 @@
         return (
             
                 <div className="w-full relative mb-20 p-1 group inline-block">
-
-                    {/*Username*/}
-                    {userData && (
-                        <div className="text-primary font-bold mb-2 text-center">
-                            {userData.username}
-                        </div>
-                    )}
-
-                    
                     
                     {/* Modifier L'image */}
                     { isPhotoOwner && (
@@ -142,7 +133,7 @@
                                         alt={`Photo ${photo._id}`} 
                                         className={`rounded-xl relative w-full h-auto max-w-96 ${
                                             isVotedId ? "border-primary border-4" : 
-                                            isPeakture ? "border-amber-500 border-6" : "border-0"
+                                            isPeakture ? "border-warning border-6" : "border-0"
                                         }`} 
                                         initial={{ scale: 1 }}
                                         animate={{ scale: isVotedId ? 1.05 : 1 }}
@@ -152,15 +143,21 @@
                                     { isPeakture && (
                                         <div>
                                             <img 
-                                                src="https://img.icons8.com/?size=100&id=nwC3hqJGfjkT&format=png&color=000000" 
-                                                alt="Trophy" 
-                                                className="absolute -bottom-10 left-2 w-12 h-12"
+                                                src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
+                                                alt="Crown" 
+                                                className="absolute -top-10 left-1/2 -translate-x-1/2 w-12 h-12"
                                             />
                                         </div>)}
                                     </div>
 
                                 
                             </motion.button>
+                            {/*Username*/}
+                            {userData && (
+                                <div className="text-primary font-bold mt-2 text-center">
+                                    {userData.username}
+                                </div>
+                            )}
                     </div>
                 </div>
                 

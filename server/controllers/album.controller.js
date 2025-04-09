@@ -161,7 +161,7 @@ export const handleTie = async (req, res) => {
 
                 return res.status(200).json({
                     message: `Le précédent vainqueur (${lastWinner.name}) doit départager les finalistes.`,
-                    album: pendingTieAlbum
+                    pendingAlbum: pendingTieAlbum
                 });
             }
         }
@@ -196,7 +196,7 @@ export const handleTie = async (req, res) => {
         }
 
         return res.status(200).json({
-            message: `Le gagnant est ${winner.name}. Départage aléatoire faute de gagnant précédent.`,
+            winner,
             updatedAlbum
         });
 
@@ -234,8 +234,13 @@ export const deleteAlbum = async (req, res) => {
 export const closeVotes = async (req, res) => {
     try{    
         const albumId = req.params.id
-
         const album = await Album.findById(albumId)
+        const classementPhotos = await Photo.find({albumId}).sort({ votes: -1 });
+        const tiePhotos = classementPhotos.filter(photo => photo.votes === classementPhotos[0].votes);
+
+        if (tiePhotos.length > 1) {
+            return res.status(400).json({ error: "égalité" });
+        }
 
         if(!album){
             return res.status(404).json({ error: "Album non trouvé"})

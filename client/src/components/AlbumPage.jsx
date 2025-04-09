@@ -479,42 +479,42 @@ const AlbumPage = () => {
                     <ContestResults results={voteResultsData} />
                 )}
                 {photos.length > 0 ? (
-                    <Masonry 
+                    album?.status === "tie-break" ? (
+                        <TieBreakView 
+                            album={album}
+                            tiedPhotos={photos.filter(photo => photo.isTied)}
+                            otherPhotos={photos.filter(photo => !photo.isTied)}
+                            onTieBreakVote={handleTieBreakVoteClick}
+                            disabled={false}
+                        />
+                    ) : (
+                        <Masonry 
                             breakpointCols={breakpointColumns}
                             className="flex"
                             columnClassName="bg-clip-paddin"
                         >
-                        {album?.status === "tie-break" ? (
-                            <TieBreakView 
-                                album={album}
-                                tiedPhotos={photos.filter(photo => photo.isTied)}
-                                otherPhotos={photos.filter(photo => !photo.isTied)}
-                                onTieBreakVote={handleTieBreakVoteClick}
-                                disabled={false}
-                            />
-                        ) : (photos.map((photo) => (
-                            
-                            <div key={photo._id} className="m-2 break-inside-avoid">
-                                <Picture 
-                                    photo={photo}
-                                    album={album}
-                                    photoUrl={photo.src} 
-                                    id={photo._id} 
-                                    onVote={handleVote}
-                                    onTieBreak={handleTieBreakVote}
-                                    changePhoto={handleImageChange}
-                                    deletePhoto={deletePhoto}
-                                    showUploadForm={setShowUploadForm}
-                                    replacingPhoto={setReplacingPhoto}
-                                    cloudinaryURL={setCloudinaryUrl}
-                                    isVotedId={photo.votedBy.includes(currentUser?._id)}
-                                    votes={photo.votes || 0}
-                                    albumStatus={album?.status}
-                                />
-    
-                            </div>
-                        )))}
-                    </Masonry>
+                            {photos.map((photo) => (
+                                <div key={photo._id} className="m-2 break-inside-avoid">
+                                    <Picture 
+                                        photo={photo}
+                                        album={album}
+                                        photoUrl={photo.src} 
+                                        id={photo._id} 
+                                        onVote={handleVote}
+                                        onTieBreak={handleTieBreakVote}
+                                        changePhoto={handleImageChange}
+                                        deletePhoto={deletePhoto}
+                                        showUploadForm={setShowUploadForm}
+                                        replacingPhoto={setReplacingPhoto}
+                                        cloudinaryURL={setCloudinaryUrl}
+                                        isVotedId={photo.votedBy.includes(currentUser?._id)}
+                                        votes={photo.votes || 0}
+                                        albumStatus={album?.status}
+                                    />
+                                </div>
+                            ))}
+                        </Masonry>
+                    )
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 text-white">
                         <motion.button 

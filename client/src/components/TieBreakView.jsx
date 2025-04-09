@@ -20,10 +20,10 @@ const TieBreakView = ({ album, tiedPhotos, otherPhotos, onTieBreakVote, disabled
                     </>
                     
                 )}
-                <div className='m-2 grid grid-cols-2  md:grid-cols-3 gap-4'>
+                <div className='m-2 grid grid-cols-2  md:grid-cols-2 gap-4 place-items-center mx-auto'>
                     {tiedPhotos.map((photo) => (
                         <div key={photo._id} 
-                            className="w-full group overflow-hidden rounded-xl  relative mb-4 group inline-block">
+                            className="w-full max-w-sm group overflow-hidden rounded-xl  relative mb-4 group inline-block">
                             <img
                                 src={photo.src}
                                 alt="Photo finaliste"

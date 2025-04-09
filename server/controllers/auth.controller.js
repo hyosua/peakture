@@ -74,7 +74,7 @@ export const login = async (req, res) => {
         const correctPass = await bcrypt.compare(password, user?.password || "")
 
         if(!user){
-            return res.status(400).json({error: "Utilisateur introuvable... mais on t'aime quand même!"})
+            return res.status(400).json({error: "Utilisateur introuvable..."})
         }
 
         if(!correctPass){

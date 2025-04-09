@@ -79,11 +79,19 @@ const AlbumList = () => {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }
             })
-
-            if(response.message === "égalité"){
-                console.log("Il y'a une égalité")
-                handleTie()
-                return
+            console.log("Response from server:", response)
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.log("Error response:", errorData);
+                
+                // Si le serveur renvoie une égalité on appelle handleTie
+                if (errorData.error === "égalité") {
+                    console.log("Il y'a une égalité");
+                    handleTie(albumId); 
+                    return;
+                } else {
+                    throw new Error(errorData.error || "Unknown error occurred");
+                }
             }
             const updatedAlbum = await response.json()
             console.log("Updated album:", updatedAlbum)
@@ -247,7 +255,7 @@ const AlbumList = () => {
                 return
             }
             // Maj de l'état de l'album 
-            if(tieResult.updatedTiedPhotos){
+            if(tieResult.pendingAlbum){
                 setAlbums(prevAlbums =>
                     prevAlbums.map(album =>
                         album._id === albumId ? { ...album, status: "tie-break" } : album
@@ -256,7 +264,7 @@ const AlbumList = () => {
             }else{
                 setAlbums(prevAlbums =>
                     prevAlbums.map(album =>
-                        album._id === albumId ? { ...album, status: "closed"} : album
+                        album._id === albumId ? { ...album, status: "closed", winner: tieResult.winner, cover: tieResult.updatedAlbum.cover } : album
                     )
                 )
             }
@@ -365,6 +373,13 @@ const AlbumList = () => {
             
             {/* Albums Grid */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
+                    {!albums.length && (
+                        <div className='flex flex-col items-center justify-center'>
+                            <img src='https://img.icons8.com/?size=100&id=nfFc9F8TR8At&format=png&color=000000' alt='Aucun album trouvé' className='w-1/2 h-1/2 mb-4'/>
+                            <h2 className='text-xl text-white font-semibold'>Aucun album</h2>
+                            <p className={`${isAdmin ? "text-gray-200" : "hidden"}`}>Crée un nouvel album pour commencer !</p>
+                        </div>
+                    )}
                     {albums.map((album) => (
                         <div
                             key={album._id}
