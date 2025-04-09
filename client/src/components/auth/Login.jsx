@@ -17,17 +17,23 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
+    console.log("Login tentative pour:", username);
     
     try {
-      const userData = await login(username, password)
-      console.log("UserData after login:",userData )
-      // si le login réussi, on notifie le parent
-      onLoginSuccess(userData)
+      const userData = await login(username, password);
+      console.log("Résultat du login:", userData);
+      
+      if (userData && !userData.error) {
+        console.log("Login réussi, appel à onLoginSuccess");
+        onLoginSuccess(userData);
+      } else {
+        console.error("Erreur de login détectée:", userData?.error);
+        setErrorMessage(userData?.error || "Erreur inconnue");
+      }
     } catch (error) {
-      setIsLoading(false)
-      console.error("Erreur lors du login: ", error);
+      console.error("Exception lors du login:", error);
       setErrorMessage(error.message || "Une erreur de connexion s'est produite.");
-    } finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -45,7 +51,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
         </button>
         <form 
           className="space-y-4"
-          onSubmit={handleLoginSubmit}
+          onSubmit={(e) => handleLoginSubmit(e)}
         >
           <input
             type="text"

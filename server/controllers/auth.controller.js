@@ -15,7 +15,7 @@ export const signup = async (req, res) => {
 
         const existingEmail = await User.findOne({ email })
         if(existingEmail){
-            return res.status(400).json({message: "Cet email est déjà utilisé"})
+            return res.status(400).json({ error: "Cet email est déjà utilisé"})
         }
 
         // hash password

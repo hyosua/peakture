@@ -82,7 +82,6 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
     const login = async (username, password) => {
-        setLoading(true)
         setError(null)
         const result = await fetch('http://localhost:5000/api/auth/login', {
             method: 'POST',
@@ -100,9 +99,8 @@ export const AuthProvider = ({ children }) => {
         
 
         if(response.error) {
-            setLoading(false)
             setError(response.error)
-            throw new Error(response.error)
+            return response
         }
 
         // Maj des données utilisateur après login réussi
@@ -127,7 +125,6 @@ export const AuthProvider = ({ children }) => {
                 console.error("AuthContext, login: erreur lors de la récupération de données de la famille: ",error)
             }
         }
-        
         return response
     }
     

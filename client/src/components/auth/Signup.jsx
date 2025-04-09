@@ -73,11 +73,12 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
       const response = await result.json();
 
       if (response.error) {
+        console.log("Erreur lors de l'inscription: ", response.error);
         setErrorMessage(response.error);
         setIsLoading(false);
         return;
       }
-
+      console.log("Inscription réussie: ", response);
       await login(formData.username, formData.password)
       onSignupSuccess()
     } catch (error) {

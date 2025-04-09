@@ -15,13 +15,26 @@ const HomePage = () => {
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [successLogin, setSuccessLogin] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [showError, setShowError] = useState(false)
   const [signupForm, setSignupForm] = useState(false)
   const [loading, setLoading] = useState(true);
   const [successSignup, setSuccessSignup] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const {currentUser, logout, fetchCurrentUser} = useAuth()
+  const {currentUser, logout, fetchCurrentUser, error} = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (errorMessage) {
+      setShowError(true);
+      const timer = setTimeout(() => {
+        setShowError(false);
+        setErrorMessage(null);
+      }, 3000); 
+
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage,setErrorMessage]);
 
   const handleJoinFamily = async (e) => {
     e.preventDefault();
@@ -152,12 +165,6 @@ const HomePage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if(loading) return (
-    <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
-      <span className="loading loading-infinity text-secondary loading-xl"></span>
-    </div>
-    )
-
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">
       {/* Header with Logo */}
@@ -181,10 +188,10 @@ const HomePage = () => {
                 </div>
             )}
         
-        { errorMessage && (
+        { showError && (
           <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
-            <div role="alert" className="alert alert-error alert-soft shadow-lg maw-w-md">
-            <span>{errorMessage}</span>
+            <div role="alert" className="alert alert-error alert-soft shadow-lg maw-w-sm">
+            <span>{errorMessage || error}</span>
           </div>
         </div>
         )}
@@ -305,23 +312,25 @@ const HomePage = () => {
         
         
         { showLoginForm && (
-          <Auth
-            signUp={signupForm} 
-            onClose={() => {
-              setShowLoginForm(false)
-              setSignupForm(false)
-            }}
-            onLoginSuccess={() => {
-              setSuccessLogin(true)
-              setShowLoginForm(false)
-            }}
-            onSignupSuccess={() => {
-              setSuccessSignup(true)
-              setSuccessLogin(true)
-              setTimeout(() => {setSuccessSignup(false)}, 3000)
-              setShowLoginForm(false)
-             }}
-          />
+          // Dans HomePage.jsx
+        <Auth
+          signUp={signupForm} 
+          isOpen={showLoginForm}  // Contrôle l'ouverture du modal depuis le parent
+          onClose={() => {
+            setShowLoginForm(false)
+            setSignupForm(false)
+          }}
+          onLoginSuccess={() => {
+            setSuccessLogin(true);
+            setShowLoginForm(false);
+          }}
+          onSignupSuccess={() => {
+            setSuccessSignup(true)
+            setSuccessLogin(true)
+            setTimeout(() => {setSuccessSignup(false)}, 3000)
+            setShowLoginForm(false)
+          }}
+        />
         )}
         
        

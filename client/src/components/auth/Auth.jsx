@@ -30,11 +30,15 @@ const Auth = ({ onClose, onLoginSuccess, signUp, onSignupSuccess }) => {
               style={{ transformStyle: "preserve-3d" }}
             >
             <div className="absolute w-full backface-hidden" style={{ backfaceVisibility: "hidden" }}>
-              <Login 
-                onClose={onClose}
-                onLoginSuccess={onLoginSuccess}
-                onSwitchToSignup={() => setIsSignUp(true)}
-                />
+            <Login 
+              onClose={onClose}
+              onLoginSuccess={(userData) => {
+                if (!userData.error) {
+                  onLoginSuccess(userData);
+                }
+              }}
+              onSwitchToSignup={() => setIsSignUp(true)}
+            />
             </div>
             
             <div 
