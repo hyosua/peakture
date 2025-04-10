@@ -69,12 +69,7 @@ const AlbumPage = () => {
                 // Calcul des votes pour afficher le classement
                 if(albumData.status === "closed"){
                     // On récupère les résultats de votes
-                    const classement = photosData.photos.map(photo => ({
-                        name: photo.username,
-                        votes: photo.votes || 0
-                    }))
-                    classement.sort((a, b) => b.votes - a.votes)
-                    setVoteResultsData(classement)
+                    updateClassement(photosData.photos || [])
                 }
 
             } catch(error){
@@ -104,6 +99,15 @@ const AlbumPage = () => {
             console.error("Error uploading to Cloudinary: ",error)
             throw error
         }
+    }
+
+    const updateClassement = (photos) => {
+        const classement = photos.map(photo => ({
+            name: photo.username,
+            votes: photo.votes || 0
+        }))
+        classement.sort((a, b) => b.votes - a.votes)
+        setVoteResultsData(classement)
     }
 
     const handleImageChange = (e) => {
@@ -275,14 +279,23 @@ const AlbumPage = () => {
             // MAJ des photos
             const result = await response.json()
             setAlbum(result.album)
-            console.log(result.peakture)
-            setPhotos(prevPhotos => 
-                        prevPhotos.map(photo =>
-                        photo._id === result.peakture._id ? result.peakture : photo
-                    ))
+            setPhotos(prevPhotos => { // Maj de la photo gagnante
+                    const updatedPhotos = prevPhotos.map(photo =>
+                    photo._id === result.peakture._id ? result.peakture : photo
+                    )
+                if(result.album.status === "closed"){
+                    updateClassement(updatedPhotos)
+                }
+                return updatedPhotos
+            })
         } catch (error) {
             console.error("Erreur lors du Tie Break:", error)
         }
+    }
+
+    const handleTieBreakVoteClick = (photoId) => {
+        setPhotoToConfirm(photoId)
+        setIsConfirmOpen(true)
     }
 
     const handleCloudinaryDelete = async (cloudinaryUrl) => {
@@ -360,10 +373,7 @@ const AlbumPage = () => {
         }, 3000)
     }
 
-    const handleTieBreakVoteClick = (photoId) => {
-        setPhotoToConfirm(photoId)
-        setIsConfirmOpen(true)
-    }
+  
 
     const confirmVote = async () => {
         handleTieBreakVote(photoToConfirm)
@@ -474,10 +484,7 @@ const AlbumPage = () => {
             
             {/* Photo Gallery */}
             <div className=" flex flex-col items-center justify-center">
-                 {/* Contest Results */}
-                 {album?.status === "closed" && (
-                    <ContestResults results={voteResultsData} />
-                )}
+                 
                 {photos.length > 0 ? (
                     album?.status === "tie-break" ? (
                         <TieBreakView 
@@ -515,6 +522,7 @@ const AlbumPage = () => {
                             ))}
                         </Masonry>
                     )
+                    
                 ) : (
                     <div className="flex flex-col items-center justify-center py-16 text-white">
                         <motion.button 
@@ -530,6 +538,11 @@ const AlbumPage = () => {
                         <p>Sois le premier !</p>                        
                     </div>
                 )} 
+
+                {/* Contest Results */}
+                {album?.status === "closed" && (
+                    <ContestResults results={voteResultsData} />
+                )}
 
                 {/* Add Photo Button */}
                 {album?.status === "open" && (

@@ -10,8 +10,8 @@ const TieBreakView = ({ album, tiedPhotos, otherPhotos, onTieBreakVote, disabled
         <div className="flex flex-col items-center h-screen">
             {/*Finalistes*/}
             <div className="text-center">
-                <h1 className="text-2xl font-bold mb-4">Finalistes</h1>
-                {isTieBreakJudge && (
+                <h1 className="text-2xl font-bold text-accent ">Finalistes</h1>
+                {isTieBreakJudge ? (
                     <>
                         <h2 className="text-accent font-bold mb-2 text-center">
                             {currentUser.username}, à toi de départager.
@@ -19,35 +19,41 @@ const TieBreakView = ({ album, tiedPhotos, otherPhotos, onTieBreakVote, disabled
                         <p className="text-gray-500 m-4 mb-6">Choisis la photo qui mérite selon toi d&apos;atteindre le sommet</p>
                     </>
                     
+                ) : (
+                    <h2 className="text-agray-500 mb-4 text-center">
+                        En attente de la décision du jury 
+                    </h2>
                 )}
-                <div className='m-2 grid grid-cols-2  md:grid-cols-2 gap-4 place-items-center mx-auto'>
+                <div className={`p-2 m-2 grid grid-cols-2  md:grid-cols-${tiedPhotos.length > 2 ? "3" : "2"} gap-4 place-items-center mx-auto`}>
                     {tiedPhotos.map((photo) => (
-                        <div key={photo._id} 
-                            className="w-full max-w-sm group overflow-hidden rounded-xl  relative mb-4 group inline-block">
-                            <img
-                                src={photo.src}
-                                alt="Photo finaliste"
-                                className={`w-full h-auto object-cover transition-transform border-4 border-accent duration-300 group-hover:scale-105 rounded-lg shadow-lg`}
-                            />
-                            {isTieBreakJudge && (
-                                <div className="indicator-item indicator-bottom ">
-                                    <input type="radio" 
-                                        name="selectedPhoto" 
-                                        className="mt-2 radio radio-accent" 
-                                        value={photo._id}
-                                        checked={selectedPhoto === photo._id}
-                                        onChange={() => setSelectedPhoto(photo._id)}
-                                    />
-
-                                
-                              </div>
+                        <div key={photo._id} className={`indicator relative inline-block w-full transition-transform duration-300 ${photo._id === selectedPhoto ? "scale-105" : ""}  rounded-xl mb-2 lg:mb-10`}>
+                            
+                            
+                            <span className={`indicator-item indicator-bottom indicator-center font-bold badge ${photo._id === selectedPhoto ? "badge-primary" : "badge-accent"} `}>
+                            {photo.votes}
+                            </span>
+                            <button onClick={() => {
+                                if (isTieBreakJudge) {
+                                    setSelectedPhoto(photo._id);
+                                }
+                            }}>
+                                <img
+                                    src={photo.src}
+                                    alt="Photo finaliste"
+                                    className={`lg:max-w-sm h-auto object-cover  border-4 ${photo._id === selectedPhoto ? "border-primary" : "border-accent"}   rounded-2xl shadow-lg`}
+                                />
+                            </button>
+                        
+                            {currentUser?._id !== album?.tieBreakJudge && (
+                                <div className="absolute -bottom-6 text-primary font-bold text-center">
+                                    {photo.username}
+                                </div>
                             )}
                         </div>
-                        
                     ))}
                 </div>
                 {isTieBreakJudge && (
-                    <button className={`btn btn-accent ${
+                    <button className={`lg:mt-4 mb-20 btn btn-primary ${
                         disabled || !selectedPhoto ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                     onClick={() => {

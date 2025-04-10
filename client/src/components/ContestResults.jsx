@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const ContestResults = ( {results} ) => {
 
     return (
-        <ul className="list bg-base-100 rounded-box shadow-md mb-4">
+        <ul className="list bg-base-100 rounded-box shadow-md mb-20">
   
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Classement</li>
             
