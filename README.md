@@ -68,21 +68,7 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 
 ## Utilisation
 
-### A- Lancer l'application
-- **Démarrer le serveur** :
-  ```
-  cd server
-  npm run dev
-  ```
-- **Démarrer le client** :
-  ```
-  cd client
-  npm run dev
-  ```
-L'application sera accessible sur [http://localhost:5173](http://localhost:5173).
-Serveur configuré sur http://localhost:5000
-
-### B- Lancer le projet avec Docker 🚀 
+### Lancer le projet avec Docker 🚀 
 Ce projet utilise Docker pour lancer l'application MERN (MongoDB, Express, React, Node.js) en local.
 
 - **Pré-requis**
