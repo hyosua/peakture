@@ -1,0 +1,27 @@
+
+services:
+  client:
+    build: ./client
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - server
+    command: npm run dev
+
+  server:
+    build: ./server
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    env_file:
+      - ./server/config.env
+    command: npm run dev
+
+

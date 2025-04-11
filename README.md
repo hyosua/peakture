@@ -83,5 +83,41 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 L'application sera accessible sur [http://localhost:5173](http://localhost:5173).
 Serveur configuré sur http://localhost:5000
 
+🚀 Lancer le projet avec Docker
+Ce projet utilise Docker pour lancer l'application MERN (MongoDB, Express, React, Node.js) en local.
+
+Pré-requis
+Docker et Docker Compose doivent être installés sur votre machine.
+
+Une instance MongoDB locale doit être en cours d'exécution (ou utilisez MongoDB Atlas).
+
+Configuration des variables d’environnement
+Certaines fonctionnalités (comme la connexion à Cloudinary ou MongoDB) nécessitent des variables d’environnement.
+
+Créer un fichier de configuration :
+
+Copiez le fichier d’exemple :
+
+bash
+Copy
+Edit
+cp server/config.env.example server/config.env
+Remplissez-le avec vos informations personnelles (Cloudinary, MongoDB, etc.).
+
+⚠️ Ne partagez jamais ce fichier config.env publiquement. Il est ignoré par Git (.gitignore).
+
+Démarrage de l'application
+Depuis la racine du projet, lancez la commande :
+
+bash
+Copy
+Edit
+docker-compose up --build
+Les services suivants seront disponibles :
+
+Frontend (Vite + React) : http://localhost:5173
+
+Backend (Express API) : http://localhost:5000
+
 
 
