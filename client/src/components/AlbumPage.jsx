@@ -226,8 +226,6 @@ const AlbumPage = () => {
         }
         const photoId = encodeURIComponent(photo_id) // assure les caractères spéciaux sont encodés
         
-        if(votedPhotoId === photoId) return // On empêche de voter plusieurs fois la même photo
-
         // MAJ optimiste de l'UI
         setVotedPhotoId(photoId)
 

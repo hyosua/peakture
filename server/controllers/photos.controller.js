@@ -249,31 +249,46 @@ export const replacePhoto = async (req,res) => {
     }
 }
 
+// Vote: 1 seul vote par album, possibilité de changer son vote
 export const votePhoto = async (req,res) => {
     const session = await mongoose.startSession()
     session.startTransaction()
 
     try {
-        const photoId = new ObjectId(req.params.id)
+        const photoId = req.params.id
         const userId = req.user._id
         const {albumId} = req.body
 
-
         const previousVote = await Photo.findOne({ albumId, votedBy: userId})
-
-        if(previousVote){
-            await Photo.updateOne(
-                { _id: previousVote._id },
+        const sameVote = await Photo.findOne({ _id: photoId, votedBy: userId})
+        const removeVote =  async (photoId, userId, session) => {
+            return Photo.updateOne(
+                { _id: photoId },
                 { $inc: {votes: -1 }, $pull: { votedBy: userId }},
                 {session}
-            )
-        }
+        )}
+        const addVote = async ( photoId, userId, session) => {
+           return  Photo.updateOne(
+                { _id: photoId },
+                { $inc: { votes: 1 }, $push: { votedBy: userId }},
+                {session}
+        )}
 
-        await Photo.updateOne(
-            { _id: photoId },
-            { $inc: { votes: 1 }, $push: { votedBy: userId }},
-            {session}
-        )
+        if(previousVote){
+            if(sameVote){
+                if(previousVote.votedBy.includes(userId)){
+                    await removeVote(previousVote._id, userId, session)
+                }else{
+                    await addVote(photoId, userId, session)
+                }
+            }else{
+                await removeVote(previousVote._id, userId, session)
+                await addVote(photoId, userId, session)
+            }
+        } else {
+            await addVote(photoId, userId, session)
+        }
+        
 
         await session.commitTransaction()
         session.endSession()
