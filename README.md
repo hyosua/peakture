@@ -82,7 +82,7 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 L'application sera accessible sur [http://localhost:5173](http://localhost:5173).
 Serveur configuré sur http://localhost:5000
 
-B- Lancer le projet avec Docker 🚀 
+### B- Lancer le projet avec Docker 🚀 
 Ce projet utilise Docker pour lancer l'application MERN (MongoDB, Express, React, Node.js) en local.
 
 - **Pré-requis**
@@ -92,8 +92,6 @@ Une instance MongoDB locale doit être en cours d'exécution (ou utilisez MongoD
 
 - **Configuration des variables d’environnement**
 Certaines fonctionnalités (comme la connexion à Cloudinary ou MongoDB) nécessitent des variables d’environnement.
-
-Créer un fichier de configuration :
 
 Copiez le fichier d’exemple :
   ```
