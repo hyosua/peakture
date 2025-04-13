@@ -1,13 +1,7 @@
-import bcrypt from 'bcryptjs'
-import Family from '../models/family.model.js'
 import User from '../models/user.model.js'
 import Photo from '../models/photo.model.js'
 import Album from '../models/album.model.js'
-import me from '../routes/auth.routes.js'
-import { ObjectId } from 'mongodb'
-import crypto from 'crypto'
-import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
-import { sendFamilyNotification } from '../lib/utils/sendEmail.js'
+
 
 export const getClassementAnnuel = async (req, res) => {
     try {
@@ -26,18 +20,18 @@ export const getClassementAnnuel = async (req, res) => {
     }
 }
 
-export const getClassementLastAlbum = async (req, res) => {
+export const getClassementAlbum = async (req, res) => {
     try {
         const familyId = req.params.familyId
-        const lastAlbum = await Album.findOne({familyId, status: "closed "}).sort({ createdAt: -1 })
+        const lastAlbum = await Album.findOne({familyId, status: "closed"}).sort({ createdAt: -1 })
         if(!lastAlbum){
             return res.status(404).json({ message: "Aucun album clos"})
         }
         const classement = await Photo.find({albumId: lastAlbum._id})
                                     .select('username votes')
                                     .sort({ votes: -1 });
-        if(!classement){
-            return res.status(404).json({ message: "Aucun utilisateur dans le classement" })
+        if(!classement || classement.length === 0){
+            return res.status(404).json({ message: "Pas de photos" })
         }
 
         res.status(200).json(classement)
