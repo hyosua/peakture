@@ -243,7 +243,10 @@ const HomePage = () => {
         
         {/* Join Family Side */}
         <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:mr-2  md:mb-0">
-          <h2 className="text-3xl font-bold mb-6 text-primary">Rejoins une Family</h2>
+          <h2 className="relative text-3xl font-bold mb-6 text-primary">Rejoins une Family</h2>
+          <div className="tooltip tooltip-info" data-tip="Une communauté où les membres peuvent créer des albums photo, participer aux concours mensuels et voter ensemble.">
+          <button className="absolute -top-4 -right-4 btn btn-info">?</button>
+        </div>
           <form onSubmit={handleJoinFamily} className="w-full max-w-xs">
             <div className="form-control">
               <label className="label">
@@ -337,7 +340,7 @@ const HomePage = () => {
       </main>
       
       <footer className="p-4 text-center text-sm opacity-70">
-        © 2025 Peakture - Partage des moments avec ta famille
+        © 2025 Peakture - Chaque photo nous rapproche du sommet
       </footer>
     </div>
   );

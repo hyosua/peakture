@@ -10,6 +10,9 @@ import HomePage from './auth/HomePage'
 import Login from './auth/Login'
 import Layout from './Layout.jsx'
 import { useState, useEffect } from 'react';
+import Classement from './Classement.jsx';
+import { Provider } from 'react-redux'
+import { store } from '../store/index.js'
 
 // Protection des routes enfants
 const ProtectedRoute = ({ children }) => {
@@ -84,6 +87,7 @@ const AppRoutes = () => {
         <Route path="/auth" element={<Auth />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/album/:id" element={<AlbumPage />} />
+        <Route path="/classement" element={<Classement />} />
       </Routes>
     </Layout>
     
@@ -95,7 +99,9 @@ const App = () => {
     <div>
     <BrowserRouter>
       <AuthProvider>
-          <AppRoutes />
+         <Provider store={store}>
+              <AppRoutes />
+          </Provider>
       </AuthProvider>
     </BrowserRouter>
     </div>

@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     profileImg:{
         type: String,
         default: "",
+    },
+    score:{
+        type: Number,
+        default: 0,
     }
 
 },{timestamps: true})

@@ -7,6 +7,7 @@ import photos from './routes/photos.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import family from './routes/family.routes.js'
 import user from './routes/user.routes.js'
+import classement from './routes/classement.routes.js'
 import { errorHandler } from './errorHandler.js'
 
 const app = express()
@@ -24,6 +25,7 @@ app.use("/api/family", family)
 app.use("/api/albums", albums)
 app.use("/api/photos", photos)
 app.use("/api/user", user)
+app.use("/api/classement", classement)
 
 app.use(errorHandler)
 
