@@ -111,15 +111,21 @@ const Classements = () => {
             <div className="tab-content bg-base-100 border-base-300 p-6">
             {albumError && activeTab ==="mensuel" ? (
                         <ClassementVide key="mensuel"/>
-                ) : (
+                ) : activeTab === "mensuel" ? (
                 <>
                     
-                        <ul className="list bg-base-100 rounded-box shadow-md mb-20">
+                    <motion.ul
+                        variants={container}
+                        initial="hidden"
+                        animate="show"
+                        className="list bg-base-100 rounded-box shadow-md mb-20"
+                        >
             
                             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide" >Classement Mensuel</li>
                             
                             {albumRankings?.map((user, index) => (
-                                <li key={index} 
+                                <motion.li key={index} 
+                                     variants={item}
                                     className={`list-row flex items-center p-4 border-b border-base-200 ${
                                     index === 0 ? " border border-yellow-200 font-extrabold " : ""
                                 }`}>
@@ -133,11 +139,11 @@ const Classements = () => {
                                     <div className="text-2xl text-primary text-right ml-auto font-bold ">
                                         {user.votes}
                                     </div>
-                                </li>
+                                </motion.li>
                             ))}
-                        </ul>       
+                        </motion.ul>       
                 </>
-            )}
+            ) : (<></>)}
         </div>
 
 
