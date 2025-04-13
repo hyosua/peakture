@@ -1,14 +1,18 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchClassement } from "../store/slices/classementSlice";
+import { useAuth } from "../context/AuthContext";
 
 const Classement = () => {
     const dispatch = useDispatch();
-    const {classement, loading, error } = useSelector((state) => state.classement);
+    const { currentFamily } = useAuth()
+    const {rankings, loading, error } = useSelector((state) => state.classement);
 
     useEffect(() => {
-        dispatch(fetchClassement());
-    }, [dispatch])
+        if(currentFamily){
+            dispatch(fetchClassement(currentFamily.family._id));
+        }
+    }, [dispatch, currentFamily])
 
     if(loading) return <span className="loading loading-infinity loading-xl"></span>
     if(error) return 
@@ -22,18 +26,18 @@ const Classement = () => {
 
     return (
         
-        <div className="tabs tabs-lift">
+        <div className="tabs tabs-lift p-4">
             {/* Classement Annuel */}
-            <input type="radio" name="annuel" className="tab" aria-label="Annuel" />
+            <input type="radio" name="classement" className="tab" aria-label="Annuel" defaultChecked />
             <div className="tab-content bg-base-100 border-base-300 p-6">
                 <ul className="list bg-base-100 rounded-box shadow-md mb-20">
     
-                    <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Classement Annuel</li>
+                    <li className="p-4 pb-2 text-xs opacity-60 tracking-wide" >Classement Annuel</li>
                     
-                    {classement.map((user, index) => (
+                    {rankings?.map((user, index) => (
                         <li key={index} 
                             className={`list-row flex items-center p-4 border-b border-base-200 ${
-                            index === 0 ? " border border-yellow-200 font-extrabold scale-105" : ""
+                            index === 0 ? " border border-yellow-200 font-extrabold " : ""
                         }`}>
                             <div className={`text-4xl text-secondary font-thin opacity-60 tabular-nums ${
                                 index === 0 ? "text-yellow-200" : index === 1 ? "text-slate-400" : index === 2 ? "text-amber-500" : "text-secondary"
@@ -51,7 +55,7 @@ const Classement = () => {
             </div>
 
             {/* Classement Mensuel */}
-            <input type="radio" name="mensuel" className="tab" aria-label="Mensuel" defaultChecked />
+            <input type="radio" name="classement" className="tab" aria-label="Mensuel"  />
             <div className="tab-content bg-base-100 border-base-300 p-6">Tab content 2</div>
 
         </div>

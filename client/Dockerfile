@@ -1,9 +1,8 @@
 # client/Dockerfile
 FROM node:20
 WORKDIR /app
-COPY . .
+COPY package.json package-lock.json ./
 RUN npm install
-RUN npm run build
-CMD ["npm", "start"]
+COPY . .
+CMD ["npm", "run", "dev"]
 EXPOSE 5173
-

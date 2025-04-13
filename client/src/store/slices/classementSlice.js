@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 import axios from 'axios'
-import { useAuth } from '../../context/AuthContext'
 
 
 
@@ -9,11 +8,12 @@ import { useAuth } from '../../context/AuthContext'
 export const fetchClassement = createAsyncThunk(
 
     'classement/fetchClassement',
-    async(_, { rejectWithValue }) => {
-            const {currentFamily} = useAuth()
-            const API_URL = `/api/${currentFamily}/classement`
+    async(familyId, { rejectWithValue }) => {
+            const API_URL = `http://localhost:5000/api/classement/${familyId}/annuel`
         try{
+            console.log("Sending fetchClassement request:", familyId)
             const response = await axios.get(API_URL);
+            console.log("Response:", response.data)
             return response.data;
         } catch(error){
             return rejectWithValue(error.response.data);
@@ -24,7 +24,7 @@ export const fetchClassement = createAsyncThunk(
 const classementSlice = createSlice({
     name: 'classement',
     initialState: {
-        classement: [],
+        rankings: [],
         loading: false,
         error: null,
     },
