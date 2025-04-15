@@ -75,7 +75,7 @@ const AlbumList = () => {
     const handleAlbumClose = async (albumId) =>{
 
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/close`,{
+            const response = await fetch(`http://localhost:5000/api/albums/close/${albumId}/close-votes`,{
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }
             })
@@ -212,7 +212,7 @@ const AlbumList = () => {
     // Album Winner
     const handleWinner = async (albumId) => {
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/winner`, {
+            const response = await fetch(`http://localhost:5000/api/albums/close/${albumId}/winner`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -243,7 +243,7 @@ const AlbumList = () => {
     // Gérer une égalité
     const handleTie = async (albumId) => {
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/${albumId}/tie`, {
+            const response = await fetch(`http://localhost:5000/api/albums/close/${albumId}/tie`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }, 
                 body: JSON.stringify({ familyId})

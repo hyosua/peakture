@@ -74,7 +74,7 @@ describe('album Controller', () => {
     await Album.findByIdAndUpdate(testAlbum._id, { status: "open" });
   
     const res = await request(app)
-      .patch(`/api/albums/${testAlbum._id}/close`)
+      .patch(`/api/albums/${testAlbum._id}/close-votes`)
       .send({ familyId: testAlbum.familyId });
     
     expect(res.status).toBe(400);
