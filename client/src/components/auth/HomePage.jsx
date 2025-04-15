@@ -2,7 +2,7 @@ import '../../App.css';
 import  { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'
 import Auth from './Auth.jsx'
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import ConfirmMessage from '../ConfirmMessage.jsx';
 
@@ -239,105 +239,105 @@ const HomePage = () => {
       </header>
       
 
-      <main className="flex-grow flex flex-col md:flex-row px-4 py-2">
-        
-        {/* Join Family Side */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:mr-2  md:mb-0">
-          <h2 className="relative text-3xl font-bold mb-6 text-primary">Rejoins une Family</h2>
-          <div className="tooltip tooltip-info" data-tip="Une communauté où les membres peuvent créer des albums photo, participer aux concours mensuels et voter ensemble.">
-          <button className="absolute -top-4 -right-4 btn btn-info">?</button>
+<main className="flex-grow flex flex-col md:flex-row px-4 py-2">
+  
+  {/* Join Family Side */}
+  <div className="flex-1 flex flex-col items-center justify-center p-4 bg-base-200 rounded-lg md:mr-2  md:mb-0">
+      <h2 className="text-3xl font-bold mb-6 text-primary flex items-center gap-2">
+        Rejoins une Family
+        <div className="tooltip tooltip-info tooltip-left" data-tip="Une communauté où les membres peuvent participer aux concours mensuels et voter ensemble.">
+          <HelpCircle className="w-5 h-5  text-gray-400 hover:text-info transition-colors cursor-pointer" />
         </div>
-          <form onSubmit={handleJoinFamily} className="w-full max-w-xs">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text mb-2">Entre le Family Code</span>
-              </label>
-                <input 
-                  type="text" 
-                  placeholder="ABC123" 
-                  className="input input-bordered w-full" 
-                  pattern="[A-F0-9]{6}" 
-                  value={joinCode}
-                  onChange={
-                    (e) => {setJoinCode(e.target.value)
-                  }}
-                  title="Code hexadécimal (6 caractères, A-F, 0-9)" 
-                  required 
-                  onInput={(e) => e.target.value = e.target.value.toUpperCase()}
-                  />
-              <p className="validator-hint">
-                Le code doit contenir exactement 6 caractères (A-F, 0-9)
-              </p>
-            </div>
-            { serverResponse && !serverResponse.family && joiningFamily && (
-              <div role="alert" className="alert alert-error alert-soft mt-2">
-              <span>{serverResponse.message}</span>
-              </div>
-            )}
-            <button type="submit" className="btn btn-primary w-full mt-6 text-lg hover:bg-emerald-500">
-              Rejoindre 
-            </button>
-          </form>
-
-        </div>
-
-        <div className="divider md:divider-horizontal text-xl text-white font-bold">OU</div>
-        
-        {/* Create Family Side */}
-        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:ml-2">
-          <h2 className="text-3xl font-bold mb-6 text-secondary ">Crée ta Family</h2>
-          <form onSubmit={handleCreateFamily} className="w-full max-w-xs">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text mb-2">Nom de la Family</span>
-              </label>
-              <input 
-                type="text" 
-                placeholder="Smith Family" 
-                className="input input-bordered w-full" 
-                value={familyName}
-                title="Entrer le nom de votre Famille" 
-
-                onChange={(e) => setFamilyName(e.target.value)}
-                required
-              />
-              { serverResponse?.message && creatingFamily && (
-              <div role="alert" className="alert alert-error alert-soft mt-2">
-              <span>{serverResponse.message}</span>
-              </div>
-            )}
-            </div>
-            <button type="submit" className="btn btn-secondary hover:bg-orange-500 w-full mt-6 text-lg">
-              Créer 
-            </button>
-          </form>
-        </div>
-        
-        
-        { showLoginForm && (
-          // Dans HomePage.jsx
-        <Auth
-          signUp={signupForm} 
-          isOpen={showLoginForm}  // Contrôle l'ouverture du modal depuis le parent
-          onClose={() => {
-            setShowLoginForm(false)
-            setSignupForm(false)
-          }}
-          onLoginSuccess={() => {
-            setSuccessLogin(true);
-            setShowLoginForm(false);
-          }}
-          onSignupSuccess={() => {
-            setSuccessSignup(true)
-            setSuccessLogin(true)
-            setTimeout(() => {setSuccessSignup(false)}, 3000)
-            setShowLoginForm(false)
-          }}
+      </h2>
+    <form onSubmit={handleJoinFamily} className="w-full max-w-xs">
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text mb-2">Entre le Family Code</span>
+        </label>
+        <input 
+          type="text" 
+          placeholder="ABC123" 
+          className="input input-bordered w-full" 
+          pattern="[A-F0-9]{6}" 
+          value={joinCode}
+          onChange={(e) => setJoinCode(e.target.value)}
+          title="Code hexadécimal (6 caractères, A-F, 0-9)" 
+          required 
+          onInput={(e) => e.target.value = e.target.value.toUpperCase()}
         />
+        <p className="validator-hint">
+          Le code doit contenir exactement 6 caractères (A-F, 0-9)
+        </p>
+      </div>
+      { serverResponse && !serverResponse.family && joiningFamily && (
+        <div role="alert" className="alert alert-error alert-soft mt-2">
+          <span>{serverResponse.message}</span>
+        </div>
+      )}
+      <button type="submit" className="btn btn-primary w-full mt-6 text-lg hover:bg-emerald-500">
+        Rejoindre 
+      </button>
+    </form>
+  </div>
+
+  <div className="divider md:divider-horizontal text-xl text-white font-bold">OU</div>
+  
+  {/* Create Family Side */}
+  <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:ml-2">
+    <h2 className="text-3xl font-bold mb-6 text-primary flex items-center gap-2">
+      Crée ta Family
+      <div className="tooltip tooltip-info tooltip-left max-w-xs" data-tip="Une communauté où les membres peuvent participer aux concours mensuels et voter ensemble.">
+      <HelpCircle className="w-5 h-5  text-gray-400 hover:text-info transition-colors cursor-pointer" />
+
+      </div>
+    </h2>
+    <form onSubmit={handleCreateFamily} className="w-full max-w-xs">
+      <div className="form-control">
+        <label className="label">
+          <span className="label-text mb-2">Nom de la Family</span>
+        </label>
+        <input 
+          type="text" 
+          placeholder="Smith Family" 
+          className="input input-bordered w-full" 
+          value={familyName}
+          title="Entrer le nom de votre Famille" 
+          onChange={(e) => setFamilyName(e.target.value)}
+          required
+        />
+        { serverResponse?.message && creatingFamily && (
+          <div role="alert" className="alert alert-error alert-soft mt-2">
+            <span>{serverResponse.message}</span>
+          </div>
         )}
-        
-       
-      </main>
+      </div>
+      <button type="submit" className="btn btn-secondary hover:bg-orange-500 w-full mt-6 text-lg">
+        Créer 
+      </button>
+    </form>
+  </div>
+  
+  { showLoginForm && (
+    <Auth
+      signUp={signupForm} 
+      isOpen={showLoginForm}  
+      onClose={() => {
+        setShowLoginForm(false)
+        setSignupForm(false)
+      }}
+      onLoginSuccess={() => {
+        setSuccessLogin(true);
+        setShowLoginForm(false);
+      }}
+      onSignupSuccess={() => {
+        setSuccessSignup(true)
+        setSuccessLogin(true)
+        setTimeout(() => {setSuccessSignup(false)}, 3000)
+        setShowLoginForm(false)
+      }}
+    />
+  )}
+</main>
       
       <footer className="p-4 text-center text-sm opacity-70">
         © 2025 Peakture - Chaque photo nous rapproche du sommet

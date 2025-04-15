@@ -259,7 +259,7 @@ const AlbumPage = () => {
     const handleTieBreakVote = async (photoId) => {
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}/vote/tie-break`, {
+            const response = await fetch(`${API_BASE_URL}/api/albums/close/${photoId}/tie-break`, {
                 method: "PATCH",
                 credentials: "include",
                 headers: {

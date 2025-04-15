@@ -10,7 +10,7 @@ const Classements = () => {
     const dispatch = useDispatch();
     const { currentFamily } = useAuth()
     const {rankings, loading, error } = useSelector((state) => state.classement);
-    const {albumRankings, albumLoading, albumError } = useSelector((state) => state.classementAlbum);
+    const {albumRankings, albumLoading, albumError, albumInfo } = useSelector((state) => state.classementAlbum);
     const [activeTab, setActiveTab] = useState("mensuel")
 
     useEffect(() => {
@@ -121,7 +121,7 @@ const Classements = () => {
                         className="list bg-base-100 rounded-box shadow-md mb-20"
                         >
             
-                            <li className="p-4 pb-2 text-xs opacity-60 tracking-wide" >Classement Mensuel</li>
+                            <li className="p-4 pb-2 text-xs opacity-60 tracking-wide" >Classement de {albumInfo?.month}</li>
                             
                             {albumRankings?.map((user, index) => (
                                 <motion.li key={index} 

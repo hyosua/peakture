@@ -163,7 +163,7 @@ export const sendTieNotification = async (userMail, username, albumId) => {
         to: userMail,
         from: 'colleterhyosua@gmail.com',
         subject: `Il est temps de départager les votes !`,
-        text: `Salut ${username}, Ta Family a bien été créé! `,
+        text: `Salut ${username}, Tu dois départager les votes !`,
         html: `
                 <!DOCTYPE html>
                 <html lang="fr">

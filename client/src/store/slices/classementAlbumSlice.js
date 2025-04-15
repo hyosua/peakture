@@ -27,6 +27,7 @@ const classementAlbumSlice = createSlice({
     name: 'classement-mensuel',
     initialState: {
         albumRankings: [],
+        albumInfo: null,
         albumLoading: false,
         albumError: null,
     },
@@ -39,7 +40,8 @@ const classementAlbumSlice = createSlice({
             })
             .addCase(fetchClassementAlbum.fulfilled, (state, action) => {
                 state.albumLoading = false;
-                state.albumRankings = action.payload;
+                state.albumRankings = action.payload.classement;
+                state.albumInfo = action.payload.album;
             })
             .addCase(fetchClassementAlbum.rejected, (state, action) => {
                 state.albumLoading = false;

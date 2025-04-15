@@ -34,7 +34,7 @@ export const getClassementAlbum = async (req, res) => {
             return res.status(404).json({ message: "Pas de photos" })
         }
 
-        res.status(200).json(classement)
+        res.status(200).json({ classement, album: lastAlbum })
     }catch (error){
         console.log("Error in getClassementLastAlbum controller", error.message)
         return res.status(500).json({ error: "Internal Server Error"})

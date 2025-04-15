@@ -133,6 +133,15 @@ export const handleTie = async (req, res) => {
             return res.status(404).json({ message: "Erreur lors de la fermeture de l'album" });
         }
 
+        // Mettre à jour les photos restantes pour qu'elles ne soient plus en égalité
+        await Photo.updateMany(
+            { _id: { $in: tiePhotos.map(photo => photo._id) } },
+            { $set: { isTied: false } }
+        );
+        // Mettre à jour le classement
+        const updatedClassementPhotos = await Photo.find({ albumId: req.params.id }).sort({ votes: -1 });
+        await assignPoints(updatedClassementPhotos);
+
         return res.status(200).json({
             winner,
             updatedAlbum
@@ -170,5 +179,43 @@ export const closeVotes = async (req, res) => {
     }catch(error){
         console.error("Erreur dans Close Album route:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
+
+export const tieBreak = async (req,res) => {
+    try{
+        const photoId = req.params.id
+        const userId = req.user._id
+        const {albumId} = req.body
+
+        const peakture = await Photo.findByIdAndUpdate(
+            { _id: photoId },
+            { $inc: { votes: 1 }},
+            { new: true }
+        )
+
+       const updatedAlbum = await Album.findByIdAndUpdate(
+            { _id: albumId },
+            { $set: { winner: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src }},
+            { new: true }
+        )
+
+        const classementPhotos = await Photo.find({albumId}).sort({ votes: -1 });
+        await assignPoints(classementPhotos)
+        // Mettre à jour les photos restantes pour qu'elles ne soient plus en égalité
+        await Photo.updateMany(
+            { albumId },
+            { $set: { isTied: false } }
+        );
+
+        return res.status(200).json({
+            message: "Le vainqueur a été choisi",
+            album: updatedAlbum,
+            peakture
+        })
+
+    }catch(error){
+        console.error("Erreur dans le tie break (photos controller):", error)
+        return res.status(500).json({ message: "Erreur interne du serveur." })
     }
 }

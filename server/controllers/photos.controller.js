@@ -302,36 +302,6 @@ export const votePhoto = async (req,res) => {
     }
 }
 
-export const tieBreak = async (req,res) => {
-    try{
-        const photoId = req.params.id
-        const userId = req.user._id
-        const {albumId} = req.body
-
-        const peakture = await Photo.findByIdAndUpdate(
-            { _id: photoId },
-            { $inc: { votes: 1 }},
-            { new: true }
-        )
-
-       const updatedAlbum = await Album.findByIdAndUpdate(
-            { _id: albumId },
-            { $set: { winner: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src }},
-            { new: true }
-        )
-
-        return res.status(200).json({
-            message: "Le vainqueur a été choisi",
-            album: updatedAlbum,
-            peakture
-        })
-
-    }catch(error){
-        console.error("Erreur dans le tie break (photos controller):", error)
-        return res.status(500).json({ message: "Erreur interne du serveur." })
-    }
-}
-
 export const hasSubmitted = async (req, res) => {
     try {
         const albumId = req.params.id
