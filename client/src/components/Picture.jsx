@@ -1,9 +1,9 @@
-    import { Edit, Trash  } from "lucide-react";
+    import { Edit, Trash, Expand  } from "lucide-react";
     import PropTypes from 'prop-types';
     import { motion, AnimatePresence } from "framer-motion";
     import EditDropdown from "./EditDropdown.jsx"
     import { useAuth } from '../context/AuthContext.jsx';
-    import { useEffect, useState } from "react";
+    import { useEffect, useState, useRef } from "react";
 
     const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
         const {currentUser} = useAuth()
@@ -11,6 +11,9 @@
         const [tooltip, setTooltip] = useState(null)
         const [shake, setShake] = useState(false);
         const [lastTap, setLastTap] = useState(0)
+        const imageRef = useRef(null);
+        const [showFullscreen, setShowFullscreen] = useState(false);
+
 
         useEffect(() => {
             const fetchUserData = async () => {
@@ -128,6 +131,7 @@
                                 </AnimatePresence>
                                             
                                     <motion.img 
+                                        ref={imageRef}
                                         key={photo._id} 
                                         src={photo.src} 
                                         alt={`Photo ${photo._id}`} 
@@ -139,6 +143,18 @@
                                         animate={{ scale: isVotedId ? 1.05 : 1 }}
                                         transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
                                     />
+
+                                    {/* Bouton Plein écran */}
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation(); 
+                                            setShowFullscreen(true);
+                                        }}
+                                        className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-2 right-2 cursor-pointer bg-black/50 text-white p-1 rounded-full hover:bg-black/80 z-20"
+                                        title="Voir en plein écran"
+                                    >
+                                        <Expand className="h-4 w-4" />
+                                    </button>
 
                                     { isPeakture && (
                                         <div>
@@ -152,6 +168,31 @@
 
                                 
                             </motion.button>
+
+                            {/* Full Screen*/}
+                            <AnimatePresence>
+                            {showFullscreen && (
+                                <motion.div 
+                                    className="fixed top-0 left-0 w-full h-full bg-black/90 flex justify-center items-center z-50"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    onClick={() => setShowFullscreen(false)} // Ferme la modal en cliquant en dehors
+                                >
+                                    <motion.img 
+                                        src={photo.src} 
+                                        alt="Fullscreen"
+                                        className="max-w-11/12 max-h-11/12 rounded-xl shadow-lg"
+                                        initial={{ scale: 0.8 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0.8 }}
+                                        transition={{ duration: 0.3 }}
+                                    />
+                                </motion.div>
+                            )}
+                            </AnimatePresence>
+
                             {/*Username*/}
                             {userData && (
                                 <div className="text-primary font-bold mt-2 text-center">

@@ -369,17 +369,19 @@ const AlbumList = () => {
                 )}
             </AnimatePresence>
             
-            
-            
-            {/* Albums Grid */}
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
-                    {!albums.length && (
+            {/* No Albums Message */}
+            {!albums.length && (
                         <div className='flex flex-col items-center justify-center'>
                             <img src='https://img.icons8.com/?size=100&id=nfFc9F8TR8At&format=png&color=000000' alt='Aucun album trouvé' className='w-1/2 h-1/2 mb-4'/>
                             <h2 className='text-xl text-white font-semibold'>Aucun album</h2>
                             <p className={`${isAdmin ? "text-gray-200" : "hidden"}`}>Crée un nouvel album pour commencer !</p>
                         </div>
                     )}
+            
+            {/* Albums Grid */}
+            
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
+                    
                     {albums.map((album) => (
                         <div
                             key={album._id}
@@ -469,7 +471,7 @@ const AlbumList = () => {
 
                         <ConfirmMessage
                             title="Supprimer cet album ?"
-                            message="Es-tu sûr(e) de vouloir supprimer cet album ? Cette action est irréversible et tout son contenu sera perdu."
+                            message="Cette action est irréversible et tout son contenu sera perdu."
                             onConfirm={(e) => {
                                 deleteAlbum(album._id)
                                 setIsConfirmOpen(false)
