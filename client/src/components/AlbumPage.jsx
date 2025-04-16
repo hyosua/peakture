@@ -409,7 +409,8 @@ const AlbumPage = () => {
                     
                 <div className="relative flex pt-4 items-center flex-col ">
                     <h2 className="text-primary text-5xl">{ album.month }</h2>
-                    <h3 className="font-semibold text-secondary mb-6">{album.theme}</h3>
+                    <h3 className="font-semibold text-secondary">{album.theme}</h3>
+                    {photos?.length > 0 && album?.status === "open" && (<p className="text-gray-500 mb-6">Double-Clique sur une photo pour voter!</p>)}
                     
                 </div>
 

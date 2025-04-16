@@ -27,8 +27,10 @@ export const identifyUserOrGuest = async (req, res, next) => {
             // Guest User
             let guest = await Guest.findOne({ sessionId })
             if (!guest) {
+                const username = generatePseudo()
                 guest = new Guest({ 
-                    sessionId, 
+                    sessionId,
+                    username, 
                  })
                 await guest.save()
             }
@@ -39,8 +41,8 @@ export const identifyUserOrGuest = async (req, res, next) => {
 
         // si nouvel invité
         sessionId = generateTokenAndSetCookie(res)
-
-        const guest = new Guest({ sessionId });
+        const username = generatePseudo()
+        const guest = new Guest({ sessionId, username });
         await guest.save();
 
         req.guest = guest;
