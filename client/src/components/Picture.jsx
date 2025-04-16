@@ -145,7 +145,8 @@
                                     />
 
                                     {/* Bouton Plein écran */}
-                                    <button 
+                                    <span role="button"
+                                        tabIndex={0} 
                                         onClick={(e) => {
                                             e.stopPropagation(); 
                                             setShowFullscreen(true);
@@ -154,7 +155,7 @@
                                         title="Voir en plein écran"
                                     >
                                         <Expand className="h-4 w-4" />
-                                    </button>
+                                    </span>
 
                                     { isPeakture && (
                                         <div>

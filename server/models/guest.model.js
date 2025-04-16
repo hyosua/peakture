@@ -6,6 +6,11 @@ const guestSchema = new mongoose.Schema({
         unique: true,
         required: true
     },
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
     role:{
         type: String,
         enum: ['admin', 'user'], default: 'user'

@@ -15,3 +15,5 @@ const adjectives = [
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
     return adj + noun;
   };
+
+    export default generatePseudo;

@@ -2,6 +2,7 @@ import User from '../models/user.model.js'
 import Guest from '../models/guest.model.js' 
 import jwt from 'jsonwebtoken'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
+import generatePseudo from '../lib/utils/generatePseudo.js'
 
 export const identifyUserOrGuest = async (req, res, next) => {
     try {
