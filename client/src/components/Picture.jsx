@@ -5,7 +5,7 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState, useRef } from "react";
 
-    const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
+    const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus, index }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
         const [tooltip, setTooltip] = useState(null)
@@ -72,7 +72,7 @@
         }
 
         const isPeakture = photo._id === album?.peakture
-        const isTieBreakJudge = currentUser?._id === album?.tieBreakJudge
+        // const isTieBreakJudge = currentUser?._id === album?.tieBreakJudge
         const isPhotoOwner = currentUser?._id === photo.userId
         
         return (
@@ -114,7 +114,7 @@
                                 animate={shake ? { rotate: [0, -10, 10, -5, 5, 0] } : isVotedId ? { scale: [1, 1.3, 1] } : {}}
                                 transition={{ duration: 0.4 }}
                             >
-                                {/*Nombre de Votes avec Image*/}
+                                {/*Nombre de Votes*/}
                                 <div className="indicator inline-block w-full">
                                     
                                 <AnimatePresence exitBeforeEnter>
@@ -129,43 +129,45 @@
                                         {photo.votes}
                                     </motion.span>
                                 </AnimatePresence>
-                                            
-                                    <motion.img 
-                                        ref={imageRef}
-                                        key={photo._id} 
-                                        src={photo.src} 
-                                        alt={`Photo ${photo._id}`} 
-                                        className={`rounded-xl relative w-full h-auto max-w-96 ${
-                                            isVotedId ? "border-primary border-4" : 
-                                            isPeakture ? "border-warning border-6" : "border-0"
-                                        }`} 
-                                        initial={{ scale: 1 }}
-                                        animate={{ scale: isVotedId ? 1.05 : 1 }}
-                                        transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
-                                    />
 
-                                    {/* Bouton Plein écran */}
-                                    <span role="button"
-                                        tabIndex={0} 
-                                        onClick={(e) => {
-                                            e.stopPropagation(); 
-                                            setShowFullscreen(true);
-                                        }}
-                                        className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-2 right-2 cursor-pointer bg-black/50 text-white p-1 rounded-full hover:bg-black/80 z-20"
-                                        title="Voir en plein écran"
-                                    >
-                                        <Expand className="h-4 w-4" />
-                                    </span>
+                                {/*Image*/}
 
-                                    { isPeakture && (
-                                        <div>
-                                            <img 
-                                                src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
-                                                alt="Crown" 
-                                                className="absolute -top-10 left-1/2 -translate-x-1/2 w-12 h-12"
-                                            />
-                                        </div>)}
-                                    </div>
+                                <motion.img 
+                                    ref={imageRef}
+                                    key={photo._id} 
+                                    src={photo.src} 
+                                    alt={`Photo ${photo._id}`} 
+                                    className={`rounded-xl relative w-full h-auto max-w-96 ${
+                                        isVotedId ? "border-primary border-4" : 
+                                        isPeakture ? "border-warning border-6" : "border-0"
+                                    }`} 
+                                    initial={{ scale: 1 }}
+                                    animate={{ scale: isVotedId ? 1.05 : 1 }}
+                                    transition={{ type: "spring", stiffness: 20, damping: 10, duration: 1.5 }}
+                                />
+
+                                {/* Bouton Plein écran */}
+                                <span role="button"
+                                    tabIndex={0} 
+                                    onClick={(e) => {
+                                        e.stopPropagation(); 
+                                        setShowFullscreen(true);
+                                    }}
+                                    className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-2 right-2 cursor-pointer bg-black/50 text-white p-1 rounded-full hover:bg-black/80 z-20"
+                                    title="Voir en plein écran"
+                                >
+                                    <Expand className="h-4 w-4" />
+                                </span>
+
+                                { isPeakture && (
+                                    <div>
+                                        <img 
+                                            src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
+                                            alt="Crown" 
+                                            className="absolute -top-10 left-1/2 -translate-x-1/2 w-12 h-12 animate-bounce"
+                                        />
+                                    </div>)}
+                                </div>
 
                                 
                             </motion.button>
@@ -225,6 +227,7 @@
             peakture: PropTypes.bool,
             tieBreakJudge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         }).isRequired,
+        index: PropTypes.number.isRequired,
     };
 
     export default Picture;

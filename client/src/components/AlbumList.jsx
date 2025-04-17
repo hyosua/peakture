@@ -5,6 +5,8 @@ import EditDropdown from './EditDropdown.jsx'
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from '../context/AuthContext.jsx';
 import ConfirmMessage from './ConfirmMessage.jsx'
+import WinnerBanner from './WinnerBanner.jsx';
+import ConfettiElement from './ConfettiElement.jsx';
 
 
 const AlbumList = () => {
@@ -401,11 +403,25 @@ const AlbumList = () => {
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
-                                {album?.winner && 
-                                    <div className='flex gap-2 items-center'>
-                                        <img src='https://img.icons8.com/?size=100&id=uveiovUxXKW2&format=png&color=000000 ' className='w-5 h-5'/>
-                                        <span className='font-semibold text-warning'><i>{album?.winner?.username}</i> </span>
-                                    </div> }
+
+                                {/* Winner Banner */}
+                                {album?.winner && (
+                                    <ConfettiElement 
+                                        id={album._id}
+                                        options={{
+                                            particleCount: 15,
+                                            gravity: 0.9,
+                                            scalar: 0.7,
+                                            spread: 70,
+                                            origin: { y: 0.6 },
+                                            colors: ['#ff7d5d', '#9fe88d']
+                                        }}
+                                    >
+                                        <WinnerBanner winner={album?.winner} />
+                                    </ConfettiElement>
+                                )}
+
+                                {/* Edit Dropdown */}
                                 { isAdmin && (
                                     <div className='absolute top-2 right-2'>
                                         <EditDropdown

@@ -1,14 +1,35 @@
 import PropTypes from 'prop-types';
+import { motion } from "framer-motion";
 
 const ContestResults = ( {results} ) => {
+    const container = {
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
+          },
+        },
+      };
+      
+      const item = {
+        hidden: { opacity: 0, y: 20 },
+        show: { opacity: 1, y: 0 },
+      };
 
     return (
-        <ul className="list bg-base-100 rounded-box shadow-md mb-20">
+        <motion.ul
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="list bg-base-100 rounded-box shadow-md mb-20"
+            >
   
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">Classement</li>
             
             {results.map((result, index) => (
-                <li key={index} 
+                <motion.li key={index} 
+                    variants={item}
                      className={`list-row flex items-center p-4 border-b border-base-200 ${
                      index === 0 ? " border border-yellow-200 font-extrabold scale-105" : ""
                 }`}>
@@ -22,11 +43,11 @@ const ContestResults = ( {results} ) => {
                     <div className="text-2xl text-primary text-right ml-auto font-bold ">
                         {result.votes}
                     </div>
-                </li>
+                </motion.li>
             ))}
             
             
-        </ul>
+        </motion.ul>
     )
     
 };

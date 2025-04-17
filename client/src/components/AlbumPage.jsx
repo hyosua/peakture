@@ -39,6 +39,8 @@ const AlbumPage = () => {
     const [voteResultsData, setVoteResultsData] = useState([])
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [photoToConfirm, setPhotoToConfirm] = useState(null);
+    const [isLoading, setIsLoading] = useState(true) // Add this new state
+
 
 
 
@@ -49,6 +51,7 @@ const AlbumPage = () => {
     // Fetch Album data
     useEffect(() => {
         async function getAlbumData() {
+            setIsLoading(true)
             try {
                 const response = await fetch(`${API_BASE_URL}/api/albums/${id}`)
                 if(!response.ok){
@@ -75,6 +78,8 @@ const AlbumPage = () => {
             } catch(error){
                 console.error("Error while fetching album data:", error)
                 navigate("/")
+            } finally {
+                setIsLoading(false)
             }
         }
         getAlbumData()
@@ -378,18 +383,8 @@ const AlbumPage = () => {
         setIsConfirmOpen(false)
     }
 
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-      // Simule un chargement minimum de 3 secondes
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, 500);
-  
-      return () => clearTimeout(timer);
-    }, []);
-
-    if (loading || !album) {
+    if (isLoading) {
         return <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
                     <span className="loading loading-infinity text-secondary loading-xl"></span>
                  </div>
@@ -407,12 +402,37 @@ const AlbumPage = () => {
                     <ArrowBigLeft size={22}/>
                 </button>
                     
-                <div className="relative flex pt-4 items-center flex-col ">
-                    <h2 className="text-primary text-5xl">{ album.month }</h2>
-                    <h3 className="font-semibold text-secondary">{album.theme}</h3>
-                    {photos?.length > 0 && album?.status === "open" && (<p className="text-gray-500 mb-6">Double-Clique sur une photo pour voter!</p>)}
-                    
-                </div>
+                <div className="relative flex pt-4 mb-6 items-center flex-col ">
+                    <motion.h2 
+                        className="text-primary text-5xl"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7, ease: "easeOut" }}
+                    >
+                        { album?.month }
+                    </motion.h2>
+
+                    <motion.h3 
+                        className="font-semibold text-secondary"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1.1, ease: "easeOut", delay: 0.2 }}
+                    >
+                        {album?.theme}
+                    </motion.h3>
+
+                    {photos?.length > 0 && album?.status === "open" && (
+                        <motion.p 
+                        className="text-gray-500 mb-6"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1.3, ease: "easeOut", delay: 0.4 }}
+                        >
+                        Double-Clique sur une photo pour voter!
+                        </motion.p>
+                    )}
+                    </div>
+
 
                 {album?.status === "closed" && (
                         <div className="absolute top-4 right-4 bg-error text-neutral text-xs px-3 py-1 rounded-full">
@@ -499,8 +519,19 @@ const AlbumPage = () => {
                             className="flex"
                             columnClassName="bg-clip-paddin"
                         >
-                            {photos.map((photo) => (
-                                <div key={photo._id} className="m-2 break-inside-avoid">
+                            {photos.map((photo, index) => (
+                                <motion.div 
+                                key={photo._id} 
+                                className="m-2 break-inside-avoid"
+                                initial={{ opacity: 0, scale: 0.7 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ 
+                                    duration: 0.9, 
+                                    delay: index * 0.2,
+                                    ease: "easeInOut",
+                                    when: "afterChildren" 
+                                }}
+                            >
                                     <Picture 
                                         photo={photo}
                                         album={album}
@@ -516,8 +547,9 @@ const AlbumPage = () => {
                                         isVotedId={photo.votedBy.includes(currentUser?._id)}
                                         votes={photo.votes || 0}
                                         albumStatus={album?.status}
+                                        index={index}
                                     />
-                                </div>
+                                </motion.div>
                             ))}
                         </Masonry>
                     )
