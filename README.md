@@ -54,7 +54,7 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
      ```
 
 3. **Configuration des variables d'environnement**
-   Créer un fichier `config.env` dans le dossier `server` et ajouter les variables suivantes :
+   Créer un fichier `.env` dans le dossier `server` et ajouter les variables suivantes :
    ```env
    ATLAS_URI=your_mongodb_connection_string
    CLOUDINARY_CLOUD_NAME=your_cloudinary_name
@@ -81,7 +81,7 @@ Certaines fonctionnalités (comme la connexion à Cloudinary ou MongoDB) nécess
 
 Copiez le fichier d’exemple :
   ```
-cp server/config.env.example server/config.env
+cp server/.env.example server/.env
   ```
 
 Remplissez-le avec vos informations personnelles (Cloudinary, MongoDB, etc.).

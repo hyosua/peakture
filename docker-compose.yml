@@ -25,7 +25,7 @@ services:
     environment:
       - NODE_ENV=development
     env_file:
-      - ./server/config.env
+      - ./server/.env
     command: npm run dev
 
 

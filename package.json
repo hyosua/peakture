@@ -1,4 +1,7 @@
 {
+  "scripts": {
+  "start": "node server.js"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "react-confetti": "^6.4.0",
