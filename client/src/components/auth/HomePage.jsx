@@ -41,7 +41,7 @@ const HomePage = () => {
 
     try {
       setJoiningFamily(true)
-      const result = await fetch('http://localhost:5000/api/family/join',{
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/join`,{
         method : "POST",
         credentials: 'include',
         headers: {
@@ -71,7 +71,7 @@ const HomePage = () => {
 
   const handleChangeFamily = async () => {
     try{
-      const result = await fetch('http://localhost:5000/api/family/change',{
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/change`,{
         method :"PATCH",
         credentials: 'include',
         headers: {
@@ -115,7 +115,7 @@ const HomePage = () => {
     setCreatingFamily(true)
     try {
       
-      const result = await fetch('http://localhost:5000/api/family/create',{
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/create`,{
         method : "POST",
         credentials: 'include',
         headers: {

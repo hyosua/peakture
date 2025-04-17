@@ -41,7 +41,7 @@ const AppRoutes = () => {
     const checkFamilyExists = async () => {
       if(currentUser?.familyId){
         try {
-          const response = await fetch(`http://localhost:5000/api/family/${currentUser.familyId}`)
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${currentUser.familyId}`)
           if(response.ok){
             setFamilyExists(true)
           }else{

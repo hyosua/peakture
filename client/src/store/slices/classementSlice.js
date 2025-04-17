@@ -9,7 +9,7 @@ export const fetchClassement = createAsyncThunk(
 
     'classement/fetchClassement',
     async(familyId, { rejectWithValue }) => {
-            const API_URL = `http://localhost:5000/api/classement/${familyId}/annuel`
+            const API_URL = `${import.meta.env.VITE_API_URL}/api/classement/${familyId}/annuel`
         try{
             console.log("Sending fetchClassement request:", familyId)
             const response = await axios.get(API_URL);

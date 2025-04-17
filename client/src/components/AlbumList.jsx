@@ -36,7 +36,7 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
-                const response = await fetch(`http://localhost:5000/api/family/albums/${familyId}`)
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/albums/${familyId}`)
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }
@@ -52,13 +52,13 @@ const AlbumList = () => {
     // Delete an album
     const deleteAlbum = async (id) => {
 
-       const response =  await fetch(`http://localhost:5000/api/albums/${id}/cloudinary/delete`, {
+       const response =  await fetch(`${import.meta.env.VITE_API_URL}/api/albums/${id}/cloudinary/delete`, {
             method: "DELETE"
         })
 
         if(response.ok){
             try{
-                await fetch(`http://localhost:5000/api/albums/${id}`, {
+                await fetch(`${import.meta.env.VITE_API_URL}/api/albums/${id}`, {
                     method: 'DELETE',
                 })  
             }catch(error){
@@ -77,7 +77,7 @@ const AlbumList = () => {
     const handleAlbumClose = async (albumId) =>{
 
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/close/${albumId}/close-votes`,{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/close-votes`,{
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }
             })
@@ -125,7 +125,7 @@ const AlbumList = () => {
         try {
             console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
             
-            const response = await fetch(`http://localhost:5000/api/albums/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/${id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -182,7 +182,7 @@ const AlbumList = () => {
     const handleSubmitNewAlbum = async (e) => {
         e.preventDefault()
         try {
-            const response = await fetch('http://localhost:5000/api/albums',{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums`,{
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -214,7 +214,7 @@ const AlbumList = () => {
     // Album Winner
     const handleWinner = async (albumId) => {
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/close/${albumId}/winner`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/winner`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -245,7 +245,7 @@ const AlbumList = () => {
     // Gérer une égalité
     const handleTie = async (albumId) => {
         try{
-            const response = await fetch(`http://localhost:5000/api/albums/close/${albumId}/tie`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/tie`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" }, 
                 body: JSON.stringify({ familyId})

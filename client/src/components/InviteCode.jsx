@@ -11,7 +11,7 @@ export default function InviteCode({ onInputChange }) {
   const validateInviteCode = async () => {
     setIsLoading(true)
     try {
-      const result = await fetch('http://localhost:5000/api/family/validate-invite-code',{
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/validate-invite-code`,{
         method : "POST",
         credentials: 'include',
         headers: {

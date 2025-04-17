@@ -20,7 +20,7 @@ const FamilyHome = () => {
     useEffect(() => {
         const device = navigator.share ? "mobile" : "pc"
         setDeviceNavigator(device)
-        fetch(`http://localhost:5000/api/family/${familyId}`)
+        fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}`)
         .then((res) => {
             if (!res.ok) {
                 throw new Error(`HTTP error! Status: ${res.status}`);

@@ -9,7 +9,7 @@ const Peakture = () => {
 
     useEffect(() => {
         const getPeakture = async () => {
-            fetch(`http://localhost:5000/api/family/${familyId}/peakture`)
+            fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`)
             .then((res) => {
                 if (!res.ok) {
                     if(res.status === 404) {

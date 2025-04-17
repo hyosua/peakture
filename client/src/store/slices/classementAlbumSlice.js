@@ -9,7 +9,7 @@ export const fetchClassementAlbum = createAsyncThunk(
 
     'classement/fetchClassementAlbum',
     async(familyId, { rejectWithValue }) => {
-            const API_URL = `http://localhost:5000/api/classement/${familyId}/album`
+            const API_URL = `${import.meta.env.VITE_API_URL}/api/classement/${familyId}/album`
         try{
             console.log("Sending fetchClassementAlbum request:", familyId)
             const response = await axios.get(API_URL);

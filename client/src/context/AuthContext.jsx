@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     const fetchCurrentUser = async () => {
         try {
             setLoading(true)
-            const response = await fetch('http://localhost:5000/api/auth/me', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                 credentials: 'include'  // pour inclure les cookies
             })
 
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
             if(userData.familyId){
                 try {
                     console.log("Fetching family data for familyId:", userData.familyId)
-                    const familyResponse = await fetch(`http://localhost:5000/api/family/${userData.familyId}`, {
+                    const familyResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${userData.familyId}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (username, password) => {
         setError(null)
-        const result = await fetch('http://localhost:5000/api/auth/login', {
+        const result = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
             method: 'POST',
             credentials: "include",
             headers: {
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
 
         if (response.familyId) {
             try {
-                const familyResponse = await fetch(`http://localhost:5000/api/family/${response.familyId}`, {
+                const familyResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${response.familyId}`, {
                     credentials: 'include'
                 })
 
@@ -132,7 +132,7 @@ export const AuthProvider = ({ children }) => {
     
     const logout = async () => {
         try{
-            const result = await fetch('http://localhost:5000/api/auth/logout', {
+            const result = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
                 method: 'POST',
                 credentials: 'include'
             })

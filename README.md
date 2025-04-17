@@ -97,7 +97,7 @@ Les services suivants seront disponibles :
 
 Frontend (Vite + React) : http://localhost:5173
 
-Backend (Express API) : http://localhost:5000
+Backend (Express API) : 
 
 
 

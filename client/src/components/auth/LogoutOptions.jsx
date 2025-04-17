@@ -37,7 +37,7 @@ const LogoutOptions = ({ setErrorMessage }) => {
         e.preventDefault()
         setErrorMessage('')
         try {
-            await fetch(`http://localhost:5000/api/family/${familyId}/logout`, {
+            await fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/logout`, {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json"

@@ -19,7 +19,7 @@
             const fetchUserData = async () => {
                 if(!photo.userId) return;
                 try {
-                    const response = await fetch(`http://localhost:5000/api/user/${photo.userId}`);
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/${photo.userId}`);
                     if (!response.ok) {
                         throw new Error(`Erreur: ${response.statusText}`);
                     }
