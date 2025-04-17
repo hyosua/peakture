@@ -85,7 +85,7 @@
                             <EditDropdown
                                 actions={[
                                     {
-                                        label: "Modifier l'image",
+                                        label: "Changer d'image",
                                         icon: <Edit className="h-4 w-4" />,
                                         onClick: () => {
                                             showUploadForm(true)

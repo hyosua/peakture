@@ -6,6 +6,7 @@ import cloudinary from "../cloudinaryConfig.js"
 import mongoose from "mongoose";
 import { sendTieNotification } from "../lib/utils/sendEmail.js";
 import { assignPoints } from "../services/album.service.js";
+import Guest from "../models/guest.model.js";
 
 export const getWinner = async (req, res) => {
     try {      
@@ -21,14 +22,21 @@ export const getWinner = async (req, res) => {
         }
 
         const winningPhoto = classementPhotos[0]
-        const winner = await User.findById(winningPhoto.userId);
+        // On vérifie si le gagnant est un utilisateur ou un invité
+        let winnerModel = 'User';
+        let winner = await User.findById(winningPhoto.userId);
         if (!winner) {
-            return res.status(404).json({ message: "Utilisateur gagnant non trouvé" });
+            winner = await Guest.findById(winningPhoto.userId);
+            winnerModel = 'Guest';
+            if (!winner) {
+                console.log("Aucun gagnant trouvé");
+                return res.status(404).json({ message: "Gagnant non trouvé" });
+            }
         }
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winningPhoto.userId, peakture: winningPhoto._id }},
+            { $set: { winner: winningPhoto.userId, winnerModel, peakture: winningPhoto._id, cover: winningPhoto.src }},
             { new: true }
         ).populate('winner').populate('peakture')
 
@@ -36,14 +44,6 @@ export const getWinner = async (req, res) => {
             console.log("Erreur lors de l'ajout du winner")
             return res.status(404).json({ message: "Album non trouvé" });
         }
-
-        // Mettre à jour l'album cover'
-        await Album.updateOne(
-            {_id: req.params.id}, 
-            { $set: { cover: winningPhoto.src } }
-        )
-
-        const albumUpdated = await Album.findById({ _id: req.params.id })
 
         res.status(200).json({
             updatedAlbum: result, 

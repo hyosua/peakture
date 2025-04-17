@@ -7,6 +7,8 @@ import { useClickAway } from "react-use";
 export default function EditDropdown({ actions }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [showFullscreen, setShowFullscreen] = useState(false);
+
   useClickAway(dropdownRef, () => setIsOpen(false));
 
     return (

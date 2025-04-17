@@ -22,8 +22,14 @@ const albumSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User", 
     },
-    winner:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+    winner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        refPath: 'winnerModel'
+      },
+    winnerModel: {
+    type: String,
+    enum: ['User', 'Guest']
     },
     peakture:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Photo'
