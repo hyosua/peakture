@@ -13,10 +13,25 @@ import { errorHandler } from './errorHandler.js'
 
 const app = express()
 
+const allowedOrigins = [
+  'https://peakture-gpumivoj7-drykissfffos-projects.vercel.app',
+  'https://www.peakture.fr'
+];
+
 app.use(cors({
-  origin: 'https://peakture-gpumivoj7-drykissfffos-projects.vercel.app',
-  credentials: true,
-}))
+  origin: function (origin, callback) {
+    // Autoriser les requêtes sans origin (comme curl ou mobile)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
