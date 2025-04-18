@@ -11,8 +11,8 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         res.cookie("jwt", token,{
             maxAge: 15*24*60*60*1000, //15 days in ms
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-            sameSite:"strict", // CSRF attacks cross-site request forgery attacks
-            secure: process.env.NODE_ENV !== "development", 
+            sameSite:"none", // CSRF attacks cross-site request forgery attacks
+            secure: true, 
     
         })
     } else {
@@ -21,8 +21,8 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         res.cookie("sessionId", sessionId,{
             maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-            sameSite:"strict", // CSRF attacks cross-site request forgery attacks
-            secure: process.env.NODE_ENV !== "development", 
+            sameSite:"none", // CSRF attacks cross-site request forgery attacks
+            secure: true, 
     
         })
 
