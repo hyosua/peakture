@@ -14,7 +14,7 @@ import { errorHandler } from './errorHandler.js'
 const app = express()
 
 app.use(cors({
-  origin: 'https://peakture-git-main-drykissfffos-projects.vercel.app/',
+  origin: 'https://peakture-gpumivoj7-drykissfffos-projects.vercel.app',
   credentials: true,
 }))
 app.use(express.json())
