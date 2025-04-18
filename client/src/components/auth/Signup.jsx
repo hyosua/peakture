@@ -179,7 +179,12 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
             className={`btn btn-accent w-full ${isLoading ? 'loading' : ''}`}
             disabled={isLoading}
           >
-            {isLoading ? 'Inscription...' : 'S\'inscrire'}
+            {isLoading ? (
+              <span className="loading loading-spinner text-secondary loading-md"></span>
+            ) : (
+              'S\'inscrire'
+            )}
+            
           </button>
           <div className="text-center">
             Déjà inscrit ?{" "}

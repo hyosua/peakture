@@ -210,22 +210,22 @@ const HomePage = () => {
         />
 
         {/* LOGO */}
-        <img src="/src/assets/img/logo/logo white.png" className='w-40 h-auto'/>
+        <img src="https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png" className='w-14 absolute top-4 left-4 h-auto'/>
         
         { currentUser && !currentUser.sessionId ? (
-          <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
+          <button className='btn btn-sm btn-outline   btn-accent absolute top-6 right-4'
                 onClick={handleLogout}
         >
                   Se Déconnecter
         </button>
         ) : (
           <div>
-              <button className='btn btn-sm btn-outline   btn-accent absolute top-4 right-4'
+              <button className='btn btn-sm btn-outline   btn-accent absolute top-6 right-4'
                        onClick={() => setShowLoginForm(true)}
                >
                   Se Connecter
               </button>
-              <button className='btn btn-sm btn-soft hidden lg:block btn-accent absolute top-4 right-32'
+              <button className='btn btn-sm btn-soft hidden lg:block btn-accent absolute top-6 right-32'
                       onClick={() => {
                         setSignupForm(true)
                         setShowLoginForm(true)
@@ -239,13 +239,13 @@ const HomePage = () => {
       </header>
       
 
-<main className="flex-grow flex flex-col md:flex-row px-4 py-2">
+<main className="flex-grow flex flex-col md:flex-row mt-10 px-4 py-2">
   
   {/* Join Family Side */}
   <div className="flex-1 flex flex-col items-center justify-center p-4 bg-base-200 rounded-lg md:mr-2  md:mb-0">
       <h2 className="text-3xl font-bold mb-6 text-primary flex items-center gap-2">
         Rejoins une Family
-        <div className="tooltip tooltip-info tooltip-left" data-tip="Une communauté où les membres peuvent participer aux concours mensuels et voter ensemble.">
+        <div className="tooltip tooltip-primary tooltip-left" data-tip="Rejoins une communauté pour partager tes photos et participer à des concours.">
           <HelpCircle className="w-5 h-5  text-gray-400 hover:text-info transition-colors cursor-pointer" />
         </div>
       </h2>
@@ -284,9 +284,9 @@ const HomePage = () => {
   
   {/* Create Family Side */}
   <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:ml-2">
-    <h2 className="text-3xl font-bold mb-6 text-primary flex items-center gap-2">
+    <h2 className="text-3xl font-bold mb-6 text-secondary flex items-center gap-2">
       Crée ta Family
-      <div className="tooltip tooltip-info tooltip-left max-w-xs" data-tip="Une communauté où les membres peuvent participer aux concours mensuels et voter ensemble.">
+      <div className="tooltip tooltip-secondary tooltip-left max-w-xs" data-tip="Devient l'admin d'une communauté où les membres peuvent participer à des concours photo.">
       <HelpCircle className="w-5 h-5  text-gray-400 hover:text-info transition-colors cursor-pointer" />
 
       </div>

@@ -86,10 +86,14 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
 
           <button 
             type="submit" 
-            className={`btn btn-primary w-full ${isLoading ? 'loading' : ''}`}
+            className={`btn btn-primary w-full`}
             disabled={isLoading}
           >
-            {isLoading ? 'Connexion...' : 'Se connecter'}
+            {isLoading ? (
+              <span className="loading loading-spinner text-secondary loading-md"></span>
+            ) : (
+              'Se connecter'
+            )}
           </button>
           <div className="text-center">
             Pas encore de compte ? 

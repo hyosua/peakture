@@ -1,11 +1,11 @@
 import { LogOut } from 'lucide-react'
 import { useState, useRef } from 'react';
 import { motion } from "framer-motion";
-import { useAuth } from '../../context/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext';
 import { useParams, useNavigate } from 'react-router-dom'
 import { useClickAway } from "react-use";
 import PropTypes from "prop-types";
-import ConfirmMessage from '../ConfirmMessage.jsx';
+import ConfirmMessage from '../ConfirmMessage';
 
 
 
