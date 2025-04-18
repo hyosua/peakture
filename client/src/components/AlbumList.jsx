@@ -397,9 +397,9 @@ const AlbumList = () => {
                                         {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
                                     </span>
                                 <h3 className='mb-2 font-semibold'>{album.month}</h3>
-                                <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"} 
+                                <img src={album.cover ? album.cover : "https://img.icons8.com/?size=100&id=nfFc9F8TR8At&format=png&color=000000 "} 
                                     alt={album.month} 
-                                    className='w-full h-60  max-w-60 max-h-60 rounded-md object-cover mb-2' 
+                                    className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
                                 />
                                 
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>

@@ -6,7 +6,7 @@ const WinnerBanner = ({ winner }) => {
 
 
   return (
-    <div className="relative flex flex-col items-center justify-center my-8">
+    <div className="relative flex flex-col items-center justify-center my-2">
 
       <motion.div
         initial={{ scale: 0 }}
