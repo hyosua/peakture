@@ -104,7 +104,12 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        res.cookie("jwt", "",{maxAge:0})
+        res.cookie("jwt", "", {
+            httpOnly: true,
+            sameSite: "none", 
+            secure: true,     
+            expires: new Date(0),
+        });
         res.status(200).json({message: "Tu es bien déconnecté. A bientôt pour de nouvelles aventures!"})
 
     }catch (error){

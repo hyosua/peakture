@@ -298,7 +298,7 @@ const HomePage = () => {
         </label>
         <input 
           type="text" 
-          placeholder="Smith Family" 
+          placeholder="Smith" 
           className="input input-bordered w-full" 
           value={familyName}
           title="Entrer le nom de votre Famille" 
