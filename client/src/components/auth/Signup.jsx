@@ -176,7 +176,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
           
           <button 
             type="submit" 
-            className={`btn btn-accent w-full ${isLoading ? 'loading' : ''}`}
+            className={`btn btn-accent w-full`}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -184,7 +184,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
             ) : (
               'S\'inscrire'
             )}
-            
+
           </button>
           <div className="text-center">
             Déjà inscrit ?{" "}

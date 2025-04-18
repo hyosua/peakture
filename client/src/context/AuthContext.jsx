@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
             }
 
             const userData = await response.json()
+            console.log("AuthContext, fetchCurrentUser: userData:", userData)
             setCurrentUser(userData)
             
             if(userData.familyId){
