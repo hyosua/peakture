@@ -124,24 +124,11 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
                             <div class="invite-code">
                                 🔑 <strong>Code d’invitation :</strong> ${inviteCode}
                                 <a
-                                    href={https://wa.me/?text=${encodeURIComponent(`
-                                        Rejoins ma famille sur Peakture ! Clique ici 👉 https://peakture.fr/?inviteCode=${inviteCode}
-                                    `)}}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={{
-                                        display: "block",
-                                        background: "#25D366",
-                                        color: "white",
-                                        padding: "12px",
-                                        textAlign: "center",
-                                        borderRadius: "5px",
-                                        textDecoration: "none",
-                                        fontWeight: "bold"
-                                    }}
-                                    >
-                                    📲 Partager sur WhatsApp
-                                </a>
+                                href="https://wa.me/?text=Rejoins%20ma%20famille%20sur%20Peakture%20!%20Clique%20ici%20👉%20https%3A%2F%2Fpeakture.fr%2F%3FinviteCode=${inviteCode}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style="display: block; background: #25D366; color: white; padding: 12px; text-align: center; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;"
+                                >
 
                             </div>
 
