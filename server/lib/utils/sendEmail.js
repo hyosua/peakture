@@ -129,6 +129,9 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
                                 rel="noopener noreferrer"
                                 style="display: block; background: #25D366; color: white; padding: 12px; text-align: center; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px;"
                                 >
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="20" height="20" style="vertical-align: middle;" />
+                                    Partager sur WhatsApp
+                                </a>
 
                             </div>
 

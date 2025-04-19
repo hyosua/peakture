@@ -13,6 +13,7 @@
         const [lastTap, setLastTap] = useState(0)
         const imageRef = useRef(null);
         const [showFullscreen, setShowFullscreen] = useState(false);
+        const [isVoting, setIsVoting] = useState(false)
 
 
         useEffect(() => {
@@ -42,23 +43,30 @@
         };
 
         const processVote = () => {
-            const isSelfVote = currentUser?._id === photo.userId;
+            if(isVoting) return;
+            setIsVoting(true)
+            try{
+                const isSelfVote = currentUser?._id === photo.userId;
 
-            if (!isSelfVote && albumStatus === "open") {
-                onVote(photo._id);
-                return
+                if (!isSelfVote && albumStatus === "open") {
+                    onVote(photo._id);
+                    return
+                }
+    
+                let errorMessage;
+                if(isSelfVote) {
+                    errorMessage = "Interdit de voter pour soi!";
+                }else if(albumStatus === "closed") {
+                    errorMessage = "Les votes sont clos";
+                }
+    
+                if(errorMessage) {
+                    showError(errorMessage);
+                }
+            } finally {
+                setTimeout(() =>  setIsVoting(false), 1000)
             }
-
-            let errorMessage;
-            if(isSelfVote) {
-                errorMessage = "Interdit de voter pour soi!";
-            }else if(albumStatus === "closed") {
-                errorMessage = "Les votes sont clos";
-            }
-
-            if(errorMessage) {
-                showError(errorMessage);
-            }
+           
         }
 
         const showError = (message) => {
