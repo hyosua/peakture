@@ -16,7 +16,7 @@ const guestSchema = new mongoose.Schema({
         enum: ['admin', 'user'], default: 'user'
     },
     familyId: { type: mongoose.Schema.Types.ObjectId, ref: "Family"},
-    expiresAt: {type: Date, default: () => Date.now() + 30 * 60 * 1000 } //Expire dans 30 minutes
+    expiresAt: {type: Date, default: () => Date.now() + 24 * 60 * 60 * 1000} //Expire dans 1 jour
 })
 
 guestSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }) // nettoyer les données

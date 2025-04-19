@@ -263,7 +263,7 @@ export const votePhoto = async (req,res) => {
         const sameVote = await Photo.findOne({ _id: photoId, votedBy: userId})
         const removeVote =  async (photoId, userId, session) => {
             return Photo.updateOne(
-                { _id: photoId, votedBy: includes(userId) },
+                { _id: photoId, votedBy: userId },
                 { $inc: {votes: -1 }, $pull: { votedBy: userId }},
                 {session}
         )}
