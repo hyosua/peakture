@@ -2,11 +2,19 @@ import { useState, useEffect } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import PropTypes from "prop-types";
 
-export default function InviteCode({ onInputChange }) {
+export default function InviteCode({ onInputChange, initialCode = "" }) {
   const [inviteCode, setInviteCode] = useState("")
   const [validation, setValidation] = useState(null)
-  const [showInviteCode, setShowInviteCode] = useState(false)
+  const [showInviteCode, setShowInviteCode] = useState(initialCode !== "")
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (initialCode) {
+      setInviteCode(initialCode);
+      setShowInviteCode(true);
+      onInputChange(initialCode);
+    }
+  }, [initialCode]);
 
   const validateInviteCode = async () => {
     setIsLoading(true)
@@ -93,6 +101,7 @@ export default function InviteCode({ onInputChange }) {
 
 InviteCode.propTypes = {
   onInputChange: PropTypes.func.isRequired,
+  initialCode: PropTypes.string,
 };
 
 

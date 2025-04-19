@@ -1,6 +1,6 @@
 import '../../App.css';
 import  { useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Auth from './Auth.jsx'
 import { CheckCircle, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -23,7 +23,21 @@ const HomePage = () => {
 
   const {currentUser, logout, fetchCurrentUser, error} = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
+  {/* Ouvrir le modal signup avec un code d'invitation */}
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const inviteCode = params.get('inviteCode');
+
+    if (inviteCode) {
+      setJoinCode(inviteCode);
+      setShowLoginForm(true);
+      setSignupForm(true);
+    }
+  }, [location]);
+
+  {/* Afficher le message d'erreur */}
   useEffect(() => {
     if (errorMessage) {
       setShowError(true);
@@ -199,9 +213,7 @@ const HomePage = () => {
         <ConfirmMessage 
           isOpen={isConfirmOpen}
           onCancel={() => {
-            console.log("Set confirm open to false")
             setIsConfirmOpen(false)
-            console.log("Set joining family to false")
             setJoiningFamily(false)
           }}
           title={"Changement de Family"}
@@ -321,6 +333,7 @@ const HomePage = () => {
     <Auth
       signUp={signupForm} 
       isOpen={showLoginForm}  
+      preFilledInviteCode={joinCode}
       onClose={() => {
         setShowLoginForm(false)
         setSignupForm(false)

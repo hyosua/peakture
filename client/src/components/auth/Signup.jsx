@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { EyeOff,Eye, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import InviteCode from '../InviteCode.jsx';
 
-const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
+const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess, inviteCode }) => {
   const { login } = useAuth()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    inviteCode: inviteCode || ''
   });
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -97,6 +98,16 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
     console.log("Form data: ", formData)
   }
 
+  useEffect(() => {
+    if (inviteCode) {
+      setFormData(prev => ({
+        ...prev,
+        inviteCode: inviteCode
+      }));
+    }
+  }
+  , [inviteCode]);
+
   return (
     <div className="card w-full bg-base-100 shadow-2xl">
       <div className="card-body relative">
@@ -172,7 +183,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
             </button>
           </div>
 
-          <InviteCode onInputChange={handleInviteInputChange}/>
+          <InviteCode onInputChange={handleInviteInputChange} initialCode={inviteCode}/>
           
           <button 
             type="submit" 
@@ -207,6 +218,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess }) => {
   );
 };
 Signup.propTypes = {
+  inviteCode: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   onSwitchToLogin: PropTypes.func.isRequired,
   onSignupSuccess: PropTypes.func.isRequired,  

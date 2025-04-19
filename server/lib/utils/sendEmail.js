@@ -22,6 +22,7 @@ export const sendSignupNotification = async (userMail, username) => {
                     Je suis ravis de t’accueillir sur Peakture ! 📸✨
                     Partage tes plus belles photos, découvre celles des autres et monte dans le classement !
                 </p>
+                <a href="https://www.peakture.fr" class="btn">Accéder à mon compte</a>
                 <p style="font-size: 14px; color: #888; text-align: center; margin-top: 20px;">
                     À bientôt sur Peakture ! <br>
                     <em>Hyo</em>
@@ -122,10 +123,26 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
                             
                             <div class="invite-code">
                                 🔑 <strong>Code d’invitation :</strong> ${inviteCode}
-                                <a href="https://wa.me/?text=Rejoins%20ma%20famille%20sur%20Peakture%20!%20Utilise%20ce%20code%20d%27invitation%20:%20${inviteCode}"
-                                style="display: block; background: #25D366; color: white; padding: 12px; text-align: center; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                                <a
+                                    href={https://wa.me/?text=${encodeURIComponent(`
+                                        Rejoins ma famille sur Peakture ! Clique ici 👉 https://peakture.fr/?inviteCode=${inviteCode}
+                                    `)}}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: "block",
+                                        background: "#25D366",
+                                        color: "white",
+                                        padding: "12px",
+                                        textAlign: "center",
+                                        borderRadius: "5px",
+                                        textDecoration: "none",
+                                        fontWeight: "bold"
+                                    }}
+                                    >
                                     📲 Partager sur WhatsApp
                                 </a>
+
                             </div>
 
                             <h3>✨ Rappel des fonctionnalités en tant qu’admin :</h3>
@@ -137,7 +154,7 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
 
                             <p>📅 <strong>Peakture</strong>, c’est un concours photo mensuel où chacun peut soumettre sa meilleure photo selon un thème défini. À la fin du mois, une photo est élue et permet de gagner des points pour le classement général.</p>
 
-                            <a href="http://localhost:5173/family/${familyId}" class="btn">Accéder à ma famille</a>
+                            <a href="https://www.peakture.fr/family/${familyId}" class="btn">Accéder à ma famille</a>
                         </div>
                         <div class="footer">
                             <p>À très bientôt sur <strong>Peakture</strong> ! 🚀</p>
@@ -218,7 +235,7 @@ export const sendTieNotification = async (userMail, username, albumId) => {
                     <p>En tant que gagnant du mois précédent, tu as l’honneur de départager les finalistes et de désigner la photo qui, selon toi, mérite de décrocher la première place ce mois-ci.</p>
 
                     <p><strong>Voici les photos en compétition :</strong></p>
-                    <a href="http://localhost:5173/album/${albumId}" class="button">Voir les finalistes</a>
+                    <a href="https://www.peakture.fr/album/${albumId}" class="button">Voir les finalistes</a>
 
                     <p>Tu as <strong>24 heures</strong> pour départager les votes, après cela, le gagnant sera tiré au sort.</p>
 
