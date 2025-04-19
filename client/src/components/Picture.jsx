@@ -42,14 +42,14 @@
             processVote();
         };
 
-        const processVote = () => {
+        const processVote = async () => {
             if(isVoting) return;
             setIsVoting(true)
             try{
                 const isSelfVote = currentUser?._id === photo.userId;
 
                 if (!isSelfVote && albumStatus === "open") {
-                    onVote(photo._id);
+                    await onVote(photo._id);
                     return
                 }
     
