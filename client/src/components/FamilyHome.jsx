@@ -14,6 +14,7 @@ const FamilyHome = () => {
     const albumFevrier = localAlbums.find(a => a.month === 'Février')
     const [deviceNavigator, setDeviceNavigator] = useState('mobile')
     const [errorMessage, setErrorMessage] = useState('')
+    const [showTooltip, setShowTooltip] = useState(false)
 
     const {currentUser} = useAuth()
 
@@ -44,7 +45,10 @@ const FamilyHome = () => {
             });
         } else {
             navigator.clipboard.writeText(family?.inviteCode);
-            alert("Code copié !");
+            setShowTooltip(true);
+            setTimeout(() => {
+                setShowTooltip(false);
+            }, 3000);
         }
     }
 
@@ -66,7 +70,13 @@ const FamilyHome = () => {
                     <h1 className="mt-4 text-4xl lg:text-5xl font-extrabold">
                         <span className="text-primary">{family.name}</span>    
                     </h1>
-                    <p className='font-semibold'>Family Code: <span className='text-accent text-lg font-mono'>{family.inviteCode}</span>
+                    <p className='font-semibold'>Family Code: 
+                    <div className={`tooltip pointer-events-none tooltip-accent ${showTooltip ? 'tooltip-open' : ''}`} 
+                        data-tip="Code copié !"
+                         onMouseEnter={(e) => e.stopPropagation()}
+                    >
+                        <span className='text-accent  text-lg font-mono'>{family.inviteCode}</span>
+                    </div>
                     <button
                         onClick={handleShare} 
                         className='mt-4 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
