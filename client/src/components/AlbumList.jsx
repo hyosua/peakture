@@ -14,7 +14,8 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
-    const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+    const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+    const [isCloseVotesConfirm, setIsCloseVotesConfirm] = useState(false);
 
     const { familyId } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
@@ -436,14 +437,14 @@ const AlbumList = () => {
                                                     label: "Cloturer les votes",
                                                     icon: <Vote className="h-4 w-4" />,
                                                     disabled: album.status === "closed" || album.status === "tie-break",
-                                                    onClick: () => handleAlbumClose(album._id)
+                                                    onClick: () => setIsCloseVotesConfirm(true),
                                                     
                                                 },
                                                 {
                                                 label: "Supprimer",
                                                 icon: <Trash className="h-4 w-4 text-red-500" />,
                                                 disabled: false,
-                                                onClick: () => setIsConfirmOpen(true),
+                                                onClick: () => setIsDeleteConfirm(true),
                                                 },
                                                 
                                             ]}
@@ -490,14 +491,28 @@ const AlbumList = () => {
                             message="Cette action est irréversible et tout son contenu sera perdu."
                             onConfirm={(e) => {
                                 deleteAlbum(album._id)
-                                setIsConfirmOpen(false)
+                                setIsDeleteConfirm(false)
                                 e.stopPropagation()
                             }}
                             onCancel={(e) => {
-                                setIsConfirmOpen(false)
+                                setIsDeleteConfirm(false)
                                 e.stopPropagation()
                             }}
-                            isOpen={isConfirmOpen}
+                            isOpen={isDeleteConfirm}
+                        />     
+                        <ConfirmMessage
+                            title="Clotûrer l'album ?"
+                            message="Cette action est irréversible, tu es sur le point de clotûrer l'album."
+                            onConfirm={(e) => {
+                                handleAlbumClose(album._id)
+                                setIsCloseVotesConfirm(false)
+                                e.stopPropagation()
+                            }}
+                            onCancel={(e) => {
+                                setIsCloseVotesConfirm(false)
+                                e.stopPropagation()
+                            }}
+                            isOpen={isCloseVotesConfirm}
                         />     
 
                         </div>

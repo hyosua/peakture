@@ -15,7 +15,7 @@ const adjectives = [
   const generatePseudo = () => {
     const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
-    return adj + noun;
+    return noun + adj;
   };
 
     export default generatePseudo;
