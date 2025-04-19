@@ -8,7 +8,7 @@ export const sendSignupNotification = async (userMail, username) => {
     console.log('SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY);
     const msg = {
         to: userMail,
-        from: 'colleterhyosua@gmail.com',
+        from: 'hyo@peakture.fr',
         subject: 'Bienvenue sur Peakture!',
         text: `Salut ${username}, Ton compte a bien été créé! `,
         html: `
@@ -44,7 +44,7 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
     console.log('Sendgrid receiver info: ', userMail, username, familyName, familyId, inviteCode);
     const msg = {
         to: userMail,
-        from: 'colleterhyosua@gmail.com',
+        from: 'hyo@peakture.fr',
         subject: `Ta Peakture Family "${familyName}" t\'attend !`,
         text: `Salut ${username}, Ta Family a bien été créé! `,
         html: `
@@ -178,7 +178,7 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
 export const sendTieNotification = async (userMail, username, albumId) => {
     const msg = {
         to: userMail,
-        from: 'colleterhyosua@gmail.com',
+        from: 'hyo@peakture.fr',
         subject: `Il est temps de départager les votes !`,
         text: `Salut ${username}, Tu dois départager les votes !`,
         html: `

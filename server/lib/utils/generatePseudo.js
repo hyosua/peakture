@@ -1,13 +1,15 @@
 const adjectives = [
-    "Pix", "Snap", "Zoom", "Flash", "Focus", "Focale", "Vue", "Blur", "Click",
-    "Shot", "Insta", "Obscur", "Kodak", "Pose", "Plan", "Clair", "Net", "Bokeh",
-    "Photo", "Déclenche", "Negative", "Posei", "Ciné", "Film"
+    "Rouge", "Bleu", "Gris", "Doré", "Écarlate",
+  "Sombre", "Lumineux", "Tacheté", "Velu", "Glacé",
+  "Cuivré", "Iridescent", "Flamboyant", "Brumeux", "Furtif",
+  "Argenté", "Rugueux", "Lisse", "Massif", "Aérien"
   ];
   
   const nouns = [
-    "Love", "ocalypse", "tonStyle", "Vision", "Moment", "Fiction", "Vibes",
-    "licious", "OnYou", "Noir", "Rigolo", "claque", "Backwards", "Boom",
-    "Linéaire", "Fusion", "oscope", "orama", "mania", "oscope", "Graphie"
+    "Corbeau", "Faucon", "Héron", "Colibri", "Albatros",
+  "Pélican", "Moineau", "Aigle", "Mésange", "Rossignol",
+  "Huppe", "Ibis", "Tisserin", "Coucou", "Perroquet",
+  "Cygne", "Touraco", "Ara", "Martin-pêcheur", "Grue"
   ];
   
   const generatePseudo = () => {
