@@ -5,7 +5,7 @@
     import { useAuth } from '../context/AuthContext.jsx';
     import { useEffect, useState, useRef } from "react";
 
-    const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus, index }) => {
+    const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
         const [tooltip, setTooltip] = useState(null)

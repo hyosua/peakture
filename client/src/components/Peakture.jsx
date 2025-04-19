@@ -54,7 +54,7 @@ const Peakture = () => {
                         e.stopPropagation(); 
                         setShowFullscreen(true);
                     }}
-                    className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-2 right-2 cursor-pointer bg-black/20 text-grey-300 p-2 rounded-full hover:bg-black/80 z-20"
+                    className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 top-8 right-6 cursor-pointer bg-black/20 text-grey-300 p-2 rounded-full hover:bg-black/80 z-20"
                     title="Voir en plein écran"
                 >
                     <Expand className="h-6 w-6" />

@@ -1,4 +1,3 @@
-import localAlbums from '../data/albumsData'
 import Peakture from './Peakture.jsx'
 import '../App.css'
 import AlbumList from './AlbumList.jsx'
@@ -11,7 +10,6 @@ import LogoutOptions from './auth/LogoutOptions.jsx';
 const FamilyHome = () => {
     const [family,setFamily] = useState(null)
     const { familyId } = useParams()
-    const albumFevrier = localAlbums.find(a => a.month === 'Février')
     const [deviceNavigator, setDeviceNavigator] = useState('mobile')
     const [errorMessage, setErrorMessage] = useState('')
     const [showTooltip, setShowTooltip] = useState(false)
@@ -38,12 +36,16 @@ const FamilyHome = () => {
 
     const handleShare = () => {
         if (navigator.share) {
-            navigator.share({
-                title: "Rejoins ma famille sur Peakture !",
-                text: `Utilise ce code pour nous rejoindre : ${family?.inviteCode}`,
-                url: window.location.href
-            });
-        } else {
+                navigator.share({
+                    title: "Rejoins ma Family sur Peakture !",
+                    text: `Utilise ce code pour nous rejoindre : ${family?.inviteCode}`,
+                    url: `peakture.fr/inviteCode=${family?.inviteCode}`,
+                })
+                .catch(error => {
+                    console.error('Error sharing:', error);
+                    setErrorMessage("Erreur lors du partage du code d'invitation.")
+                });
+            } else {
             navigator.clipboard.writeText(family?.inviteCode);
             setShowTooltip(true);
             setTimeout(() => {
@@ -70,7 +72,7 @@ const FamilyHome = () => {
                     <h1 className="mt-4 text-4xl lg:text-5xl font-extrabold">
                         <span className="text-primary">{family.name}</span>    
                     </h1>
-                    <p className='font-semibold'>Family Code: 
+                    <div className='font-semibold'>Family Code: 
                     <div className={`tooltip pointer-events-none tooltip-accent ${showTooltip ? 'tooltip-open' : ''}`} 
                         data-tip="Code copié !"
                          onMouseEnter={(e) => e.stopPropagation()}
@@ -82,15 +84,9 @@ const FamilyHome = () => {
                         className='mt-4 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
                         {deviceNavigator === "mobile"  ? (<Share2 size={14}/>) : (<Copy size={14} />)}
                     </button>
-                    </p>
+                    </div>
                     
-                    <Peakture winner='Alaina' 
-                                        photo={albumFevrier.photos[0].src} 
-                                        id='0' 
-                                        voteCount='35' 
-                                        avatar='avatar'
-                                        month='Février' //album.month
-                    />
+                    <Peakture />
                     <AlbumList />
                 </div>
             ) : (
