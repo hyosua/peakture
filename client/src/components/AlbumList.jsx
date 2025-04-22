@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import ConfirmMessage from './ConfirmMessage.jsx'
 import WinnerBanner from './WinnerBanner.jsx';
 import ConfettiElement from './ConfettiElement.jsx';
-
+import { useToast } from "../context/ToastContext.jsx"
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -26,6 +26,7 @@ const AlbumList = () => {
     const [errorMessage, setErrorMessage] = useState('')
     
     const {isAdmin} = useAuth()
+    const {showToast} = useToast()
     const navigate = useNavigate()
 
     const monthsList = [
@@ -116,16 +117,14 @@ const AlbumList = () => {
     }
 
     // Save edited album
-    const handleSave = async (id, e) => {
+    const handleSaveTheme = async (id, e) => {
         e.stopPropagation()
 
         if(!newTheme){
-            return alert("Vous devez entrer un thème")
+            return;
         }
 
-        try {
-            console.log(`Sending PATCH request to update album ${id} with theme: ${newTheme}`);
-            
+        try {            
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/${id}`, {
                 method: "PATCH",
                 headers: {
@@ -135,20 +134,24 @@ const AlbumList = () => {
                     theme: newTheme
                 })
             })
+
+            if (!response.ok) {
+                console.error(`Erreur du serveur : ${response.status}`);
+                return;
+            }
             
-            const updatedAlbum = await response.json();
-            console.log("Updated response: ", updatedAlbum)
+            const serverResponse = await response.json();
+            console.log("serverResponse:", serverResponse)
+            if(serverResponse.success){
+                console.log("severResponse.success ok")
+                showToast({ message: serverResponse.message, type: "success"})
+                const updatedAlbums = albums.map(album => 
+                    album._id === id ? { ...album, theme: newTheme } : album
+                );
 
-        
-            const updatedAlbums = albums.map(album => {
-                if(album._id === id || album._id === parseInt(id)){
-                    return { ...album, theme: newTheme };
-                }
-                return album
-            });
-    
-            setAlbums(updatedAlbums);
-
+                setAlbums(updatedAlbums);
+            }
+           
             setEditingAlbum(null);
             setNewTheme('');
 
@@ -475,7 +478,7 @@ const AlbumList = () => {
                                             <X size={26} className='mr-1' /> 
                                         </button>
                                         <button 
-                                            onClick={(e) => handleSave(album._id,e)}
+                                            onClick={(e) => handleSaveTheme(album._id,e)}
                                             className='p-2 py-2 btn btn-primary flex justify-center'
                                         >
                                             <Check size={26} className='mr-1' /> 

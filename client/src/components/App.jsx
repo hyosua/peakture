@@ -13,6 +13,7 @@ import { useState, useEffect } from 'react';
 import { Provider } from 'react-redux'
 import { store } from '../store/index.js'
 import Classements from './Classements.jsx';
+import { ToastProvider } from '../context/ToastContext.jsx';
 
 // Protection des routes enfants
 const ProtectedRoute = ({ children }) => {
@@ -100,7 +101,9 @@ const App = () => {
     <BrowserRouter>
       <AuthProvider>
          <Provider store={store}>
-              <AppRoutes />
+          <ToastProvider>
+            <AppRoutes />
+          </ToastProvider>
           </Provider>
       </AuthProvider>
     </BrowserRouter>

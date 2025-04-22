@@ -62,7 +62,11 @@ export const editAlbum = async (req, res) => {
         // Get the updated document
         const updatedAlbum = await Album.findOne(query);
 
-        res.status(200).send(updatedAlbum);
+        res.status(200).json({
+            success: true,
+            message: "Le thème a bien été mis à jour",
+            updatedAlbum
+        });
     } catch (error) {
         console.error('Error updating album:', error);
         res.status(500).json({ message: 'Error updating album', error: error.message });

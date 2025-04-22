@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
 import { Share2, Copy } from 'lucide-react'
 import LogoutOptions from './auth/LogoutOptions.jsx';
+import NameEditor from './NameEditor.jsx';
 
 const FamilyHome = () => {
     const [family,setFamily] = useState(null)
@@ -13,7 +14,6 @@ const FamilyHome = () => {
     const [deviceNavigator, setDeviceNavigator] = useState('mobile')
     const [errorMessage, setErrorMessage] = useState('')
     const [showTooltip, setShowTooltip] = useState(false)
-
     const {currentUser} = useAuth()
 
     useEffect(() => {
@@ -69,9 +69,8 @@ const FamilyHome = () => {
         )}
             { family ? (
                 <div className='bg-base-100 flex flex-col items-center'>
-                    <h1 className="mt-4 text-4xl lg:text-5xl font-extrabold">
-                        <span className="text-primary">{family.name}</span>    
-                    </h1>
+                    <NameEditor />
+ 
                     <div className='font-semibold'>Family Code: 
                     <div className={`tooltip pointer-events-none tooltip-accent ${showTooltip ? 'tooltip-open' : ''}`} 
                         data-tip="Code copié !"
