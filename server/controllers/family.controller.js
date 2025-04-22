@@ -239,6 +239,19 @@ export const change = async (req, res) => {
         return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }
+export const editFamilyName = async (req, res) => {
+    try {
+        const update = req.body
+        const updatedFamily = await Family.findByIdAndUpdate(req.params.id, update, {
+            new : true,
+            runValidators: true, // Verifie le format défini dans le schéma mongoose
+        })
+        return res.status(200).json({ success: true, message: "Le non de la Family a bien été modifié", updatedFamily })
+    } catch (error) {
+        console.error("Erreur dans change Family Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
 
 export const getAlbums = async (req, res) => {
     try{

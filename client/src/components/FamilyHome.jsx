@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom'
 import { Share2, Copy } from 'lucide-react'
 import LogoutOptions from './auth/LogoutOptions.jsx';
 import NameEditor from './NameEditor.jsx';
+import { useToast } from "../context/ToastContext.jsx"
+
 
 const FamilyHome = () => {
     const [family,setFamily] = useState(null)
@@ -14,7 +16,11 @@ const FamilyHome = () => {
     const [deviceNavigator, setDeviceNavigator] = useState('mobile')
     const [errorMessage, setErrorMessage] = useState('')
     const [showTooltip, setShowTooltip] = useState(false)
+
     const {currentUser} = useAuth()
+    const {showToast} = useToast()
+
+    const isAdmin = currentUser?._id === family?.admin
 
     useEffect(() => {
         const device = navigator.share ? "mobile" : "pc"
@@ -32,7 +38,36 @@ const FamilyHome = () => {
         .catch((err) => console.error(err));
     }, [familyId])
 
-    
+    const handleSaveFamilyName = async (familyName) => {
+        if(!familyName){
+            return;
+        }
+        try{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/edit-name`,{
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: familyName
+                })
+            })
+
+            const serverResponse = await response.json()
+            if(serverResponse.success){
+                showToast({ message: serverResponse.message, type: "success"})
+                const updatedFamily = {...family, name: familyName };
+
+                setFamily(updatedFamily);
+            }
+        }catch(error){
+            console.error('Error updating family name:', error);
+            if (error.response) {
+                console.error('Error details:', error.response.data);
+                console.error('Status:', error.response.status);
+            }
+        }
+    }
 
     const handleShare = () => {
         if (navigator.share) {
@@ -69,8 +104,11 @@ const FamilyHome = () => {
         )}
             { family ? (
                 <div className='bg-base-100 flex flex-col items-center'>
-                    <NameEditor />
- 
+                    <NameEditor 
+                        isAdmin={isAdmin}
+                        familyName={family?.name}
+                        onSave={handleSaveFamilyName}
+                    />
                     <div className='font-semibold'>Family Code: 
                     <div className={`tooltip pointer-events-none tooltip-accent ${showTooltip ? 'tooltip-open' : ''}`} 
                         data-tip="Code copié !"

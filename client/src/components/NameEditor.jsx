@@ -12,7 +12,9 @@ const NameEditor = ({ familyName, onSave, isAdmin }) => {
         setIsLoading(true);
         await onSave(editedName)
         setIsLoading(false)
+        setIsEditing(false)
     }
+
     
     return (
         <>

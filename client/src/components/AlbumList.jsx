@@ -141,9 +141,7 @@ const AlbumList = () => {
             }
             
             const serverResponse = await response.json();
-            console.log("serverResponse:", serverResponse)
             if(serverResponse.success){
-                console.log("severResponse.success ok")
                 showToast({ message: serverResponse.message, type: "success"})
                 const updatedAlbums = albums.map(album => 
                     album._id === id ? { ...album, theme: newTheme } : album
