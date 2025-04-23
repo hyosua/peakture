@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
 import { Share2, Copy } from 'lucide-react'
-import LogoutOptions from './auth/LogoutOptions.jsx';
 import NameEditor from './NameEditor.jsx';
 import { useToast } from "../context/ToastContext.jsx"
 
@@ -91,9 +90,7 @@ const FamilyHome = () => {
 
     return (
         <div>
-            { currentUser &&(
-                <LogoutOptions setErrorMessage={setErrorMessage}/>
-            )}
+    
 
         { errorMessage && (
             <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>

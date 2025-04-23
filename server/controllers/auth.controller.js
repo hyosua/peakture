@@ -55,7 +55,7 @@ export const signup = async (req, res) => {
                 role: newUser.role,
                 email: newUser.email,
                 familyId: newUser.familyId,
-                profileImg: newUser.profileImg,
+                avatar: newUser.avatar,
                 
             })
         } else{
@@ -91,7 +91,7 @@ export const login = async (req, res) => {
             role: user.role,
             email: user.email,
             familyId: user.familyId,
-            profileImg: user.profileImg,
+            avatar: user.avatar,
             isGuest: user.isGuest
             
         })

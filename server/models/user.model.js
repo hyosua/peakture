@@ -23,9 +23,16 @@ const userSchema = new mongoose.Schema({
     familyId:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Family'
     },
-    profileImg:{
-        type: String,
-        default: "",
+    avatar:{
+        exists: {
+            type: Boolean,
+            default: 'false',
+            },
+        imageLink: {
+            type: String,
+            trim: true,
+            default: 'null',
+        },
     },
     score:{
         type: Number,
