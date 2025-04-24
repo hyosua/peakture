@@ -9,6 +9,7 @@ import  Auth  from './auth/Auth.jsx'
 import ContestResults from "./ContestResults.jsx"
 import TieBreakView from "./TieBreakView.jsx"
 import ConfirmMessage from "./ConfirmMessage.jsx"
+import { getMonthName } from "../../utils/dateConvert.js"
 
 const breakpointColumns = {
     default: 3,
@@ -409,7 +410,7 @@ const AlbumPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, ease: "easeOut" }}
                     >
-                        { album?.month }
+                        { getMonthName(album?.month) }
                     </motion.h2>
 
                     <motion.h3 

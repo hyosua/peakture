@@ -1,8 +1,12 @@
 import mongoose from 'mongoose'
 
 const albumSchema = new mongoose.Schema({
+    year:{
+        type: Number,
+        required: true,
+    },
     month:{
-        type: String,
+        type: Number,
         required: true,
     },
     theme:{

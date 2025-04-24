@@ -8,6 +8,7 @@ import ConfirmMessage from './ConfirmMessage.jsx'
 import WinnerBanner from './WinnerBanner.jsx';
 import ConfettiElement from './ConfettiElement.jsx';
 import { useToast } from "../context/ToastContext.jsx"
+import { getMonthName, monthsList } from '../../utils/dateConvert.js';
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -19,7 +20,7 @@ const AlbumList = () => {
 
     const { familyId } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
-        month: '',
+        month: 0,
         theme: '',
         familyId: familyId
     })
@@ -28,11 +29,6 @@ const AlbumList = () => {
     const {isAdmin} = useAuth()
     const {showToast} = useToast()
     const navigate = useNavigate()
-
-    const monthsList = [
-        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", 
-        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-    ]
 
     // Fetch albums from the server
     useEffect(() => {
@@ -206,7 +202,7 @@ const AlbumList = () => {
                 familyId: newAlbumFromServer.familyId
             }
             setAlbums(prev => [...prev, newAlbum])
-            setNewAlbumForm({ month: "", theme: "", familyId: familyId })
+            setNewAlbumForm({ month: 0, theme: "", familyId: familyId })
             setShowAddForm(false)
         } catch (error) {
             console.error('Error creating a new album: ', error)
@@ -322,7 +318,7 @@ const AlbumList = () => {
                                         >
                                             <option className="font-semibold bg-base-100" value="">Sélectionner un mois</option>
                                             {monthsList.map((month, index) => (
-                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={`${month}`}>{month}</option>
+                                                <option className="bg-base-100 font-bold" key={`month-${index}-${familyId}`} value={`${index+1}`}>{month}</option>
                                             ))}   
                                         </motion.select>
                                     </label>
@@ -398,9 +394,9 @@ const AlbumList = () => {
                                     <span className={`indicator-item badge " + ${(album.status === "closed" ? "badge-secondary" : album.status === "tie-break" ? "badge-accent" :"badge-primary")}`}>
                                         {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
                                     </span>
-                                <h3 className='mb-2 font-semibold'>{album.month}</h3>
+                                <h3 className='mb-2 font-semibold'>{getMonthName(album.month)}</h3>
                                 <img src={album.cover ? album.cover : "https://img.icons8.com/?size=100&id=nfFc9F8TR8At&format=png&color=000000 "} 
-                                    alt={album.month} 
+                                    alt={getMonthName(album.month)} 
                                     className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
                                 />
                                 

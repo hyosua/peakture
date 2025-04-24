@@ -26,13 +26,17 @@ export const getAlbum = async (req, res) => {
 
 export const createAlbum = async (req, res) => {
     try {
-        if(await Album.findOne({familyId: req.body.familyId, month: req.body.month})){
+        const { familyId, month, theme } = req.body
+        const year = new Date().getFullYear()
+
+        if(await Album.findOne({familyId, month, year})){
             return res.status(404).json({ message: "Il y'a déjà un album pour ce mois" })
         }
         let newDocument = {
-            month: req.body.month,
-            theme: req.body.theme,
-            familyId: req.body.familyId
+            year,
+            month,
+            familyId,
+            theme
         };
         const result = await Album.create(newDocument);
         res.status(201).send(result);

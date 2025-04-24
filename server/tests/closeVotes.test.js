@@ -22,7 +22,7 @@ describe('album Controller', () => {
     user1 = await User.create({ username: 'Alice', email: 'alice@example.com', password: 'TestPassword1!' });
     user2 = await User.create({ username: 'Bob', email: 'bob@example.com', password: 'TestPassword2!' });
 
-    testAlbum = await Album.create({_id: "67f542fafa2168f2efec8e9a", familyId: '67eac690182ba7200062785f', status: "open", month: "Janvier", theme: "Test" });
+    testAlbum = await Album.create({_id: "67f542fafa2168f2efec8e9a", familyId: '67eac690182ba7200062785f', status: "open", month: 1, theme: "Test" });
 
     photo1 = await Photo.create({ albumId: '67f542fafa2168f2efec8e9a', src:'peakture.jpg' , userId: user1._id, votes: 3 });
     photo2 = await Photo.create({ albumId: '67f542fafa2168f2efec8e9a', src: 'peakture2.jpg', userId: user2._id, votes: 3 });
@@ -65,7 +65,7 @@ describe('album Controller', () => {
     //   familyId: testAlbum.familyId,
     //   winner: user1._id,
     //   status: "closed",
-    //   month: 'Décembre',
+    //   month: 12,
     //   theme: 'Précédent',
     //   createdAt: new Date(Date.now() - 86400000) // 1 jour avant
     // });
