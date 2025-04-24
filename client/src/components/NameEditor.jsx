@@ -21,7 +21,7 @@ const NameEditor = ({ familyName, onSave, isAdmin }) => {
         {isEditing ? (
             
             <div className='flex items-center gap-2 mt-4'>
-                <input className='input input-bordered text-4xl font-bold'
+                <input className='input input-bordered border-success text-4xl font-bold'
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
                 />
@@ -29,14 +29,14 @@ const NameEditor = ({ familyName, onSave, isAdmin }) => {
                     {isLoading ? (
                          <span className="loading loading-spinner loading-sm"></span>
                     ) : (
-                        <Check size={20}/> 
+                        <Check className="text-success cursor-pointer" size={20}/> 
                     )}
                 </button>
                 <button onClick={() => {
                     setIsEditing(false);
                     setEditedName(familyName);
                 }}> 
-                 <X size={20} />
+                 <X className="text-error cursor-pointer" size={20} />
                 </button>
             </div>
                 
@@ -50,7 +50,7 @@ const NameEditor = ({ familyName, onSave, isAdmin }) => {
                         setEditedName(familyName);
                         setIsEditing(true);
                     }}>
-                        <Pencil size={20}/>
+                        <Pencil className="cursor-pointer" size={15}/>
                     </button>
                 )}
             </div>

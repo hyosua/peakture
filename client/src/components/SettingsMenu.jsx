@@ -57,7 +57,6 @@ const SettingsMenu = () => {
         setIsOpen((prev) => !prev);
       }}>
         <Settings className="size-[1.2em]" />
-        <span className="dock-label">Settings</span>
       </button>
 
       {isOpen && (
