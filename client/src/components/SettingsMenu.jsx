@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion } from "framer-motion";
 import { useAuth } from '../context/AuthContext';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useClickAway } from "react-use";
 import { LogOut, Settings } from 'lucide-react';
 import ConfirmMessage from './ConfirmMessage';
@@ -12,9 +12,8 @@ const SettingsMenu = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const { familyId } = useParams();
   const { currentUser, logout, fetchCurrentUser } = useAuth();
-  
+  const familyId = currentUser?.familyId
   useClickAway(menuRef, () => setIsOpen(false));
   
   const handleLogout = async (e) => {
@@ -23,6 +22,7 @@ const SettingsMenu = () => {
     try {
       await logout();
       navigate('/');
+      fetchCurrentUser()
     } catch (error) {
       console.error("Erreur lors du logout: ", error);
       setErrorMessage("Une erreur lors de la déconnexion s'est produite.");
