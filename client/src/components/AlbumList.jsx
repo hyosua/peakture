@@ -17,6 +17,7 @@ const AlbumList = () => {
     const [showAddForm, setShowAddForm] = useState(false)
     const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
     const [isCloseVotesConfirm, setIsCloseVotesConfirm] = useState(false);
+    const [albumLoading, setAlbumLoading] = useState(false)
 
     const { familyId } = useParams() 
     const [newAlbumForm, setNewAlbumForm ] = useState({
@@ -34,15 +35,19 @@ const AlbumList = () => {
     useEffect(() => {
         async function getAlbums() {
             try {
+                setAlbumLoading(true)
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/albums/${familyId}`)
                 if(!response.ok) {
                     throw new Error(`An error has occured: ${response.statusText}`)
                 }
                 const albumsData = await response.json()
                 setAlbums(albumsData)
+                setAlbumLoading(false)
             } catch (error){
                 console.error('Error fetching albums:', error)
-            }
+                setAlbumLoading(false)
+
+            } 
         }
         getAlbums()
     }, [familyId])
@@ -369,19 +374,21 @@ const AlbumList = () => {
                 )}
             </AnimatePresence>
             
-            {/* No Albums Message */}
-            {!albums.length && (
+            {/*Albums Display*/}           
+                
+            {albumLoading ? ( 
+                <div className="flex justify-center items-center my-12">
+                    <span className="loading loading-dots loading-lg text-primary"></span>
+                </div>
+              
+                ) : albums?.length === 0 ? ( 
                         <div className='flex flex-col items-center justify-center'>
                             <img src='https://img.icons8.com/?size=100&id=nfFc9F8TR8At&format=png&color=000000' alt='Aucun album trouvé' className='w-1/2 h-1/2 mb-4'/>
                             <h2 className='text-xl text-white font-semibold'>Aucun album</h2>
                             <p className={`${isAdmin ? "text-gray-200" : "hidden"}`}>Crée un nouvel album pour commencer !</p>
                         </div>
-                    )}
-            
-            {/* Albums Grid */}
-            
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
-                    
+                ) : (
+                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
                     {albums.map((album) => (
                         <div
                             key={album._id}
@@ -399,7 +406,6 @@ const AlbumList = () => {
                                     alt={getMonthName(album.month)} 
                                     className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
                                 />
-                                
                                 <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
 
                                 {/* Winner Banner */}
@@ -515,10 +521,10 @@ const AlbumList = () => {
                         </div>
                         
                     ))}
-
-                                   
-                     
+    
                 </div>
+            )}
+                                
             
                 { isAdmin && (
                         <button
