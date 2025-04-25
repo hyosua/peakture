@@ -14,6 +14,7 @@ import { Provider } from 'react-redux'
 import { store } from '../store/index.js'
 import Classements from './Classements.jsx';
 import { ToastProvider } from '../context/ToastContext.jsx';
+import Profile from './user/Profile.jsx';
 
 // Protection des routes enfants
 const ProtectedRoute = ({ children }) => {
@@ -85,6 +86,7 @@ const AppRoutes = () => {
             // </ProtectedRoute>
           } 
         />
+        <Route path="/profile" element={<Profile />} /> 
         <Route path="/auth" element={<Auth />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/album/:id" element={<AlbumPage />} />

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useClickAway } from "react-use";
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, UserRoundPen, Ban } from 'lucide-react';
 import ConfirmMessage from './ConfirmMessage';
 
 const SettingsMenu = () => {
@@ -67,6 +67,38 @@ const SettingsMenu = () => {
           className="absolute bottom-16 right-0 w-48 bg-neutral shadow-lg rounded-xl border-2 border-gray-200"
         >
           <ul>
+          {currentUser?.familyId && (
+              <li>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/profile');
+                    setIsOpen(false);
+                  }}
+                  className="flex cursor-pointer font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100"
+                >
+                  <UserRoundPen className="size-4"/>
+                  Profil
+                </button>
+              </li>
+            )}
+            
+            {currentUser?.familyId && (
+              <li>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsConfirmOpen(true);
+                    setIsOpen(false);
+                  }}
+                  className="flex cursor-pointer font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100"
+                >
+                  <Ban className="size-4"/>
+                  Quitter la family
+                </button>
+              </li>
+            )}
+
             {!currentUser?.sessionId && (
               <li>
                 <button
@@ -83,20 +115,7 @@ const SettingsMenu = () => {
               </li>
             )}
             
-            {currentUser?.familyId && (
-              <li>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsConfirmOpen(true);
-                    setIsOpen(false);
-                  }}
-                  className="flex cursor-pointer font-bold rounded-lg items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-100"
-                >
-                  Quitter la family
-                </button>
-              </li>
-            )}
+            
             
             {/* <li>
               <button
