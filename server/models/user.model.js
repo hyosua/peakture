@@ -24,15 +24,12 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: 'Family'
     },
     avatar:{
-        exists: {
-            type: Boolean,
-            default: 'false',
-            },
-        imageLink: {
-            type: String,
-            trim: true,
-            default: 'null',
-        },
+        type: String,
+        default: "https://img.icons8.com/?size=100&id=91243&format=png&color=000000"
+    },
+    coverImage:{
+        type: String,
+        default: "https://img.icons8.com/?size=100&id=115643&format=png&color=000000"
     },
     score:{
         type: Number,

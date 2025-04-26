@@ -67,7 +67,7 @@ const SettingsMenu = () => {
           className="absolute bottom-16 right-0 w-48 bg-neutral shadow-lg rounded-xl border-2 border-gray-200"
         >
           <ul>
-          {currentUser?.familyId && (
+          {!currentUser?.sessionId &&(
               <li>
                 <button
                   onClick={(e) => {

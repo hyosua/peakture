@@ -23,10 +23,10 @@ export const getUserData = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try{
-        const { username, avatar } = req.body
+        const { username, avatar, coverImage } = req.body
         const updatedUser = await User.findByIdAndUpdate(
             req.user._id,
-            {username, avatar},
+            {username, avatar, coverImage},
             {new: true}
         )
         return res.status(200).json({success: true, updatedUser})

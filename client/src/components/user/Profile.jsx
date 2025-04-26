@@ -1,101 +1,197 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import { useToast } from "../../context/ToastContext.jsx"
+import { User, Camera, Upload, Pencil } from "lucide-react";
 import { useAuth } from '../../context/AuthContext.jsx';
-
-
+import uploadToCloudinary from "../../../utils/uploadToCloudinary.js";
 
 const Profile = () => {
-const [user, setUser] = useState({username: '', avatar: null});
-const [preview, setPreview] = useState(null);
-const {showToast} = useToast();
-const [modifying, setModifying] = useState(false)
+  const [user, setUser] = useState({username: '', avatar: null, coverImage: null});
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
+  const {showToast} = useToast();
+  const [isEditing, setIsEditing] = useState(false);
+  const formRef = useRef(null)
 
-const {currentUser} = useAuth()
+  const {currentUser, fetchCurrentUser} = useAuth();
 
-useEffect(() => {
-    setUser({username: currentUser.username, avatar: currentUser.avatar.imageLink})
-    if(currentUser.avatar){
-        setPreview(currentUser.avatar)
-    }
-},[currentUser])
+  useEffect(() => {
+    setUser({
+      username: currentUser.username, 
+      avatar: currentUser.avatar || null,
+      coverImage: currentUser.coverImage || null
+    });
+    
+    setAvatarPreview(currentUser.avatar);
+    setCoverPreview(currentUser.coverImage);
+    
+  }, [currentUser]);
 
+  const handleUsernameChange = (e) => {
+    setIsEditing(true);
+    setUser({ ...user, username: e.target.value});
+  };
 
-const handleUsernameChange = (e) => {
-    setModifying(true)
-    setUser({ ...user, [e.target.name]: e.target.value})
-}
-
-const handleFileChange = async (e) => {
-    setModifying(true)
+  const handleAvatarChange = async (e) => {
+    setIsEditing(true);
     const file = e.target.files[0];
-    const formData = new FormData()
-        formData.append('file', file)
-        formData.append('upload_preset', 'peakture-preset')
-
-    try {
-        const response = await fetch("https://api.cloudinary.com/v1_1/djsj0pfm3/image/upload", {
-            method: "POST",
-            body: formData
-        })
-
-        const data = await response.json()
-        setUser({...user, avatar: data.secure_url})
-        setPreview(data.secure_url)
-        console.log("secure url:",data.secure_url)
-        return data.secure_url
+    try{
+      const avatarUrl = await uploadToCloudinary(file);
+      setUser({...user, avatar: avatarUrl});
+      setAvatarPreview(avatarUrl);
     } catch (error){
-        console.error("Error uploading to Cloudinary: ",error)
-        throw error
+      console.error("Error uploading avatar to Cloudinary: ", error);
+      throw error;
     }
-}
+  };
+  
+  const handleCoverChange = async (e) => {
+    setIsEditing(true);
+    const file = e.target.files[0];
+    try{
+      const coverUrl = await uploadToCloudinary(file);
+      setUser({...user, coverImage: coverUrl});
+      setCoverPreview(coverUrl);
+    } catch (error){
+      console.error("Error uploading cover image to Cloudinary: ", error);
+      throw error;
+    }
+  };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try{
-        const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/user/update`, 
-            { username: user.username, avatar: user.avatar },
-            {withCredentials: true}
-        )
-        if(response.data.success){
-            showToast({ message: "Profil mis à jour!", type: "success"})
-        }
-        setModifying(false)
-    }catch(error){
-        console.log("Erreur lors de la mise à jour du profil:", error)
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/api/user/update`, 
+        { username: user.username, avatar: user.avatar, coverImage: user.coverImage },
+        {withCredentials: true}
+      );
+      
+      if(response.data.success){
+        showToast({ message: "Profil mis à jour!", type: "success"});
+      }
+      fetchCurrentUser()
+      setIsEditing(false);
+    } catch(error){
+      console.log("Erreur lors de la mise à jour du profil:", error);
+      showToast({ message: "Erreur lors de la mise à jour du profil", type: "error" });
     }
+  };
 
-}
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsEditing(false);
+      }
+    };
 
-return(
-    <div className="max-w-md mx-auto p-4">
-    <h1 className="text-2xl text-primary font-bold mb-4">Mon profil</h1>
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <label className="block">
-        Pseudo :
-        <input
-          name="username"
-          value={user.username}
-          onChange={handleUsernameChange}
-          className="w-full border p-2 rounded mt-1"
-        />
-      </label>
+    const handleClickAway = (e) => {
+      if(formRef.current && !formRef.current.contains(e.target)){
+        setIsEditing(false)
+      }
+    }
+  
+    if (isEditing) {
+      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('mousedown', handleClickAway)
+    }
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.addEventListener('mousedown', handleClickAway);
+    };
+  }, [isEditing]);
 
-      <label className="block">
-        Avatar :
-        <input type="file" onChange={handleFileChange} className="mt-1" />
-      </label>
-    
-    
-       <img src={preview ? preview : "https://img.icons8.com/?size=100&id=65342&format=png"} alt="Avatar" className="w-24 h-24 object-cover rounded-full mt-2" />
+  return(
+    <div className="overflow-hidden mx-auto bg-base-300 shadow-md rounded-lg">
+       <div className="fixed bottom-24 right-4 z-50">
+          <button
+            type="submit"
+            disabled={!isEditing}
+            onClick={handleSubmit}
+            className={`w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-neutral ${isEditing ? 'bg-primary cursor-pointer hover:bg-accent' : 'bg-gray-400 cursor-not-allowed'}`}
+          >
+            Enregistrer
+          </button>
+        </div>
+      {/* Cover Image */}
+      <div className="relative h-48 bg-gray-200">
+          <img
+            src={coverPreview}
+            alt="Cover"
+            className="w-full h-full object-cover"
+          />
+        <label className="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-primary" title="Changer l'image de couverture">
+          <Camera size={20} className="text-gray-600" />
+          <input
+            type="file"
+            onChange={handleCoverChange}
+            className="hidden"
+            accept="image/*"
+          />
+        </label>
+      </div>
+      
+      <div className="p-6">
+        <div className="flex gap-6 h-screen">
+          {/* Avatar Section */}
+          <div className="relative flex-shrink-0">
+            <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg -mt-16 overflow-hidden bg-gray-200">
+              <img 
+                src={avatarPreview} 
+                alt="Avatar" 
+                className="w-full h-full object-cover"
+              />
+              <label className="absolute top-0 left-1 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-primary" title="Changer la photo">
+                <Camera size={16} className="text-gray-600" />
+                <input 
+                  type="file" 
+                  onChange={handleAvatarChange} 
+                  className="hidden" 
+                  accept="image/*"
+                />
+              </label>
+            </div>
+          </div>
 
-      <button type="submit" className="btn btn-success" disabled={!modifying}>
-        Enregistrer
-      </button>
-    </form>
-  </div>
-)
+          {/* Profile Form */}
+          {isEditing ? (
+            <div ref={formRef}>
+              <form onSubmit={handleSubmit} className="max-w-md flex-grow space-y-4 md:mt-0">
+              <div className="space-y-4">
+                <div>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <input
+                      type="text"
+                      name="username"
+                      value={user.username}
+                      onChange={handleUsernameChange}
+                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                      placeholder="Votre nom d'utilisateur"
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          ) : (
+            <div className="relative space-y-4 text-primary text-xl lg:text-2xl font-bold">
+              {currentUser.username}
+              <button 
+                  className="absolute top-0 -right-6"
+                  onClick={() => setIsEditing(true)}
+                  >
+                <Pencil size={14} className="cursor-pointer"/>
+              </button>
+            </div>
+          )}
+          
+        </div>
+       
+      </div>
+      
+    </div>
+  );
+};
 
-}
-
-export default Profile
+export default Profile;
