@@ -1,11 +1,17 @@
 import { useAuth } from '../context/AuthContext.jsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
+import { Expand  } from "lucide-react";
+
+
 
 const TieBreakView = ({ album, tiedPhotos, otherPhotos, onTieBreakVote, disabled }) => {
     const { currentUser } = useAuth();
     const isTieBreakJudge = currentUser?._id === album?.tieBreakJudge;
     const [selectedPhoto, setSelectedPhoto] = useState(null);
+    const [showFullscreen, setShowFullscreen] = useState(null);
+
     return( 
         <div className="flex flex-col items-center h-screen">
             {/*Finalistes*/}
@@ -43,6 +49,43 @@ const TieBreakView = ({ album, tiedPhotos, otherPhotos, onTieBreakVote, disabled
                                     className={`lg:max-w-sm h-auto object-cover  border-4 ${photo._id === selectedPhoto ? "border-primary" : "border-accent"}   rounded-2xl shadow-lg`}
                                 />
                             </button>
+
+                            {/* Bouton Plein écran */}
+                            <span role="button"
+                                    tabIndex={0} 
+                                    onClick={(e) => {
+                                        e.stopPropagation(); 
+                                        setShowFullscreen(photo._id);
+                                    }}
+                                    className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-4 right-2 cursor-pointer bg-black/50 text-white p-1 rounded-full hover:bg-black/80 z-20"
+                                    title="Voir en plein écran"
+                                >
+                                    <Expand className="h-4 w-4" />
+                            </span>
+
+                            {/* Full Screen*/}
+                            <AnimatePresence>
+                            {showFullscreen === photo._id && (
+                                <motion.div 
+                                    className="fixed top-0 left-0 w-full h-full bg-black/90 flex justify-center items-center z-50"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    onClick={() => setShowFullscreen(false)} // Ferme la modal en cliquant en dehors
+                                >
+                                    <motion.img 
+                                        src={photo.src} 
+                                        alt="Fullscreen"
+                                        className="max-w-11/12 max-h-11/12 rounded-xl shadow-lg"
+                                        initial={{ scale: 0.8 }}
+                                        animate={{ scale: 1 }}
+                                        exit={{ scale: 0.8 }}
+                                        transition={{ duration: 0.3 }}
+                                    />
+                                </motion.div>
+                            )}
+                            </AnimatePresence>
                         
                             {currentUser?._id !== album?.tieBreakJudge && (
                                 <div className="absolute -bottom-6 text-primary font-bold text-center">

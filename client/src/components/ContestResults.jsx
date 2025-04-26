@@ -10,12 +10,14 @@ const ContestResults = ( {results} ) => {
             delayChildren: 0.2,
           },
         },
-      };
+    };
       
-      const item = {
+    const item = {
         hidden: { opacity: 0, y: 20 },
         show: { opacity: 1, y: 0 },
-      };
+    };
+
+    
 
     return (
         <motion.ul
@@ -36,9 +38,12 @@ const ContestResults = ( {results} ) => {
                     <div className={`text-4xl text-secondary font-thin opacity-60 tabular-nums ${
                         index === 0 ? "text-yellow-200" : index === 1 ? "text-slate-400" : index === 2 ? "text-amber-500" : "text-secondary"
                     }`}>{index+1}</div>
-                    <div><img className="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp"/></div>
+
+                    <img className="size-12 object-cover rounded-box" src={result.user?.avatar} />
+                    
+
                     <div className='list-grow'>
-                         <div className="text-xs uppercase font-semibold opacity-60">{result.name}</div> 
+                         <div className="text-xs uppercase font-semibold opacity-60">{result.user?.username}</div> 
                     </div>
                     <div className="text-2xl text-primary text-right ml-auto font-bold ">
                         {result.votes}

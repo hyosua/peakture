@@ -10,6 +10,9 @@ import ContestResults from "./ContestResults.jsx"
 import TieBreakView from "./TieBreakView.jsx"
 import ConfirmMessage from "./ConfirmMessage.jsx"
 import { getMonthName } from "../../utils/dateConvert.js"
+import { useToast } from "../context/ToastContext.jsx"
+
+
 
 const breakpointColumns = {
     default: 3,
@@ -47,7 +50,8 @@ const AlbumPage = () => {
 
 
     const {currentUser} = useAuth()
-    
+    const {showToast} = useToast()
+
         
     // Fetch Album data
     useEffect(() => {
@@ -69,12 +73,7 @@ const AlbumPage = () => {
                 }
                 const photosData = await photosResponse.json()
                 setPhotos(photosData.photos || [])
-                
-                // Calcul des votes pour afficher le classement
-                if(albumData.status === "closed"){
-                    // On récupère les résultats de votes
-                    updateClassement(photosData.photos || [])
-                }
+
 
             } catch(error){
                 console.error("Error while fetching album data:", error)
@@ -86,6 +85,13 @@ const AlbumPage = () => {
         getAlbumData()
         
     }, [id, navigate])
+
+    useEffect(() => {
+        // Only run when album is not null and status is "closed"
+        if (album && album.status === "closed") {
+            updateClassement()
+        }
+    }, [album]) 
 
 
     const uploadToCloudinary = async (file) => {
@@ -107,14 +113,6 @@ const AlbumPage = () => {
         }
     }
 
-    const updateClassement = (photos) => {
-        const classement = photos.map(photo => ({
-            name: photo.username,
-            votes: photo.votes || 0
-        }))
-        classement.sort((a, b) => b.votes - a.votes)
-        setVoteResultsData(classement)
-    }
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -221,6 +219,23 @@ const AlbumPage = () => {
         }
     }
 
+    const updateClassement = async () => {
+        // Calcul des votes pour afficher le classement
+        if(album?.status === "closed"){
+            // On récupère les résultats de votes
+            const classementResponse = await fetch(`${API_BASE_URL}/api/classement/${id}`)
+            if(!classementResponse.ok) {
+                throw new Error(`Erreur: ${classementResponse.statusText}`)
+            }
+            const classement = await classementResponse.json()
+            if(classement.success){
+                setVoteResultsData(classement.classement)
+            } else {
+                console.log(classement.message)
+            }
+        }
+    }
+
     const handleVote = async (photo_id) => {
         // si l'utilisateur n'est pas connecté impossible de voter
         if(!currentUser.email){
@@ -287,15 +302,17 @@ const AlbumPage = () => {
                     const updatedPhotos = prevPhotos.map(photo =>
                     photo._id === result.peakture._id ? result.peakture : photo
                     )
-                if(result.album.status === "closed"){
-                    updateClassement(updatedPhotos)
-                }
+                
                 return updatedPhotos
             })
+            await updateClassement()
+        
         } catch (error) {
             console.error("Erreur lors du Tie Break:", error)
         }
     }
+
+    
 
     const handleTieBreakVoteClick = (photoId) => {
         setPhotoToConfirm(photoId)

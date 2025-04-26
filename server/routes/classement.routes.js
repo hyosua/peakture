@@ -1,10 +1,11 @@
 import express from 'express'
-import { getClassementAnnuel, getClassementAlbum } from '../controllers/classement.controller.js'
+import { getClassementAlbum, getClassementAnnuel, getClassementMensuel } from '../controllers/classement.controller.js'
 
 const router = express.Router()
 
 router.get("/:familyId/annuel", getClassementAnnuel)
-router.get("/:familyId/album", getClassementAlbum)
+router.get("/:familyId/album", getClassementMensuel)
+router.get("/:id", getClassementAlbum)
 
 
 export default router

@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios';
 import { useToast } from "../../context/ToastContext.jsx"
-import { User, Camera, Upload, Pencil } from "lucide-react";
+import { Camera, Pencil } from "lucide-react";
 import { useAuth } from '../../context/AuthContext.jsx';
 import uploadToCloudinary from "../../../utils/uploadToCloudinary.js";
 import { motion } from "framer-motion";

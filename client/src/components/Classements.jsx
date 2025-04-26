@@ -85,14 +85,22 @@ const Classements = () => {
                             >
                                 {index + 1}
                             </div>
-                            <div>
+                            <div className="relative">
                                 <img
-                                className="size-10 rounded-box"
-                                src="https://img.daisyui.com/images/profile/demo/1@94.webp"
+                                className="size-14 object-cover rounded-box"
+                                src={user.avatar}
                                 />
+                                {index === 0 &&(
+                                    <img 
+                                    src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
+                                    alt="Crown" 
+                                    className="absolute -top-7 left-1/2 -translate-x-1/2 w-8 h-8"
+                                    />
+                                )}
+                                
                             </div>
                             <div className="list-grow">
-                                <div className="text-xs uppercase font-semibold opacity-60">
+                                <div className="text-lg uppercase font-semibold opacity-60">
                                 {user.username}
                                 </div>
                             </div>
@@ -133,9 +141,18 @@ const Classements = () => {
                                     <div className={`text-4xl text-secondary font-thin opacity-60 tabular-nums ${
                                         index === 0 ? "text-yellow-200" : index === 1 ? "text-slate-400" : index === 2 ? "text-amber-500" : "text-secondary"
                                     }`}>{index+1}</div>
-                                    <div><img className="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp"/></div>
+                                    <div className="relative">
+                                        <img className="size-14 object-cover rounded-box" src={user.user?.avatar}/>
+                                        {index === 0 && (
+                                            <img 
+                                            src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
+                                            alt="Crown" 
+                                            className="absolute -top-7 left-1/2 -translate-x-1/2 w-8 h-8"
+                                        />
+                                        )}
+                                        </div>
                                     <div className='list-grow'>
-                                        <div className="text-xs uppercase font-semibold opacity-60">{user.username}</div> 
+                                        <div className="text-lg uppercase font-semibold opacity-60">{user.user?.username}</div> 
                                     </div>
                                     <div className="text-2xl text-primary text-right ml-auto font-bold ">
                                         {user.votes}
