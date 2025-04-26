@@ -71,6 +71,7 @@ const Profile = () => {
         showToast({ message: "Profil mis à jour!", type: "success"});
       }
       fetchCurrentUser()
+      console.log("Current user maj:", currentUser)
       setIsEditing(false);
     } catch(error){
       console.log("Erreur lors de la mise à jour du profil:", error);
@@ -78,35 +79,11 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        setIsEditing(false);
-      }
-    };
-
-    const handleClickAway = (e) => {
-      if(formRef.current && !formRef.current.contains(e.target)){
-        setIsEditing(false)
-      }
-    }
-  
-    if (isEditing) {
-      window.addEventListener('keydown', handleKeyDown);
-      window.addEventListener('mousedown', handleClickAway)
-    }
-  
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.addEventListener('mousedown', handleClickAway);
-    };
-  }, [isEditing]);
 
   return(
     <div className="overflow-hidden mx-auto bg-base-300 shadow-md rounded-lg">
        <div className="fixed bottom-24 right-4 z-50">
           <button
-            type="submit"
             disabled={!isEditing}
             onClick={handleSubmit}
             className={`w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-neutral ${isEditing ? 'bg-primary cursor-pointer hover:bg-accent' : 'bg-gray-400 cursor-not-allowed'}`}
@@ -156,7 +133,7 @@ const Profile = () => {
 
           {/* Profile Form */}
           {isEditing ? (
-            <div ref={formRef}>
+            <div>
               <form onSubmit={handleSubmit} className="max-w-md flex-grow space-y-4 md:mt-0">
               <div className="space-y-4">
                 <div>
@@ -166,7 +143,7 @@ const Profile = () => {
                       name="username"
                       value={user.username}
                       onChange={handleUsernameChange}
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                      className="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                       placeholder="Votre nom d'utilisateur"
                     />
                   </div>
