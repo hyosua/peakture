@@ -15,7 +15,7 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
-    const [isDeleteConfirm, setIsDeleteConfirm] = useState(false);
+    const [isDeleteConfirm, setIsDeleteConfirm] = useState(null);
     const [isCloseVotesConfirm, setIsCloseVotesConfirm] = useState(false);
     const [albumLoading, setAlbumLoading] = useState(false)
 
@@ -447,7 +447,7 @@ const AlbumList = () => {
                                                 label: "Supprimer",
                                                 icon: <Trash className="h-4 w-4 text-red-500" />,
                                                 disabled: false,
-                                                onClick: () => setIsDeleteConfirm(true),
+                                                onClick: () => setIsDeleteConfirm(album._id),
                                                 },
                                                 
                                             ]}
@@ -493,12 +493,12 @@ const AlbumList = () => {
                             title="Supprimer cet album ?"
                             message="Cette action est irréversible et tout son contenu sera perdu."
                             onConfirm={(e) => {
-                                deleteAlbum(album._id)
-                                setIsDeleteConfirm(false)
+                                deleteAlbum(isDeleteConfirm)
+                                setIsDeleteConfirm(null)
                                 e.stopPropagation()
                             }}
                             onCancel={(e) => {
-                                setIsDeleteConfirm(false)
+                                setIsDeleteConfirm(null)
                                 e.stopPropagation()
                             }}
                             isOpen={isDeleteConfirm}
