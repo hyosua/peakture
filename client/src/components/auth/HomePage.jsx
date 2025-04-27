@@ -35,6 +35,10 @@ const HomePage = () => {
       setShowLoginForm(true);
       setSignupForm(true);
     }
+
+    if (params.get('showLoginForm') === 'true'){
+      setShowLoginForm(true)
+    }
   }, [location]);
 
   {/* Afficher le message d'erreur */}

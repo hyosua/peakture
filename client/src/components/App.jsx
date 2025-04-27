@@ -17,6 +17,7 @@ import { ToastProvider } from '../context/ToastContext.jsx';
 import Profile from './user/Profile.jsx';
 import { useParams } from 'react-router-dom';
 import Loader from './Loader.jsx'
+import Forbidden from './Forbidden.jsx';
 
 // Family Wrapper
 const FamilyRouteWrapper = () => {
@@ -98,7 +99,7 @@ const AppRoutes = () => {
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/auth" element={<Auth />} /> 
         <Route path="/login" element={<Login />} /> 
-        <Route path="/forbidden" element={<div>Accès refusé</div>} />
+        <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/album/:id" element={<AlbumPage />} />
         <Route path="/classement" element={<Classements />} />
       </Routes>
