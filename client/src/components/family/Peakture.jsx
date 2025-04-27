@@ -39,13 +39,17 @@ const Peakture = () => {
         <>
         {peakture && (
             <div className='relative m-8 p-8 w-80 md:w-[500px] lg:w-96 flex flex-col group items-center bg-base-200 rounded-xl overflow-hidden shadow-lg'>
-            <h1 className='font-bold text-4xl text-center mb-10'>Peakture</h1>
-            <img key={peakture._id} 
+            <h1 className='font-bold text-4xl text-center mb-6'>Peakture</h1>
+            <motion.img key={peakture._id} 
                 src={peakture.src} 
                 alt={`Photo of the Month`} 
-                className="w-full h-auto border-4 border-primary rounded-3xl"
-                onClick={() => navigate(`/album/${peakture.albumId}`)} 
+                className="w-full h-auto  rounded-3xl"
+                onClick={() => navigate(`/album/${peakture.albumId}`)}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 2 }} 
             />
+
                 {/* Bouton Plein écran */}
                 <span role="button"
                     tabIndex={0} 

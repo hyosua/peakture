@@ -130,7 +130,7 @@ const Classements = () => {
                         className="list bg-base-100 rounded-box shadow-md mb-20"
                         >
             
-                            <li className="p-4 pb-2 text-xs opacity-60 tracking-wide" >Classement de {getMonthName(albumInfo?.month)}</li>
+                            <li className="p-2 pb-4 text-xs opacity-60 tracking-wide" >Classement de {getMonthName(albumInfo?.month)}</li>
                             
                             {albumRankings?.map((user, index) => (
                                 <motion.li key={index} 

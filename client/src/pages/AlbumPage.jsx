@@ -419,18 +419,28 @@ const AlbumPage = () => {
                 <div className="relative flex pt-4 mb-6 items-center flex-col ">
                     <motion.h2 
                         className="text-primary text-5xl"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, ease: "easeOut" }}
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.3,
+                          }}
                     >
                         { getMonthName(album?.month) }
                     </motion.h2>
 
                     <motion.h3 
                         className="font-semibold text-secondary"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.1, ease: "easeOut", delay: 0.2 }}
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.2,
+                          }}
                     >
                         {album?.theme}
                     </motion.h3>
@@ -438,9 +448,14 @@ const AlbumPage = () => {
                     {album?.isRandomWinner && (
                         <motion.p
                             className="text-accent mb-2"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}>
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 20,
+                                delay: 0.6,
+                            }}>
                             Départage par tirage au sort
                         </motion.p>
                     )}
@@ -448,9 +463,14 @@ const AlbumPage = () => {
                     {photos?.length > 0 && album?.status === "open" && (
                         <motion.p 
                         className="text-gray-500 mb-6"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.3, ease: "easeOut", delay: 0.4 }}
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.7,
+                          }}
                         >
                         Double-Clique sur une photo pour voter!
                         </motion.p>
@@ -582,9 +602,43 @@ const AlbumPage = () => {
                     
                 ) : (
                     <div className="flex flex-col items-center justify-center py-6 text-white">
-                        <img className="w-64" src="http://localhost:5173/src/assets/img/lib/sleeping-album.png" />
-                        <p className="text-xl mb-2">Aucune Photo pour le moment.</p> 
-                        <p className="text-secondary">Sois le premier !</p>                        
+                        <motion.img 
+                            className="w-64" src="http://localhost:5173/src/assets/img/lib/sleeping-album.png" 
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 20,
+                                delay: 0.3,
+                            }}
+                        />
+                        <motion.p 
+                            className="text-xl mb-2"
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.2,
+                          }}
+                            >
+                                Aucune Photo pour le moment.
+                        </motion.p> 
+                        <motion.p 
+                            className="text-secondary"
+                            initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.5,
+                          }}
+                            >
+                                Sois le premier !
+                        </motion.p>                        
                     </div>
                 )} 
 
@@ -597,21 +651,40 @@ const AlbumPage = () => {
                 {album?.status === "open" && (
                     <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip={error}>
                     <div className='pb-20'>
-                        <button
-                            className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
-                            onClick={async () => {
-                                const canSubmit = await checkHasSubmitted()
-                                if(canSubmit){
-                                    setShowUploadForm(true)
-                                }else{
-                                    handleError()
-                                }
-                            }}
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.3,
+                          }}
+                        className='p-6 btn btn-primary rounded-full hover:text-neutral flex items-center cursor-pointer'
+                        onClick={async () => {
+                          const canSubmit = await checkHasSubmitted();
+                          if (canSubmit) {
+                            setShowUploadForm(true);
+                          } else {
+                            handleError();
+                          }
+                        }}
+                      >
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.6}}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.3,
+                          }}
                         >
-                            <Plus size={24} />
-                        </button>
+                          <Plus size={24} />
+                        </motion.div>
+                      </motion.button>
                     </div>
-                </div>
+                  </div>
                 )}
                 
                

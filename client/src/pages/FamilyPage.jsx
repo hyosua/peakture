@@ -111,11 +111,11 @@ const FamilyHome = () => {
                         data-tip="Code copié !"
                          onMouseEnter={(e) => e.stopPropagation()}
                     >
-                        <span className='text-accent  text-lg font-mono'>{family.inviteCode}</span>
+                        <span className='text-accent ml-2  text-lg font-mono'>{family.inviteCode}</span>
                     </div>
                     <button
                         onClick={handleShare} 
-                        className='mt-4 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
+                        className='mt-2 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
                         {deviceNavigator === "mobile"  ? (<Share2 size={14}/>) : (<Copy size={14} />)}
                     </button>
                     </div>
