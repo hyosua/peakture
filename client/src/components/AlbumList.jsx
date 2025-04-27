@@ -15,7 +15,7 @@ const AlbumList = () => {
     const [newTheme, setNewTheme] = useState('')
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
-    const [isDeleteConfirm, setIsDeleteConfirm] = useState(null);
+    const [isDeleteAlbumId, setIsDeleteAlbumId] = useState(null);
     const [isCloseVotesConfirm, setIsCloseVotesConfirm] = useState(false);
     const [albumLoading, setAlbumLoading] = useState(false)
 
@@ -447,7 +447,7 @@ const AlbumList = () => {
                                                 label: "Supprimer",
                                                 icon: <Trash className="h-4 w-4 text-red-500" />,
                                                 disabled: false,
-                                                onClick: () => setIsDeleteConfirm(album._id),
+                                                onClick: () => setIsDeleteAlbumId(album._id),
                                                 },
                                                 
                                             ]}
@@ -493,15 +493,15 @@ const AlbumList = () => {
                             title="Supprimer cet album ?"
                             message="Cette action est irréversible et tout son contenu sera perdu."
                             onConfirm={(e) => {
-                                deleteAlbum(isDeleteConfirm)
-                                setIsDeleteConfirm(null)
+                                deleteAlbum(isDeleteAlbumId)
+                                setIsDeleteAlbumId(null)
                                 e.stopPropagation()
                             }}
                             onCancel={(e) => {
-                                setIsDeleteConfirm(null)
+                                setIsDeleteAlbumId(null)
                                 e.stopPropagation()
                             }}
-                            isOpen={isDeleteConfirm}
+                            isOpen={isDeleteAlbumId}
                         />     
                         <ConfirmMessage
                             title="Clotûrer l'album ?"

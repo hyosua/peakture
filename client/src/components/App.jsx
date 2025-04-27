@@ -15,24 +15,35 @@ import { store } from '../store/index.js'
 import Classements from './Classements.jsx';
 import { ToastProvider } from '../context/ToastContext.jsx';
 import Profile from './user/Profile.jsx';
+import { useParams } from 'react-router-dom';
+import Loader from './Loader.jsx'
 
-// Protection des routes enfants
-const ProtectedRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
-  
-  if (loading) return (
-        <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
-          <span className="loading loading-infinity text-secondary loading-xl"></span>
-        </div>
-  ) 
-  
-  if (!currentUser) return <Navigate to="/" />;
-  
-  return children;
+// Family Wrapper
+const FamilyRouteWrapper = () => {
+  const {familyId} = useParams()
+
+  return (
+    <ProtectedRoute familyId={familyId}>
+      <FamilyHome />
+    </ProtectedRoute>
+  )
 }
+
+// Protected Route
+const ProtectedRoute = ({ children, familyId}) => {
+  const {currentUser, loading} = useAuth()
+
+  if(loading) return <Loader />
+  console.log("FamilyId:",familyId)
+  if(!currentUser || currentUser.familyId !== familyId ) return <Navigate to="/forbidden" />
+
+  return children
+}
+
 
 ProtectedRoute.propTypes = {
   children: PropTypes.node.isRequired,
+  familyId: PropTypes.string, 
 };
 
 const AppRoutes = () => {
@@ -59,14 +70,13 @@ const AppRoutes = () => {
   }, [currentUser])
   
   if (loading) {
-    return  <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
-                <span className="loading loading-infinity text-secondary loading-xl"></span>
-            </div>
+    return  <Loader />
   }
   
   return (
     <Layout>
       <Routes>
+        {/* Page d'accueil avec redirection vers la famille si connecté */}
         <Route 
           path="/" 
           element={
@@ -77,18 +87,18 @@ const AppRoutes = () => {
               : <HomePage />
           } 
         />
+        {/* Routes protégées pour la famille */}
         <Route 
           path="/family/:familyId" 
           element={ 
-            // Possibilité de protéger l'accès à une famille 
-            // <ProtectedRoute>
-              <FamilyHome />
-            // </ProtectedRoute>
+            <FamilyRouteWrapper />
           } 
         />
+        {/* Routes publiques */}
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/auth" element={<Auth />} /> 
         <Route path="/login" element={<Login />} /> 
+        <Route path="/forbidden" element={<div>Accès refusé</div>} />
         <Route path="/album/:id" element={<AlbumPage />} />
         <Route path="/classement" element={<Classements />} />
       </Routes>
