@@ -288,7 +288,19 @@ const AlbumList = () => {
     return (
         <div className='flex flex-col justify-center items-center mx-auto p-4 mb-24'> 
             <div className='flex justify-between items-center mb-6'>
-                <h1 className='text-2xl text-white font-bold'>Albums</h1>
+                <motion.h1 
+                    className='text-2xl text-white font-bold'
+                    initial={{ opacity: 0, scale: 0.6 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 500,
+                                    damping: 20,
+                                    delay: 0.5,
+                                }}
+                    >
+                        Albums
+                </motion.h1>
             </div>
 
             {/* Add album form */}
@@ -383,9 +395,45 @@ const AlbumList = () => {
               
                 ) : albums?.length === 0 ? ( 
                         <div className='flex flex-col items-center justify-center'>
-                            <img src='https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png' alt='Aucun album trouvé' className='w-1/2 h-1/2 mb-4'/>
-                            <h2 className='text-xl text-white font-semibold'>Aucun album</h2>
-                            <p className={`${isAdmin ? "text-gray-200" : "hidden"}`}>Crée un nouvel album pour commencer !</p>
+                            <motion.img 
+                                src='https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png' 
+                                alt='Aucun album trouvé' 
+                                className='w-1/2 h-1/2 lg:w-80 mb-4'
+                                initial={{ opacity: 0, scale: 0.6 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 500,
+                                    damping: 20,
+                                    delay: 0.4,
+                                }}
+                            />
+                            <motion.h2 
+                                className='text-xl text-white font-semibold'
+                                initial={{ opacity: 0, scale: 0.6 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 500,
+                                    damping: 20,
+                                    delay: 0.2,
+                                }}
+                                >
+                                    Aucun album
+                            </motion.h2>
+                            <motion.p 
+                                className={`${isAdmin ? "text-gray-200" : "hidden"}`}
+                                initial={{ opacity: 0, scale: 0.6 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                    type: "spring",
+                                    stiffness: 500,
+                                    damping: 20,
+                                    delay: 0.6,
+                                }}
+                                >
+                                    Crée un nouvel album pour commencer !
+                            </motion.p>
                         </div>
                 ) : (
                         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
@@ -527,12 +575,20 @@ const AlbumList = () => {
                                 
             
                 { isAdmin && (
-                        <button
+                        <motion.button
                             className='p-6 btn btn-primary mt-6 rounded-full hover:text-neutral flex items-center cursor-pointer'
                             onClick={() => setShowAddForm(true)}
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 20,
+                                delay: 0.7,
+                            }}
                         >
                             <Plus size={24} />
-                        </button>
+                        </motion.button>
                     )}
            
         </div>

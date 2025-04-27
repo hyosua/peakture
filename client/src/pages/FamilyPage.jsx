@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom'
 import { Share2, Copy } from 'lucide-react'
 import NameEditor from '@/components/ui/NameEditor.jsx';
 import { useToast } from "@/context/ToastContext.jsx"
+import { motion } from "framer-motion";
+
 
 
 const FamilyHome = () => {
@@ -101,24 +103,47 @@ const FamilyHome = () => {
         )}
             { family ? (
                 <div className='bg-base-100 flex flex-col items-center'>
-                    <NameEditor 
-                        isAdmin={isAdmin}
-                        familyName={family?.name}
-                        onSave={handleSaveFamilyName}
-                    />
-                    <div className='font-semibold'>Family Code: 
-                    <div className={`tooltip pointer-events-none tooltip-accent ${showTooltip ? 'tooltip-open' : ''}`} 
-                        data-tip="Code copié !"
-                         onMouseEnter={(e) => e.stopPropagation()}
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.3,
+                        }}
                     >
-                        <span className='text-accent ml-2  text-lg font-mono'>{family.inviteCode}</span>
-                    </div>
-                    <button
-                        onClick={handleShare} 
-                        className='mt-2 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
-                        {deviceNavigator === "mobile"  ? (<Share2 size={14}/>) : (<Copy size={14} />)}
-                    </button>
-                    </div>
+                        <NameEditor 
+                            isAdmin={isAdmin}
+                            familyName={family?.name}
+                            onSave={handleSaveFamilyName}
+                    />
+                    </motion.div>
+                    
+                    <motion.div 
+                            className='font-semibold'
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                                delay: 0.3,
+                            }}
+                    >
+                        Family Code: 
+                        <div className={`tooltip pointer-events-none tooltip-accent ${showTooltip ? 'tooltip-open' : ''}`} 
+                            data-tip="Code copié !"
+                            onMouseEnter={(e) => e.stopPropagation()}
+                        >
+                            <span className='text-accent ml-2  text-lg font-mono'>{family.inviteCode}</span>
+                        </div>
+                        <button
+                            onClick={handleShare} 
+                            className='mt-2 ml-2 p-1 bg-accent text-white cursor-pointer rounded-lg'>
+                            {deviceNavigator === "mobile"  ? (<Share2 size={14}/>) : (<Copy size={14} />)}
+                        </button>
+                    </motion.div>
                     
                     <Peakture />
                     <AlbumList />
