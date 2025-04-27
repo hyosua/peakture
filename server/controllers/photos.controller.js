@@ -29,7 +29,7 @@ export const getPhotosFromAlbum = async (req, res) => {
 
 export const addPhoto = async (req, res) => {
     try {
-        const { albumId, src, userId, username } = req.body
+        const { albumId, src, userId, username, userModel } = req.body
 
         if( !albumId || !src ) {
             return res.status(400).json({message: "Album Id and Image URL are required" })
@@ -42,6 +42,7 @@ export const addPhoto = async (req, res) => {
             votes: 0,
             userId,
             username,
+            userModel,
             createdAt: new Date()
         }
         const result = await Photo.create(photoData)

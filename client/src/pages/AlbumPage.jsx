@@ -10,7 +10,6 @@ import ContestResults from "@/components/album/ContestResults.jsx"
 import TieBreakView from "@/components/album/TieBreakView.jsx"
 import ConfirmMessage from "@/components/ui/ConfirmMessage.jsx"
 import { getMonthName } from '@/utils/dateConvert.js'
-import { useToast } from '@/context/ToastContext.jsx'
 
 
 
@@ -43,15 +42,10 @@ const AlbumPage = () => {
     const [voteResultsData, setVoteResultsData] = useState([])
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [photoToConfirm, setPhotoToConfirm] = useState(null);
-    const [isLoading, setIsLoading] = useState(true) // Add this new state
-
-
-
+    const [isLoading, setIsLoading] = useState(true)
 
 
     const {currentUser} = useAuth()
-    const {showToast} = useToast()
-
         
     // Fetch Album data
     useEffect(() => {
@@ -177,7 +171,8 @@ const AlbumPage = () => {
                     albumId: album._id,
                     src: imageUrl,
                     userId: currentUser._id,
-                    username: currentUser.username
+                    username: currentUser.username,
+                    userModel: currentUser.sessionId ? "Guest" : "User"
                 })
             })
 
@@ -229,6 +224,7 @@ const AlbumPage = () => {
             }
             const classement = await classementResponse.json()
             if(classement.success){
+                console.log("classement:",  classement.classement)
                 setVoteResultsData(classement.classement)
             } else {
                 console.log(classement.message)

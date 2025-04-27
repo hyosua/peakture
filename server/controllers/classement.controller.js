@@ -28,7 +28,7 @@ export const getClassementMensuel = async (req, res) => {
             return res.status(404).json({ message: "Aucun album clos"})
         }
         const photos = await Photo.find({albumId: lastAlbum._id})
-                                    .select('userId votes')
+                                    .select('userId votes userModel')
                                     .populate('userId','username avatar')
                                     .sort({ votes: -1 });
         if(!photos || photos.length === 0){
@@ -54,9 +54,13 @@ export const getClassementAlbum = async (req, res) => {
             return res.status(404).json({ success: false, message: "Aucun album clos ne correspond"})
         }
         const photos = await Photo.find({albumId})
-                                    .select('userId votes')
-                                    .populate('userId','username avatar')
-                                    .sort({ votes: -1 });
+                        .select('userId votes username userModel')
+                        .populate({
+                            path: 'userId',
+                            select: 'username avatar'
+                        })
+                        .sort({ votes: -1 });
+
         if(!photos || photos.length === 0){
             return res.status(404).json({ success: false, message: "Pas de photos" })
         }

@@ -26,7 +26,6 @@ const Peakture = () => {
                 return res.json();
             })
             .then((data) => {
-                console.log("getPeakture data:", data)
                 setPeakture(data)
             })
             .catch((err) => console.error(err));
