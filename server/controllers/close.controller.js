@@ -132,20 +132,33 @@ export const handleTie = async (req, res) => {
             { new: true }
         );
 
-        const winner = await User.findById(winningPhoto.userId);
+        // Déterminer si le gagnant est un User ou un Guest
+        let userType = 'User';
+        let winner = await User.findById(winningPhoto.userId);
+        if (!winner) {
+            winner = await Guest.findById(winningPhoto.userId);
+            if (winner) {
+                userType = 'Guest';
+            }
+        }
 
         const updatedAlbum = await Album.findByIdAndUpdate(
             req.params.id,
             {
                 $set: {
                     winner: winningPhoto.userId,
+                    userModel: userType,
+                    isRandomWinner: true,
                     peakture: updatedWinningPhoto._id,
                     status: "closed",
                     cover: updatedWinningPhoto.src
                 }
             },
             { new: true }
-        ).populate('winner').populate('peakture');
+        ).populate({
+            path: 'winner',
+            refPath: 'userModel'
+        }).populate('peakture');
 
         if (!updatedAlbum) {
             return res.status(404).json({ message: "Erreur lors de la fermeture de l'album" });

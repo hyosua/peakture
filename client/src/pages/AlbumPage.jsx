@@ -435,6 +435,16 @@ const AlbumPage = () => {
                         {album?.theme}
                     </motion.h3>
 
+                    {album?.isRandomWinner && (
+                        <motion.p
+                            className="text-accent mb-2"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1.2, ease: "easeOut", delay: 0.3 }}>
+                            Départage par tirage au sort
+                        </motion.p>
+                    )}
+
                     {photos?.length > 0 && album?.status === "open" && (
                         <motion.p 
                         className="text-gray-500 mb-6"
@@ -445,6 +455,8 @@ const AlbumPage = () => {
                         Double-Clique sur une photo pour voter!
                         </motion.p>
                     )}
+
+                    
                     </div>
 
 

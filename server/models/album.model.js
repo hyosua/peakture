@@ -24,7 +24,7 @@ const albumSchema = new mongoose.Schema({
     },
     tieBreakJudge: { // l'utilisateur qui doit départager (ancien gagnant)
         type: mongoose.Schema.Types.ObjectId,
-        ref: "userModel", 
+        ref: "User", 
     },
     winner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +34,10 @@ const albumSchema = new mongoose.Schema({
     userModel: {
     type: String,
     enum: ['User', 'Guest']
+    },
+    isRandomWinner: {
+        type: Boolean,
+        default: false
     },
     peakture:{
         type: mongoose.Schema.Types.ObjectId, ref: 'Photo'
