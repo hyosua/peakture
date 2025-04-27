@@ -1,4 +1,5 @@
 import User from "../models/user.model.js"
+import Guest from "../models/guest.model.js"
 import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb";
@@ -11,8 +12,8 @@ export const getAlbum = async (req, res) => {
     try {
         const album = await Album.findOne({
             _id: req.params.id
-        });
-        
+        }).populate("winner");
+
         if (!album) {
             return res.status(404).json({ message: 'Album non trouvé' });
         }
@@ -91,16 +92,20 @@ export const getWinner = async (req, res) => {
         }
 
         const winningPhoto = classementPhotos[0]
-        const winner = await User.findById(winningPhoto.userId);
+        const userType = winningPhoto.userModel;
+        const UserModel = mongoose.model(userType);
+        const winner = await UserModel.findById(winningPhoto.userId);
         if (!winner) {
             return res.status(404).json({ message: "Utilisateur gagnant non trouvé" });
         }
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winningPhoto.userId, peakture: winningPhoto._id }},
+            { $set: { winner: winningPhoto.userId, userModel: userType, peakture: winningPhoto._id }},
             { new: true }
         ).populate('winner').populate('peakture')
+
+        console.log("Album with winner: ",result)
 
         if(!result) {
             console.log("Erreur lors de l'ajout du winner")
@@ -142,7 +147,10 @@ export const handleTie = async (req, res) => {
         ).sort({ createdAt: -1 });
 
         if (lastClosedAlbum) {
-            const lastWinner = await User.findById(lastClosedAlbum.winner);
+            let lastWinner = await User.findById(lastClosedAlbum.winner);
+            if(!lastWinner){
+                lastWinner = await Guest.findById(lastClosedAlbum.winner)
+            }
             const lastWinnerIsFinalist = tiePhotos.some(photo => photo.userId.toString() === lastClosedAlbum.winner.toString());
 
             if (!lastWinnerIsFinalist) {
@@ -168,7 +176,7 @@ export const handleTie = async (req, res) => {
                 }
 
                 return res.status(200).json({
-                    message: `Le précédent vainqueur (${lastWinner.name}) doit départager les finalistes.`,
+                    message: `Le précédent vainqueur (${lastWinner.username}) doit départager les finalistes.`,
                     pendingAlbum: pendingTieAlbum
                 });
             }
@@ -184,7 +192,10 @@ export const handleTie = async (req, res) => {
             { new: true }
         );
 
-        const winner = await User.findById(winningPhoto.userId);
+        let winner = await User.findById(winningPhoto.userId);
+        if(!winner){
+            winner = await Guest.findById(winningPhoto.userId)
+        }
 
         const updatedAlbum = await Album.findByIdAndUpdate(
             req.params.id,

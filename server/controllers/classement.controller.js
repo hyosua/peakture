@@ -1,4 +1,5 @@
 import User from '../models/user.model.js'
+import Guest from '../models/guest.model.js'
 import Photo from '../models/photo.model.js'
 import Album from '../models/album.model.js'
 
@@ -8,7 +9,8 @@ export const getClassementAnnuel = async (req, res) => {
         const familyId = req.params.familyId
         const classement = await User.find({ familyId })
                                     .select('username avatar score')
-                                    .sort({ score: -1 });
+                                    .sort({ score: -1 })
+                                    .lean();
         if(!classement){
             return res.status(404).json({ message: "Aucun utilisateur dans le classement" })
         }

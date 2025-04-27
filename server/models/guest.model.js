@@ -21,7 +21,11 @@ const guestSchema = new mongoose.Schema({
     },
     coverImage:{
         type: String,
-        default: "http://localhost:5173/src/assets/img/lib/empty-cover.png"
+        default: "http://localhost:5173/src/assets/img/lib/sleeping-cover.png"
+    },
+    score:{
+        type: Number,
+        default: 0,
     },
     familyId: { type: mongoose.Schema.Types.ObjectId, ref: "Family"},
     expiresAt: {type: Date, default: () => Date.now() + 24 * 60 * 60 * 1000} //Expire dans 1 jour

@@ -58,7 +58,7 @@ const Classements = () => {
                         animate="show"
                         className="list bg-base-100 rounded-box shadow-md mb-20"
                         >
-                        <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
+                        <li className="p-2 pb-4 text-xs opacity-60 tracking-wide">
                             Classement Annuel
                         </li>
 

@@ -23,11 +23,11 @@ export const getWinner = async (req, res) => {
 
         const winningPhoto = classementPhotos[0]
         // On vérifie si le gagnant est un utilisateur ou un invité
-        let winnerModel = 'User';
+        let userModel = 'User';
         let winner = await User.findById(winningPhoto.userId);
         if (!winner) {
             winner = await Guest.findById(winningPhoto.userId);
-            winnerModel = 'Guest';
+            userModel = 'Guest';
             if (!winner) {
                 console.log("Aucun gagnant trouvé");
                 return res.status(404).json({ message: "Gagnant non trouvé" });
@@ -36,17 +36,20 @@ export const getWinner = async (req, res) => {
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winningPhoto.userId, winnerModel, peakture: winningPhoto._id, cover: winningPhoto.src }},
+            { $set: { winner: winningPhoto.userId, userModel: userModel, peakture: winningPhoto._id, cover: winningPhoto.src }},
             { new: true }
-        ).populate('winner').populate('peakture')
+        )
+        const populatedResult = await Album.findById(req.params.id)
+        .populate('winner')
+        .populate('peakture');
 
-        if(!result) {
+        if(!populatedResult) {
             console.log("Erreur lors de l'ajout du winner")
             return res.status(404).json({ message: "Album non trouvé" });
         }
 
         res.status(200).json({
-            updatedAlbum: result, 
+            updatedAlbum: populatedResult, 
             classementPhotos
         })
 
@@ -71,11 +74,23 @@ export const handleTie = async (req, res) => {
             { familyId, status: "closed" }
         ).sort({ createdAt: -1 });
 
+        // Vérifier si on a un album précédent et si le winner n'est pas parmi les finalistes
         if (lastClosedAlbum) {
-            const lastWinner = await User.findById(lastClosedAlbum.winner);
-            const lastWinnerIsFinalist = tiePhotos.some(photo => photo.userId.toString() === lastClosedAlbum.winner.toString());
+            // Vérifier si le dernier gagnant est un Guest
+            let lastWinner = await Guest.findById(lastClosedAlbum.winner);
+            const isGuest = lastWinner !== null;
+            
+            // Si ce n'est pas un Guest, chercher dans User
+            if (!isGuest) {
+                lastWinner = await User.findById(lastClosedAlbum.winner);
+            }
+            
+            const lastWinnerIsFinalist = tiePhotos.some(photo => 
+                photo.userId.toString() === lastClosedAlbum.winner.toString()
+            );
 
-            if (!lastWinnerIsFinalist) {
+            // Si le dernier gagnant n'est pas finaliste ET n'est pas un Guest, lui demander de départager
+            if (!lastWinnerIsFinalist && !isGuest) {
                 await sendTieNotification(
                     lastWinner.email,
                     lastWinner.username,
@@ -98,13 +113,16 @@ export const handleTie = async (req, res) => {
                 }
 
                 return res.status(200).json({
-                    message: `Le précédent vainqueur (${lastWinner.name}) doit départager les finalistes.`,
+                    message: `Le précédent vainqueur (${lastWinner.username}) doit départager les finalistes.`,
                     pendingAlbum: pendingTieAlbum
                 });
             }
+            
+            // Si le dernier gagnant est un Guest OU est finaliste, faire un tirage au sort
+            // On continue l'exécution vers le tirage au sort
         }
 
-        // Sinon, tirage au sort
+        // Tirage au sort
         const indexGagnant = Math.floor(Math.random() * tiePhotos.length);
         const winningPhoto = tiePhotos[indexGagnant];
 
@@ -138,6 +156,7 @@ export const handleTie = async (req, res) => {
             { _id: { $in: tiePhotos.map(photo => photo._id) } },
             { $set: { isTied: false } }
         );
+        
         // Mettre à jour le classement
         const updatedClassementPhotos = await Photo.find({ albumId: req.params.id }).sort({ votes: -1 });
         await assignPoints(updatedClassementPhotos);

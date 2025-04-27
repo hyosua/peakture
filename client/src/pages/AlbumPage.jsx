@@ -569,18 +569,10 @@ const AlbumPage = () => {
                     )
                     
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-16 text-white">
-                        <motion.button 
-                                    className="cursor-pointer flex flex-col items-center   hover:text-primary"
-                                    onClick={() => setShowUploadForm(true)}
-                                    initial={{ scale: 1 }}
-                                    whileHover={{ scale: 1.2 }}
-                                    transition={{ type: "spring", stiffness: 30, damping: 10 }}
-                    >
-                            <Upload size={64} className="mb-4" />
-                        </motion.button>
+                    <div className="flex flex-col items-center justify-center py-6 text-white">
+                        <img className="w-64" src="http://localhost:5173/src/assets/img/lib/sleeping-album.png" />
                         <p className="text-xl mb-2">Aucune Photo pour le moment.</p> 
-                        <p>Sois le premier !</p>                        
+                        <p className="text-secondary">Sois le premier !</p>                        
                     </div>
                 )} 
 

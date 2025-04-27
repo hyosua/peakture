@@ -124,7 +124,7 @@ const Profile = () => {
           key={coverPreview} 
           src={coverPreview}
           alt="Cover"
-          className="w-full h-full object-contains"
+          className="w-full h-full object-contain"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}

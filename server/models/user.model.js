@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     },
     coverImage:{
         type: String,
-        default: "http://localhost:5173/src/assets/img/lib/empty-cover.png"
+        default: "http://localhost:5173/src/assets/img/lib/sleeping-cover.png"
     },
     score:{
         type: Number,
