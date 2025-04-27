@@ -26,6 +26,7 @@ const Peakture = () => {
                 return res.json();
             })
             .then((data) => {
+                console.log("getPeakture data:", data)
                 setPeakture(data)
             })
             .catch((err) => console.error(err));
@@ -83,7 +84,7 @@ const Peakture = () => {
                             </AnimatePresence>
 
             <div className='w-80 m-7 flex gap-4 justify-center items-center'>
-                <img className='w-16 h-16 border-2 border-primary rounded-full object-cover' src={peakture.userId.avatar} alt={"peakture winner"} />
+                <img className='w-16 h-16 border-2 border-primary rounded-full object-cover' src={peakture.userId?.avatar} alt={"peakture winner"} />
                 <h2 className="text-xl font-semibold">{peakture.username}</h2>
                 <span className='m-4'><h4 className='text-primary text-xl font-semibold'>{peakture.votes}</h4></span>
             </div>

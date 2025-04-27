@@ -14,15 +14,24 @@ const photoSchema = new mongoose.Schema({
         default: 0,
     },
     userId:{ 
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'userModel' 
     },
     username:{
-        type: String, ref: 'User'
+        type: String, 
+        refPath: 'userModel' 
     },
-    votedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    votedBy: [{ 
+        type: mongoose.Schema.Types.ObjectId, 
+        refPath: 'userModel' 
+    }],
     isTied:{
         type: Boolean,
         default: false
+    },
+    userModel: {
+        type: String,
+        enum: ['User', 'Guest']
     },
 
 },{timestamps: true})

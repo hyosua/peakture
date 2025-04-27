@@ -35,7 +35,6 @@ const ProtectedRoute = ({ children, familyId}) => {
   const {currentUser, loading} = useAuth()
 
   if(loading) return <Loader />
-  console.log("FamilyId:",familyId)
   if(!currentUser || currentUser.familyId !== familyId ) return <Navigate to="/forbidden" />
 
   return children

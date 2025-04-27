@@ -15,6 +15,14 @@ const guestSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'user'], default: 'user'
     },
+    avatar:{
+        type: String,
+        default: "https://img.icons8.com/?size=100&id=91243&format=png&color=000000"
+    },
+    coverImage:{
+        type: String,
+        default: "http://localhost:5173/src/assets/img/lib/empty-cover.png"
+    },
     familyId: { type: mongoose.Schema.Types.ObjectId, ref: "Family"},
     expiresAt: {type: Date, default: () => Date.now() + 24 * 60 * 60 * 1000} //Expire dans 1 jour
 })
