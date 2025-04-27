@@ -1,23 +1,23 @@
 import { BrowserRouter as BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from '../context/AuthContext';
-import { useAuth } from '../context/AuthContext';
+import { AuthProvider } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import PropTypes from 'prop-types';
-import FamilyHome from "./FamilyHome"
-import AlbumPage from "./AlbumPage"
-import '../App.css'
-import Auth from './auth/Auth.jsx'
-import HomePage from './auth/HomePage'
-import Login from './auth/Login'
-import Layout from './Layout.jsx'
+import FamilyHome from "@/pages/FamilyPage.jsx"
+import AlbumPage from "@/pages/AlbumPage.jsx"
+import '@/App.css'
+import Auth from '@/components/auth/Auth.jsx'
+import HomePage from '@/pages/HomePage.jsx'
+import Login from '@/components/auth/Login'
+import Layout from '@/components/layout/Layout.jsx'
 import { useState, useEffect } from 'react';
 import { Provider } from 'react-redux'
-import { store } from '../store/index.js'
-import Classements from './Classements.jsx';
-import { ToastProvider } from '../context/ToastContext.jsx';
-import Profile from './user/Profile.jsx';
+import { store } from '@/store/index.js'
+import Classements from '@/components/contest/Classements.jsx';
+import { ToastProvider } from '@/context/ToastContext.jsx';
+import Profile from '@/pages/ProfilePage.jsx';
 import { useParams } from 'react-router-dom';
-import Loader from './Loader.jsx'
-import Forbidden from './Forbidden.jsx';
+import Loader from '@/components/ui/Loader.jsx'
+import Forbidden from '@/components/auth/Forbidden.jsx';
 
 // Family Wrapper
 const FamilyRouteWrapper = () => {

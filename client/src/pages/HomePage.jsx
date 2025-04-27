@@ -1,10 +1,10 @@
-import '../../App.css';
+import '@/App.css';
 import  { useState, useEffect} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
-import Auth from './Auth.jsx'
+import Auth from '@/components/auth/Auth.jsx'
 import { CheckCircle, HelpCircle } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext.jsx';
-import ConfirmMessage from '../ConfirmMessage.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
+import ConfirmMessage from '@/components/ui/ConfirmMessage.jsx';
 
 const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');

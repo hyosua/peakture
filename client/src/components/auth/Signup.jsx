@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { EyeOff,Eye, X } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext.jsx';
-import InviteCode from '../InviteCode.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
+import InviteCode from '@/components/ui/InviteCode.jsx';
 
 const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess, inviteCode }) => {
   const { login } = useAuth()

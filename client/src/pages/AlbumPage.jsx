@@ -2,15 +2,15 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
 import { Upload, Plus, X, ArrowBigLeft } from "lucide-react"
-import Picture  from "./Picture.jsx"
+import Picture  from "@/components/album/Picture.jsx"
 import { motion } from "framer-motion";
-import { useAuth } from '../context/AuthContext.jsx';
-import  Auth  from './auth/Auth.jsx'
-import ContestResults from "./ContestResults.jsx"
-import TieBreakView from "./TieBreakView.jsx"
-import ConfirmMessage from "./ConfirmMessage.jsx"
-import { getMonthName } from "../../utils/dateConvert.js"
-import { useToast } from "../context/ToastContext.jsx"
+import { useAuth } from '@/context/AuthContext.jsx';
+import  Auth  from '@/components/auth/Auth.jsx'
+import ContestResults from "@/components/album/ContestResults.jsx"
+import TieBreakView from "@/components/album/TieBreakView.jsx"
+import ConfirmMessage from "@/components/ui/ConfirmMessage.jsx"
+import { getMonthName } from '@/utils/dateConvert.js'
+import { useToast } from '@/context/ToastContext.jsx'
 
 
 

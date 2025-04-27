@@ -3,7 +3,6 @@ import { Expand  } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { useState, useEffect } from "react";
-import avatarPic from "../assets/img/avatars/avatar.jpg";
 
 const Peakture = () => {
     const navigate = useNavigate();

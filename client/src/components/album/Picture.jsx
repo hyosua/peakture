@@ -1,8 +1,8 @@
     import { Edit, Trash, Expand  } from "lucide-react";
     import PropTypes from 'prop-types';
     import { motion, AnimatePresence } from "framer-motion";
-    import EditDropdown from "./EditDropdown.jsx"
-    import { useAuth } from '../context/AuthContext.jsx';
+    import EditDropdown from "@/components/ui/EditDropdown.jsx"
+    import { useAuth } from '@/context/AuthContext.jsx';
     import { useEffect, useState, useRef } from "react";
 
     const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {

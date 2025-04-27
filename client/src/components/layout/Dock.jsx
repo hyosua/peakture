@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import SettingsMenu from "./SettingsMenu";
-import { useAuth } from '../context/AuthContext.jsx';
+import SettingsMenu from "./SettingsMenu.jsx";
+import { useAuth } from '@/context/AuthContext.jsx';
 
 
 const Dock = () => {

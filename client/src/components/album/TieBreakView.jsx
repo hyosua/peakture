@@ -1,4 +1,4 @@
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";

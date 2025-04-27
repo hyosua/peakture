@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { useToast } from "../../context/ToastContext.jsx"
+import { useToast } from "@/context/ToastContext.jsx"
 import { Camera, Pencil } from "lucide-react";
-import { useAuth } from '../../context/AuthContext.jsx';
-import uploadToCloudinary from "../../../utils/uploadToCloudinary.js";
+import { useAuth } from '@/context/AuthContext.jsx';
+import uploadToCloudinary from "@/utils/uploadToCloudinary.js";
 import { motion } from "framer-motion";
 
 const Profile = () => {

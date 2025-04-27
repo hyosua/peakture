@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react';
 import { motion } from "framer-motion";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useClickAway } from "react-use";
 import { LogOut, Settings, UserRoundPen, Ban } from 'lucide-react';
-import ConfirmMessage from './ConfirmMessage';
+import ConfirmMessage from '@/components/ui/ConfirmMessage';
 
 const SettingsMenu = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchClassement } from "../store/slices/classementSlice";
-import { useAuth } from "../context/AuthContext";
-import { fetchClassementAlbum } from "../store/slices/classementAlbumSlice";
+import { fetchClassement } from "@/store/slices/classementSlice";
+import { useAuth } from "@/context/AuthContext";
+import { fetchClassementAlbum } from "@/store/slices/classementAlbumSlice";
 import { motion } from 'framer-motion'
 import ClassementVide from "./ClassementVide";
-import { getMonthName } from "../../utils/dateConvert";
+import { getMonthName } from "@/utils/dateConvert";
 
 const Classements = () => {
     const dispatch = useDispatch();

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Plus, X, Check, Edit, Trash, Vote} from 'lucide-react'
-import EditDropdown from './EditDropdown.jsx'
+import EditDropdown from '@/components/ui/EditDropdown.jsx'
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from '../context/AuthContext.jsx';
-import ConfirmMessage from './ConfirmMessage.jsx'
-import WinnerBanner from './WinnerBanner.jsx';
-import ConfettiElement from './ConfettiElement.jsx';
-import { useToast } from "../context/ToastContext.jsx"
-import { getMonthName, monthsList } from '../../utils/dateConvert.js';
+import { useAuth } from '@/context/AuthContext.jsx';
+import ConfirmMessage from '@/components/ui/ConfirmMessage.jsx'
+import WinnerBanner from '@/components/contest/WinnerBanner.jsx';
+import ConfettiElement from '@/components/ui/ConfettiElement.jsx';
+import { useToast } from "@/context/ToastContext.jsx"
+import { getMonthName, monthsList } from '@/utils/dateConvert.js';
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])

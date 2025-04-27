@@ -1,12 +1,12 @@
-import Peakture from './Peakture.jsx'
-import '../App.css'
-import AlbumList from './AlbumList.jsx'
-import { useAuth } from '../context/AuthContext.jsx';
+import Peakture from '@/components/family/Peakture.jsx'
+import '@/App.css'
+import AlbumList from '@/components/family/AlbumList.jsx'
+import { useAuth } from '@/context/AuthContext.jsx';
 import { useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
 import { Share2, Copy } from 'lucide-react'
-import NameEditor from './NameEditor.jsx';
-import { useToast } from "../context/ToastContext.jsx"
+import NameEditor from '@/components/ui/NameEditor.jsx';
+import { useToast } from "@/context/ToastContext.jsx"
 
 
 const FamilyHome = () => {
