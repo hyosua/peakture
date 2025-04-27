@@ -603,7 +603,7 @@ const AlbumPage = () => {
                 ) : (
                     <div className="flex flex-col items-center justify-center py-6 text-white">
                         <motion.img 
-                            className="w-64" src="http://localhost:5173/src/assets/img/lib/sleeping-album.png" 
+                            className="w-64" src="https://www.peakture.fr//src/assets/img/lib/sleeping-album.png" 
                             initial={{ opacity: 0, scale: 0.6 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{
