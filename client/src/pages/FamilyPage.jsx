@@ -73,7 +73,7 @@ const FamilyHome = () => {
                 navigator.share({
                     title: "Rejoins ma Family sur Peakture !",
                     text: `Rejoins nous sur Peakture : `,
-                    url: `https://www.peakture.fr?inviteCode=${family?.inviteCode}`,
+                    url: `https://www.peakture.fr/?inviteCode=${family?.inviteCode}`,
                 })
                 .catch(error => {
                     console.error('Error sharing:', error);

@@ -21,7 +21,7 @@ const guestSchema = new mongoose.Schema({
     },
     coverImage:{
         type: String,
-        default: "http://localhost:5173/src/assets/img/lib/sleeping-cover.png"
+        default: "https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-album_sowbvd.png"
     },
     score:{
         type: Number,

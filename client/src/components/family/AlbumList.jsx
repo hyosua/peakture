@@ -383,7 +383,7 @@ const AlbumList = () => {
               
                 ) : albums?.length === 0 ? ( 
                         <div className='flex flex-col items-center justify-center'>
-                            <img src='https://www.peakture.fr/src/assets/img/lib/sleeping-family.png' alt='Aucun album trouvé' className='w-1/2 h-1/2 mb-4'/>
+                            <img src='https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png' alt='Aucun album trouvé' className='w-1/2 h-1/2 mb-4'/>
                             <h2 className='text-xl text-white font-semibold'>Aucun album</h2>
                             <p className={`${isAdmin ? "text-gray-200" : "hidden"}`}>Crée un nouvel album pour commencer !</p>
                         </div>
@@ -402,7 +402,7 @@ const AlbumList = () => {
                                         {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
                                     </span>
                                 <h3 className='mb-2 font-semibold'>{getMonthName(album.month)}</h3>
-                                <img src={album.cover ? album.cover : "https://www.peakture.fr/src/assets/img/lib/empty-cover.png"} 
+                                <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png"} 
                                     alt={getMonthName(album.month)} 
                                     className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
                                 />
