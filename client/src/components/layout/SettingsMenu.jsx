@@ -52,6 +52,7 @@ const SettingsMenu = () => {
     <div className="relative" ref={menuRef}>
       <button 
         className='cursor-pointer'
+        disabled={!currentUser || currentUser?.sessionId}
         onClick={(e) => {
         e.stopPropagation();
         setIsOpen((prev) => !prev);

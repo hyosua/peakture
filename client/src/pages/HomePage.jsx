@@ -357,6 +357,7 @@ const HomePage = () => {
 </main>
       
       <footer className="p-4 text-center text-sm opacity-70">
+      <a href="https://storyset.com/worker" className=" mt-10 text-xs text-neutral">illustrations by Storyset</a>
         © 2025 Peakture - Chaque photo nous rapproche du sommet
       </footer>
     </div>

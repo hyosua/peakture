@@ -9,11 +9,10 @@ const Forbidden = () => {
             <button 
                 className="btn btn-error mt-4"
                 >
-                    <a href="http://localhost:5173/?showLoginForm=true">
+                    <a href="https://www.peakture.fr/?showLoginForm=true">
                       Se connecter
                     </a>
                 </button>
-            <a href="https://storyset.com/worker" className=" mt-10 text-xs text-neutral">Worker illustrations by Storyset</a>
         </div>
     )
 }
