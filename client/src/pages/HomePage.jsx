@@ -25,7 +25,7 @@ const HomePage = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  {/* Ouvrir le modal signup avec un code d'invitation */}
+  // Ouvrir le modal signup avec un code d'invitation 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const inviteCode = params.get('inviteCode');
@@ -41,18 +41,19 @@ const HomePage = () => {
     }
   }, [location]);
 
-  {/* Afficher le message d'erreur */}
+  // Afficher le message d'erreur 
   useEffect(() => {
     if (errorMessage) {
       setShowError(true);
       const timer = setTimeout(() => {
         setShowError(false);
-        setErrorMessage(null);
-      }, 3000); 
-
+        setErrorMessage('');
+      }, 3000);
+  
       return () => clearTimeout(timer);
     }
-  }, [errorMessage,setErrorMessage]);
+  }, [errorMessage]);
+  
 
   const handleJoinFamily = async (e) => {
     e.preventDefault();
@@ -78,10 +79,13 @@ const HomePage = () => {
       const familyData = await result.json()
       
       setServerResponse(familyData)
+      if (familyData.family) {
+        setJoiningFamily(false);
+      }
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
     }finally{
-      if (!isConfirmOpen) {
+      if (isConfirmOpen || (serverResponse && serverResponse.family)) {
         setJoiningFamily(false);
       }
     }
@@ -117,16 +121,17 @@ const HomePage = () => {
   }
 
   useEffect(() => {
-    const handleFamilyJoin = async() => {
-      if(serverResponse?.family && serverResponse.family._id){
-        fetchCurrentUser()
-        navigate(`/family/${serverResponse.family._id}`)
+    if (!serverResponse) return; 
+  
+    if (serverResponse.family && serverResponse.family._id) {
+      const handleFamilyJoin = async () => {
+        await fetchCurrentUser();
+        navigate(`/family/${serverResponse.family._id}`);
         setServerResponse(null); 
-      }
+      };
+      handleFamilyJoin();
     }
-    handleFamilyJoin()
-    
-  },[serverResponse, navigate, fetchCurrentUser])
+  }, [serverResponse, navigate, fetchCurrentUser]);
 
   const handleCreateFamily = async (e) => {
     e.preventDefault();
@@ -213,6 +218,13 @@ const HomePage = () => {
           </div>
         </div>
         )}
+        {!showError && error && (
+          <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
+            <div role="alert" className="alert alert-error alert-soft shadow-lg max-w-sm">
+              <span>{error}</span>
+            </div>
+          </div>
+        )}
 
         <ConfirmMessage 
           isOpen={isConfirmOpen}
@@ -285,7 +297,7 @@ const HomePage = () => {
           Le code doit contenir exactement 6 caractères (A-F, 0-9)
         </p>
       </div>
-      { serverResponse && !serverResponse.family && joiningFamily && (
+      { serverResponse && !serverResponse?.family && joiningFamily && (
         <div role="alert" className="alert alert-error alert-soft mt-2">
           <span>{serverResponse.message}</span>
         </div>
