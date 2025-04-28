@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Expand  } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { useState, useEffect } from "react";
 
