@@ -1,7 +1,7 @@
-// ConfettiElement.jsx
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import PropTypes from 'prop-types';
 import confetti from 'canvas-confetti';
+import { useInView } from 'framer-motion';
 
 /**
  * A component that displays confetti when it enters the viewport
@@ -12,8 +12,13 @@ import confetti from 'canvas-confetti';
  */
 const ConfettiElement = ({ id, children, options = {} }) => {
   const elementRef = useRef(null);
-  const observerRef = useRef(null);
   const hasTriggeredRef = useRef(false);
+  
+  // Configure useInView to trigger at 70% visibility (equivalent to threshold: 0.7)
+  const isInView = useInView(elementRef, { 
+    once: true, 
+    amount: 0.7 
+  });
 
   const defaultOptions = {
     particleCount: 100,
@@ -23,41 +28,9 @@ const ConfettiElement = ({ id, children, options = {} }) => {
 
   const confettiOptions = { ...defaultOptions, ...options };
 
-  useEffect(() => {
-    // Reset triggered state when id changes
-    hasTriggeredRef.current = false;
-  }, [id]);
-  
-  useEffect(() => {
-    // Create IntersectionObserver instance
-    observerRef.current = new IntersectionObserver((entries) => {
-      const entry = entries[0];
-      
-      if (entry?.isIntersecting && !hasTriggeredRef.current) {
-        triggerConfetti(entry.target);
-        hasTriggeredRef.current = true;
-        
-        // Stop observing after triggering
-        if (observerRef.current && elementRef.current) {
-          observerRef.current.unobserve(elementRef.current);
-        }
-      }
-    }, { threshold: 0.7 });
-
-    // Start observing the element
-    if (elementRef.current) {
-      observerRef.current.observe(elementRef.current);
-    }
-
-    // Cleanup on component unmount
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
-
-  const triggerConfetti = (element) => {
+  // Trigger confetti effect when element comes into view
+  if (isInView && !hasTriggeredRef.current) {
+    const element = elementRef.current;
     const rect = element.getBoundingClientRect();
     const x = (rect.left + rect.right) / 2 / window.innerWidth;
     const y = (rect.top + rect.bottom) / 2 / window.innerHeight;
@@ -66,7 +39,9 @@ const ConfettiElement = ({ id, children, options = {} }) => {
       ...confettiOptions,
       origin: { x, y }
     });
-  };
+    
+    hasTriggeredRef.current = true;
+  }
 
   return (
     <div ref={elementRef} id={`confetti-element-${id}`}>
@@ -74,6 +49,7 @@ const ConfettiElement = ({ id, children, options = {} }) => {
     </div>
   );
 };
+
 ConfettiElement.propTypes = {
   id: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,

@@ -9,6 +9,7 @@ import WinnerBanner from '@/components/contest/WinnerBanner.jsx';
 import ConfettiElement from '@/components/ui/ConfettiElement.jsx';
 import { useToast } from "@/context/ToastContext.jsx"
 import { getMonthName, monthsList } from '@/utils/dateConvert.js';
+import AlbumCard from './AlbumCard';
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -437,74 +438,21 @@ const AlbumList = () => {
                         </div>
                 ) : (
                         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 place-items-center'>
-                    {albums.map((album) => (
+                    {albums.map((album, index) => (
                         <div
                             key={album._id}
-                            className='relative'
-                            onClick={() => handleAlbumClick(album._id)}
                         >
-                            
                             {/* Album Card */}
-                            <div className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.status === "closed" ? "border-secondary" : album.status === "tie-break" ? "border-accent" : "border-primary"} rounded-lg indicator group`}>
-                                    <span className={`indicator-item badge " + ${(album.status === "closed" ? "badge-secondary" : album.status === "tie-break" ? "badge-accent" :"badge-primary")}`}>
-                                        {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
-                                    </span>
-                                <h3 className='mb-2 font-semibold'>{getMonthName(album.month)}</h3>
-                                <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png"} 
-                                    alt={getMonthName(album.month)} 
-                                    className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
-                                />
-                                <h5 className='text-white mb-1'><i>{editingAlbum === album._id ?'' : album.theme}</i></h5>
+                            <AlbumCard 
+                                album={album}
+                                index={index}
+                                handleEdit={handleEdit}
+                                isAdmin={isAdmin}
+                                setIsDeleteAlbumId={setIsDeleteAlbumId}
+                                setIsCloseVotesConfirm={setIsCloseVotesConfirm}
+                                handleAlbumClick={handleAlbumClick}
 
-                                {/* Winner Banner */}
-                                {album?.winner && (
-                                    <ConfettiElement 
-                                        id={album._id}
-                                        options={{
-                                            particleCount: 15,
-                                            gravity: 0.9,
-                                            scalar: 0.7,
-                                            spread: 70,
-                                            origin: { y: 0.6 },
-                                            colors: ['#ff7d5d', '#9fe88d']
-                                        }}
-                                    >
-                                        <WinnerBanner winner={album?.winner} />
-                                    </ConfettiElement>
-                                )}
-
-                                {/* Edit Dropdown */}
-                                { isAdmin && (
-                                    <div className='absolute top-2 right-2'>
-                                        <EditDropdown
-                                            actions={[
-                                                {
-                                                label: "Modifier le thème",
-                                                icon: <Edit className="h-4 w-4" />,
-                                                disabled: false,
-                                                onClick: () => handleEdit(album),
-                                                },
-                                                {
-                                                    label: "Cloturer les votes",
-                                                    icon: <Vote className="h-4 w-4" />,
-                                                    disabled: album.status === "closed" || album.status === "tie-break",
-                                                    onClick: () => setIsCloseVotesConfirm(true),
-                                                    
-                                                },
-                                                {
-                                                label: "Supprimer",
-                                                icon: <Trash className="h-4 w-4 text-red-500" />,
-                                                disabled: false,
-                                                onClick: () => setIsDeleteAlbumId(album._id),
-                                                },
-                                                
-                                            ]}
-                                        />
-                                    </div>
-                                )}
-                                
-                            </div>
-
+                            />
                             {/* Edit Album */}
                             {editingAlbum === album._id && (
                                 <div className='absolute inset-0 backdrop-blur-sm bg-neutral/80 flex flex-col items-center justify-center cursor-pointer'
