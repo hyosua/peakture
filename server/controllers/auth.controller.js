@@ -105,18 +105,18 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         res.cookie("jwt", "", {
+            domain: 'peakture.fr', 
             httpOnly: true,
             sameSite: "none", 
             secure: true,     
             expires: new Date(0),
         });
-        res.status(200).json({message: "Tu es bien déconnecté. A bientôt pour de nouvelles aventures!"})
-
-    }catch (error){
-        console.log("Error in logout controller", error.message)
-        return res.status(500).json({ error: "Internal Server Error"})
+        res.status(200).json({message: "Tu es bien déconnecté. À bientôt pour de nouvelles aventures !"})
+    } catch (error) {
+        console.log("Error in logout controller", error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
-}
+};
 
 export const getMe = async (req, res) => {
     try {
