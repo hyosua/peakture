@@ -20,7 +20,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
 
         res.cookie("sessionId", sessionId,{
             maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
-            httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+            httpOnly: false,
             sameSite:"none", // CSRF attacks cross-site request forgery attacks
             secure: true, 
     
