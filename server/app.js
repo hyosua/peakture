@@ -15,6 +15,7 @@ const app = express()
 
 const allowedOrigins = [
   'https://peakture-gpumivoj7-drykissfffos-projects.vercel.app',
+  'https://api.peakture.fr',
   'https://www.peakture.fr',
   'http://localhost:5173',
   'http://localhost:5174',
