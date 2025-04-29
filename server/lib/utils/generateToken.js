@@ -10,6 +10,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
 
         res.cookie("jwt", token,{
             domain: '.peakture.fr',
+            path: '/',
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
             sameSite:"None", // CSRF attacks cross-site request forgery attacks
             secure: true, 
@@ -20,6 +21,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
 
         res.cookie("sessionId", sessionId,{
             domain: '.peakture.fr',
+            path: '/',
             httpOnly: false, // prevent XSS attacks cross-site scripting attacks
             sameSite:"None", // CSRF attacks cross-site request forgery attacks
             secure: true, 
