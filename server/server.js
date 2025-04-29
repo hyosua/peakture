@@ -1,7 +1,7 @@
 // server.js
 import dotenv from 'dotenv'
 import connectMongoDB from './db/connexion.js'
-import app from './app.js' // 👈 l’app express pure
+import app from './app.js'
 dotenv.config()
 
 const PORT = process.env.PORT || 5000
