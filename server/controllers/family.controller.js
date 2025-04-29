@@ -83,8 +83,9 @@ export const create = async (req, res) => {
                 )
             }
             if(req.guest){
+                console.log("user:", user)
                 await Guest.updateOne(
-                    {_id: user._id}, 
+                    {_id: req.guest._id}, 
                     {
                         role: "admin",
                         familyId: newFamily._id
