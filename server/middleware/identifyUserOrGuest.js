@@ -7,9 +7,13 @@ import generatePseudo from '../lib/utils/generatePseudo.js'
 export const identifyUserOrGuest = async (req, res, next) => {
     try {
         const token = req.cookies.jwt
-        let sessionId = req.cookies.sessionId 
+        let sessionId = req.cookies.sessionId
+        
+        // Debug log to see what cookies we're receiving
+        console.log("Cookies received:", req.cookies)
+        
         if (token) {
-            // utilisateur enregistré
+            // Registered user logic - unchanged
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             if (!decoded) {
                 return res.status(401).json({ error: "Unauthorized: Token Invalide" })
@@ -25,26 +29,33 @@ export const identifyUserOrGuest = async (req, res, next) => {
         }
 
         if (sessionId) {
-            // Guest User
+            // Guest User logic
+            console.log("Found existing sessionId:", sessionId)
             let guest = await Guest.findOne({ sessionId })
+            
             if (!guest) {
+                console.log("No guest found with sessionId, creating new guest")
                 const username = generatePseudo()
                 guest = new Guest({ 
                     sessionId,
                     username, 
-                 })
+                })
                 await guest.save()
+            } else {
+                console.log("Found existing guest:", guest.username)
             }
 
             req.guest = guest  
             return next()
         }
 
-        // si nouvel invité
+        // New guest logic
+        console.log("No sessionId found, generating new one")
         sessionId = generateTokenAndSetCookie(res)
         const username = generatePseudo()
         const guest = new Guest({ sessionId, username });
         await guest.save();
+        console.log("Created new guest with sessionId:", sessionId)
 
         req.guest = guest;
         return next();
