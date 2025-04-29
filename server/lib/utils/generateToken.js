@@ -9,6 +9,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         })
 
         res.cookie("jwt", token,{
+            domain: '.peakture.fr',
             maxAge: 15*24*60*60*1000, //15 days in ms
             httpOnly: true, // prevent XSS attacks cross-site scripting attacks
             sameSite:"none", // CSRF attacks cross-site request forgery attacks
@@ -19,6 +20,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         const sessionId = uuidv4()
 
         res.cookie("sessionId", sessionId,{
+            domain: '.peakture.fr',
             maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
             httpOnly: false, // prevent XSS attacks cross-site scripting attacks
             sameSite:"none", // CSRF attacks cross-site request forgery attacks
