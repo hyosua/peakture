@@ -22,9 +22,11 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                 credentials: 'include'  // pour inclure les cookies
             })
-
+            console.log("fetch /api/auth/me response:", response);
+            console.log("Document.cookie:", document.cookie)
             if(!response.ok){
                 // User not logged in ou autre erreur
+                console.log("fetch /api/auth/me error status:", response.status);
                 setCurrentUser(null)
                 setCurrentFamily(null)
                 setLoading(false)
