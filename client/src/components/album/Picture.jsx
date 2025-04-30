@@ -1,18 +1,17 @@
-    import { Edit, Trash, Expand  } from "lucide-react";
+    import { Edit, Trash, Expand, Fullscreen  } from "lucide-react";
     import PropTypes from 'prop-types';
     import { motion, AnimatePresence } from "framer-motion";
     import EditDropdown from "@/components/ui/EditDropdown.jsx"
     import { useAuth } from '@/context/AuthContext.jsx';
     import { useEffect, useState, useRef } from "react";
 
-    const Picture = ({ photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
+    const Picture = ({index, onExpand, photo, deletePhoto, album, isVotedId, onVote, showUploadForm, replacingPhoto, cloudinaryURL, albumStatus }) => {
         const {currentUser} = useAuth()
         const [userData, setUserData] = useState(null)
         const [tooltip, setTooltip] = useState(null)
         const [shake, setShake] = useState(false);
         const [lastTap, setLastTap] = useState(0)
         const imageRef = useRef(null);
-        const [showFullscreen, setShowFullscreen] = useState(false);
         const [isVoting, setIsVoting] = useState(false)
 
 
@@ -158,8 +157,8 @@
                                 <span role="button"
                                     tabIndex={0} 
                                     onClick={(e) => {
-                                        e.stopPropagation(); 
-                                        setShowFullscreen(true);
+                                        e.stopPropagation();
+                                        onExpand(index)
                                     }}
                                     className="absolute lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-2 right-2 cursor-pointer bg-black/50 text-white p-1 rounded-full hover:bg-black/80 z-20"
                                     title="Voir en plein écran"
@@ -187,29 +186,6 @@
                                 
                             </motion.button>
 
-                            {/* Full Screen*/}
-                            <AnimatePresence>
-                            {showFullscreen && (
-                                <motion.div 
-                                    className="fixed top-0 left-0 w-full h-full bg-black/90 flex justify-center items-center z-20"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    onClick={() => setShowFullscreen(false)} // Ferme la modal en cliquant en dehors
-                                >
-                                    <motion.img 
-                                        src={photo.src} 
-                                        alt="Fullscreen"
-                                        className="max-w-11/12 max-h-11/12 rounded-xl shadow-lg"
-                                        initial={{ scale: 0.8 }}
-                                        animate={{ scale: 1 }}
-                                        exit={{ scale: 0.8 }}
-                                        transition={{ duration: 0.3 }}
-                                    />
-                                </motion.div>
-                            )}
-                            </AnimatePresence>
 
                             {/*Username*/}
                             {userData && (
@@ -228,6 +204,7 @@
         albumStatus: PropTypes.string,
         onVote: PropTypes.func.isRequired,
         deletePhoto: PropTypes.func,
+        onExpand: PropTypes.func.isRequired,
         cloudinaryURL: PropTypes.func,
         showUploadForm: PropTypes.func,
         replacingPhoto: PropTypes.func,
@@ -238,6 +215,15 @@
             votes: PropTypes.number,
             isTied: PropTypes.bool
         }).isRequired,
+        photos: PropTypes.arrayOf(
+            PropTypes.shape({
+                src: PropTypes.string.isRequired,
+                _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+                userId: PropTypes.string,
+                votes: PropTypes.number,
+                isTied: PropTypes.bool
+            })
+        ).isRequired,
         album: PropTypes.shape({
             peakture: PropTypes.bool,
             tieBreakJudge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

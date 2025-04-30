@@ -10,6 +10,7 @@ import ContestResults from "@/components/album/ContestResults.jsx"
 import TieBreakView from "@/components/album/TieBreakView.jsx"
 import ConfirmMessage from "@/components/ui/ConfirmMessage.jsx"
 import { getMonthName } from '@/utils/dateConvert.js'
+import FullscreenSwiper from "@/components/album/FullscreenSwiper.jsx";
 
 
 
@@ -43,6 +44,8 @@ const AlbumPage = () => {
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [photoToConfirm, setPhotoToConfirm] = useState(null);
     const [isLoading, setIsLoading] = useState(true)
+    const [fullscreenIndex, setFullscreenIndex] = useState(null);
+
 
 
     const {currentUser} = useAuth()
@@ -397,13 +400,21 @@ const AlbumPage = () => {
         setIsConfirmOpen(false)
     }
 
+    // Handle opening fullscreen viewer with correct index
+    const handleOpenFullscreen = (index) => {
+        setFullscreenIndex(index);
+    }
+
+    // Handle closing fullscreen viewer
+    const handleCloseFullscreen = () => {
+        setFullscreenIndex(null);
+    }
 
     if (isLoading) {
         return <div className="fixed inset-0 flex items-center justify-center scale-200 z-50">
                     <span className="loading loading-infinity text-secondary loading-xl"></span>
                  </div>
     }    
-
 
     return (
         <div className="lg:p-10">
@@ -580,6 +591,7 @@ const AlbumPage = () => {
                             >
                                     <Picture 
                                         photo={photo}
+                                        photos={photos}
                                         album={album}
                                         photoUrl={photo.src} 
                                         id={photo._id} 
@@ -593,7 +605,10 @@ const AlbumPage = () => {
                                         isVotedId={photo.votedBy.includes(currentUser?._id)}
                                         votes={photo.votes || 0}
                                         albumStatus={album?.status}
+                                        onExpand={handleOpenFullscreen}
+                                        onClose={handleCloseFullscreen}
                                         index={index}
+                                        
                                     />
                                 </motion.div>
                             ))}
@@ -641,6 +656,15 @@ const AlbumPage = () => {
                         </motion.p>                        
                     </div>
                 )} 
+
+                {/* Full Screen */}
+                {fullscreenIndex !== null && fullscreenIndex >= 0 && fullscreenIndex < photos.length && (
+                <FullscreenSwiper 
+                    photos={photos}
+                    initialIndex={fullscreenIndex}
+                    onClose={handleCloseFullscreen}
+                />
+                )}
 
                 {/* Contest Results */}
                 {album?.status === "closed" && (
