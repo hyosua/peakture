@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { motion } from "framer-motion";
+import Avatar from "@/components/user/Avatar";
 
 const ContestResults = ( {results} ) => {
     const container = {
@@ -39,8 +40,7 @@ const ContestResults = ( {results} ) => {
                         index === 0 ? "text-yellow-200" : index === 1 ? "text-slate-400" : index === 2 ? "text-amber-500" : "text-secondary"
                     }`}>{index+1}</div>
 
-                    <img className="size-12 object-cover rounded-box" src={result.user?.avatar} />
-                    
+                    <Avatar avatarSrc={result.user?.avaatar} />
 
                     <div className='list-grow'>
                          <div className="text-xs uppercase font-semibold opacity-60">{result.user?.username}</div> 

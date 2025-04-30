@@ -6,6 +6,7 @@ import { fetchClassementAlbum } from "@/store/slices/classementAlbumSlice";
 import { motion } from 'framer-motion'
 import ClassementVide from "./ClassementVide";
 import { getMonthName } from "@/utils/dateConvert";
+import Avatar from "../user/Avatar";
 
 const Classements = () => {
     const dispatch = useDispatch();
@@ -86,10 +87,7 @@ const Classements = () => {
                                 {index + 1}
                             </div>
                             <div className="relative">
-                                <img
-                                className="size-14 object-cover rounded-box"
-                                src={user.avatar}
-                                />
+                                <Avatar avatarSrc={user.avatar} />
                                 {index === 0 &&(
                                     <img 
                                     src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
@@ -142,7 +140,7 @@ const Classements = () => {
                                         index === 0 ? "text-yellow-200" : index === 1 ? "text-slate-400" : index === 2 ? "text-amber-500" : "text-secondary"
                                     }`}>{index+1}</div>
                                     <div className="relative">
-                                        <img className="size-14 object-cover rounded-box" src={user.user?.avatar}/>
+                                        <Avatar avatarSrc={user.user?.avatar} />
                                         {index === 0 && (
                                             <img 
                                             src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
