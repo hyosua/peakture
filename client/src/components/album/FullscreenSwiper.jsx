@@ -1,10 +1,11 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useEffect, useState, useRef } from "react";
 import { X, Play, Pause } from "lucide-react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import 'swiper/css/effect-fade';
 import PropTypes from "prop-types";
 
 const FullscreenSwiper = ({ photos, initialIndex, onClose }) => {
@@ -37,7 +38,7 @@ const FullscreenSwiper = ({ photos, initialIndex, onClose }) => {
       };
 
       const autoplayConfig = {
-        delay: 3000,
+        delay: 4000,
         disableOnInteraction: false,
         pauseOnMouseEnter: true,
         enabled: isAutoplay
@@ -46,7 +47,7 @@ const FullscreenSwiper = ({ photos, initialIndex, onClose }) => {
       if (initialIndex === null) {
         return null;  // Ne pas afficher le composant si l'index est null
       }
-      
+
       useEffect(() => {
         if (swiperRef.current) {
           // Cette méthode met à jour l'autoplay lorsque l'état change
@@ -86,11 +87,12 @@ const FullscreenSwiper = ({ photos, initialIndex, onClose }) => {
 
         <Swiper
           initialSlide={initialIndex}
-          modules={[Autoplay, Navigation, Pagination]}
-          pagination={{ clickable: true }}
+          modules={[Autoplay, Navigation, Pagination, EffectFade]}
+          effect="fade" 
+          fadeEffect={{ crossFade: true }}
+          pagination={{ clickable: true,el: ".swiper-pagination" }}
           autoplay={autoplayConfig}
-          navigation
-          loop
+          navigation={{ nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }}
           className="w-full h-full"
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
