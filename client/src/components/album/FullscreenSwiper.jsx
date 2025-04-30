@@ -67,7 +67,7 @@ const FullscreenSwiper = ({ photos, initialIndex, onClose }) => {
             e.stopPropagation();
             onClose();
           }}
-          className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/80 text-blue-400 p-2 rounded-full transition-colors duration-300"
+          className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full transition-colors duration-300"
           aria-label="Close fullscreen view"
         >
           <X size={24} />
@@ -79,7 +79,7 @@ const FullscreenSwiper = ({ photos, initialIndex, onClose }) => {
             e.stopPropagation();
             toggleAutoplay();
           }}
-          className="absolute top-4 left-4 z-10 bg-black/50 hover:bg-black/80 text-blue-400 p-2 rounded-full transition-colors duration-300"
+          className="absolute top-4 left-4 z-10 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full transition-colors duration-300"
           aria-label={isAutoplay ? "Pause slideshow" : "Play slideshow"}
         >
           {isAutoplay ? <Pause size={24} /> : <Play size={24} />}
