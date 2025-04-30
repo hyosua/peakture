@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import uploadToCloudinary from "@/utils/uploadToCloudinary.js";
 import { motion } from "framer-motion";
 
+
 const Profile = () => {
   const [user, setUser] = useState({username: '', avatar: null, coverImage: null});
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -14,6 +15,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false)
   const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarFullscreen, setAvatarFullscreen] = useState(false);
 
   const {currentUser, fetchCurrentUser} = useAuth();
 
@@ -162,9 +164,10 @@ const Profile = () => {
           ) : (
             <motion.img
               key={avatarPreview} 
+              onClick={() => setAvatarFullscreen(true)}
               src={avatarPreview}
               alt="Avatar"
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-cover rounded-full cursor-pointer"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
@@ -186,6 +189,18 @@ const Profile = () => {
               accept="image/*"
             />
           </motion.label>
+
+          {avatarFullscreen && (
+                <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center"
+                    onClick={() => setAvatarFullscreen(false)}>
+                    <img 
+                        src={avatarPreview} 
+                        className=" w-60 h-60 lg:w-96 lg:h-96  rounded-full object-cover"
+                        onClick={() => setAvatarFullscreen(false)}
+                        alt="User Avatar Fullscreen"
+                    />
+                </div>
+            )}
 
         </div>
       </div>
