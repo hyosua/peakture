@@ -1,25 +1,44 @@
 import cron from 'node-cron'
 import Family from '../../models/family.model.js'
 import Guest from '../../models/guest.model.js'
+import mongoose from 'mongoose'
 
 const cleanGuestReferences = async () => {
-    try{
-        console.log("Nettoyage des reférences aux invités expirés")
+    try {
+        console.log("Début du nettoyage des invités expirés");
 
-        const result = await Family.updateMany(
-            { guestMembers: { $exists: true, $ne: [], $not: { $in: await Guest.distinct("_id") } } },
-            { $pull: { guestMembers: { $nin: await Guest.distinct("_id") } } }
-        )
+        // Étape 1 : Supprimer les invités expirés (créés il y a plus de 24h)
+        const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24h en arrière
+        const expiredGuests = await Guest.find({ createdAt: { $lt: cutoffDate } }, '_id');
+        const expiredGuestIds = expiredGuests.map(g => g._id);
 
-        console.log(`Nettoyage terminé: ${result.modifiedCount} familles mises à jour`);
+        const deleteResult = await Guest.deleteMany({ _id: { $in: expiredGuestIds } });
+        console.log(`Invités expirés supprimés : ${deleteResult.deletedCount}`);
+
+        // Étape 2 : Supprimer leurs références dans les familles
+        if (expiredGuestIds.length > 0) {
+            const updateResult = await Family.updateMany(
+                {},
+                {
+                    $pull: {
+                        guestMembers: { $in: expiredGuestIds }
+                    }
+                }
+            );
+            console.log(`Familles mises à jour : ${updateResult.modifiedCount}`);
+        } else {
+            console.log("Aucun invité expiré à supprimer");
+        }
+
+        console.log("Nettoyage terminé");
     } catch (error) {
-        console.log("Erreur lors du nettoyage des refs aux invités expirés", error)
+        console.error("Erreur lors du nettoyage :", error);
     }
-}
+};
 
-cron.schedule('0 43 7 * * *', cleanGuestReferences,{
+cron.schedule('0 43 7 * * *', cleanGuestReferences, {
     scheduled: true,
-    timezone: "Europe/Paris" 
-})
+    timezone: "Europe/Paris"
+});
 
 export default cleanGuestReferences

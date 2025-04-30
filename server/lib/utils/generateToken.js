@@ -2,37 +2,30 @@ import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid' // génère un sessionid unique
 
 export const generateTokenAndSetCookie = (res, userId=null) => {
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + 15);
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieDomain = isProduction ? 'peakture.fr' : undefined; 
+    const cookieOptions = {
+        domain: cookieDomain,
+        maxAge: 15 * 24 * 60 * 60 * 1000, // 15 jours en millisecondes
+        httpOnly: true, // empêche les attaques XSS (cross-site scripting)
+        sameSite: "None", // empêche les attaques CSRF (cross-site request forgery)
+        secure: true, // le cookie ne sera envoyé que sur HTTPS
+    }
 
     if(userId){
         const token = jwt.sign({ userId }, process.env.JWT_SECRET,{
             expiresIn: '15d'
         })
 
-        res.cookie("jwt", token,{
-            domain: 'peakture.fr',
-            maxAge: 15*24*60*60*1000, //15 days in ms
-            httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-            sameSite:"None", // CSRF attacks cross-site request forgery attacks
-            secure: true, 
-    
-        })
+        res.cookie("jwt", token,cookieOptions)
     } else {
         const sessionId = uuidv4()
 
         res.cookie("sessionId", sessionId,{
-            domain: 'peakture.fr',
-            maxAge: 24 * 60 * 60 * 1000, // 1 jour en millisecondes
-            httpOnly: true, // prevent XSS attacks cross-site scripting attacks
-            sameSite:"None", // CSRF attacks cross-site request forgery attacks
-            secure: true, 
-    
+            ...cookieOptions,
+            maxAge: 24 * 60 * 60 * 1000 // 1 jour pour la session
         })
 
         return sessionId
     }
-    
-
-    
 }
