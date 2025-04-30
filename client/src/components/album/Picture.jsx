@@ -191,7 +191,7 @@
                             <AnimatePresence>
                             {showFullscreen && (
                                 <motion.div 
-                                    className="fixed top-0 left-0 w-full h-full bg-black/90 flex justify-center items-center z-50"
+                                    className="fixed top-0 left-0 w-full h-full bg-black/90 flex justify-center items-center z-20"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
