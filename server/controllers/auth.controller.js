@@ -104,14 +104,14 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
-    const cookieDomain = isProduction ? 'peakture.fr' : undefined; 
+    const cookieDomain = isProduction ? 'api.peakture.fr' : undefined; 
     try {
-        res.cookie("jwt", "", {
+        res.clearCookie("jwt", {
             domain: cookieDomain, 
             httpOnly: true,
             sameSite: "None", 
-            secure: true,     
-            expires: new Date(0),
+            secure: true,   
+            path: "/",  
         });
         res.status(200).json({message: "Tu es bien déconnecté. À bientôt pour de nouvelles aventures !"})
     } catch (error) {
