@@ -169,3 +169,43 @@ export const getMe = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error"})
     }
 }
+
+export const validateMail = async (req, res) => {
+    try {
+        const { email } = req.body
+        
+        const existingUser = await User.findOne({ email })
+
+        if(!existingUser){
+            return res.status(404).json({ success: false, message: "Aucun utilisateur avec cet email"})
+        }
+        
+        res.status(200).json({ message: "Adresse mail valide" })
+    }catch (error){
+        console.log("Error in auth controller", error.message)
+        return res.status(500).json({ success: true, error: "Internal Server Error"})
+    }
+}
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({ email })
+
+        if(!user){
+            return res.status(404).json({ success: false, message: "Aucun utilisateur avec cet email"})
+        }
+
+        // hash password
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+
+        user.password = hashedPassword
+        await user.save()
+
+        res.status(200).json({ success: true, message: "Mot de passe mis à jour avec succès!" })
+    }catch (error){
+        console.log("Error in auth controller", error.message)
+        return res.status(500).json({ success: true, error: "Internal Server Error"})
+    }
+}

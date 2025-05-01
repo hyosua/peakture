@@ -254,3 +254,84 @@ export const sendTieNotification = async (userMail, username, albumId) => {
         console.error('Erreur lors de l\'envoi du mail:', error.response ? error.response.body: error.message)
     }
 }
+
+export const sendPasswordResetNotification = async (userMail, username) => {
+    const msg = {
+        to: userMail,
+        from: 'hyo@peakture.fr',
+        subject: `Réinitialisation de ton mot de passe Peakture`,
+        text: `Salut ${username}, Tu as demandé la réinitialisation de ton mot de passe !`,
+        html: `
+                <!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8" />
+                    <title>Réinitialisation de mot de passe</title>
+                    <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f6f9fc;
+                        padding: 20px;
+                        color: #333;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: auto;
+                        background-color: #ffffff;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+                        padding: 30px;
+                    }
+                    h1 {
+                        color: #1a73e8;
+                    }
+                    .button {
+                        display: inline-block;
+                        margin-top: 20px;
+                        padding: 12px 20px;
+                        background-color: #1a73e8;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 6px;
+                        font-weight: bold;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        font-size: 13px;
+                        color: #888;
+                        text-align: center;
+                    }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                    <h1>Réinitialisation de ton mot de passe</h1>
+                    <p>Bonjour <strong>${username}</strong>,</p>
+
+                    <p>Demande de réinitialisation de mot de passe pour ton compte Peakture.</p>
+
+                    <p>Pour réinitialiser ton mot de passe, clique sur le bouton ci-dessous :</p>
+
+                    <a href="https://www.peakture.fr/reset-password" class="button">Réinitialiser mon mot de passe</a>
+
+                    <p>Si tu n’as pas demandé cette réinitialisation, ignore simplement ce message.</p>
+
+                    <p>À très vite,<br>
+                    <strong>Peakture</strong></p>
+
+                    <div class="footer">
+                        © 2025 Peakture
+                    </div>
+                    </div>
+                </body>
+                </html>
+            `,
+    }
+    try {
+        const response = await sgMail.send(msg);
+        console.log("Mail de réinitialisation de mot de passe envoyé :", response);
+    }
+    catch(error){
+        console.error('Erreur lors de l\'envoi du mail:', error.response ? error.response.body: error.message)
+    }
+}
