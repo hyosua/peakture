@@ -103,11 +103,13 @@ export const login = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieDomain = isProduction ? 'peakture.fr' : undefined; 
     try {
         res.cookie("jwt", "", {
-            domain: 'peakture.fr', 
+            domain: cookieDomain, 
             httpOnly: true,
-            sameSite: "none", 
+            sameSite: "None", 
             secure: true,     
             expires: new Date(0),
         });
