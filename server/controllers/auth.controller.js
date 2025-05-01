@@ -121,6 +121,13 @@ export const logout = async (req, res) => {
             maxAge: 0,
             path: "/" 
         });
+
+        res.cookie("jwt", "", {
+            httpOnly: true,
+            sameSite: "None",
+            secure: true,
+            maxAge: 0
+        });
         res.status(200).json({message: "Tu es bien déconnecté. À bientôt pour de nouvelles aventures !"})
     } catch (error) {
         console.log("Error in logout controller", error.message);
