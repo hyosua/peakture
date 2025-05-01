@@ -16,10 +16,18 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         const token = jwt.sign({ userId }, process.env.JWT_SECRET,{
             expiresIn: '15d'
         })
-
+        console.log("Environnement:", process.env.NODE_ENV);
+        console.log("[generateTokenAndSetCookie] Set cookie: jwt");
+        console.log(" - Domain:", cookieOptions.domain);
+        console.log(" - Secure:", cookieOptions.secure);
+        console.log(" - SameSite:", cookieOptions.sameSite);
+        console.log(" - HttpOnly:", cookieOptions.httpOnly);
         res.cookie("jwt", token,cookieOptions)
     } else {
         const sessionId = uuidv4()
+
+        console.log("[generateTokenAndSetCookie] Set cookie: sessionId");
+        console.log(" - Domain:", cookieOptions.domain);
 
         res.cookie("sessionId", sessionId,{
             ...cookieOptions,

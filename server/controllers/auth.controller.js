@@ -106,6 +106,13 @@ export const logout = async (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
     const cookieDomain = isProduction ? 'api.peakture.fr' : undefined; 
     try {
+        console.log("[logout] Attempting to clear jwt cookie");
+        console.log("Environnement:", process.env.NODE_ENV);
+        console.log(" - Domain:", cookieDomain);
+
+
+        console.log("Cookies received in request:", req.cookies);
+
         res.clearCookie("jwt", {
             domain: cookieDomain, 
             httpOnly: true,
