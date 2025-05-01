@@ -113,12 +113,12 @@ export const logout = async (req, res) => {
 
         console.log("Cookies received in request:", req.cookies);
 
-        res.clearCookie("jwt", {
+        res.cookie("jwt", "", {
             domain: cookieDomain, 
             httpOnly: true,
             sameSite: "None", 
             secure: true,   
-            path: "/",  
+            expires: new Date(0) 
         });
         res.status(200).json({message: "Tu es bien déconnecté. À bientôt pour de nouvelles aventures !"})
     } catch (error) {
@@ -129,15 +129,10 @@ export const logout = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        console.log("---- API /api/auth/me CALLED ----");
-        console.log("Cookies envoyés :", req.cookies);
-        console.log("req.user:", req.user);
-        console.log("req.guest:", req.guest);
+
         let user = req.user || req.guest
         
         if(!user){
-            console.log("Aucun utilisateur trouvé dans req");
-
             return res.status(400).json({error: "Aucun utilisateur"})
         }
 
@@ -150,9 +145,6 @@ export const getMe = async (req, res) => {
              const familyData = userObj.familyId 
                 ? await Family.findById(userObj.familyId) 
                 : null;
-
-                console.log("Utilisateur connecté, userObj:", userObj);
-            console.log("Famille trouvée:", familyData);
  
              // Renvoyer l'utilisateur avec les données de famille
              return res.status(200).json({
@@ -163,7 +155,6 @@ export const getMe = async (req, res) => {
 
         }
 
-        console.log("Utilisateur invité, guest session:", user);
         res.status(200).json(user)
     }catch (error){
         console.log("Error in getMe controller", error.message)
