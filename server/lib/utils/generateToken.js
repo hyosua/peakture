@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid' // génère un sessionid unique
 
 export const generateTokenAndSetCookie = (res, userId=null) => {
     const isProduction = process.env.NODE_ENV === 'production';
-    const cookieDomain = isProduction ? 'api.peakture.fr' : undefined; 
+    const cookieDomain = isProduction ? '.peakture.fr' : undefined; 
     const cookieOptions = {
         domain: cookieDomain,
         maxAge: 15 * 24 * 60 * 60 * 1000, // 15 jours en millisecondes
