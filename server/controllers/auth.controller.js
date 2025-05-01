@@ -118,7 +118,8 @@ export const logout = async (req, res) => {
             httpOnly: true,
             sameSite: "None", 
             secure: true,   
-            expires: new Date(0) 
+            maxAge: 0,
+            path: "/" 
         });
         res.status(200).json({message: "Tu es bien déconnecté. À bientôt pour de nouvelles aventures !"})
     } catch (error) {

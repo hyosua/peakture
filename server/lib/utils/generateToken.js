@@ -10,6 +10,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         httpOnly: true, // empêche les attaques XSS (cross-site scripting)
         sameSite: "None", // empêche les attaques CSRF (cross-site request forgery)
         secure: true, // le cookie ne sera envoyé que sur HTTPS
+        Path: "/", // le cookie sera accessible sur tout le site
     }
 
     if(userId){
