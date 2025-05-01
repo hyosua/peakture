@@ -1,7 +1,7 @@
 import { useToast } from "@/context/ToastContext.jsx"
 import { useState } from "react"
 import { X } from "lucide-react"
-import ValidateMail from "../components/auth/ValidateMail"
+import ValidateMail from "./ValidateMail"
 import { motion, AnimatePresence } from 'framer-motion';
 import ResetPasswordForm from "./ResetPasswordForm"
 

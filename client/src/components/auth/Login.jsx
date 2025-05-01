@@ -89,7 +89,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
                 onClose();
                 setTimeout(() => {
                   window.location.href = '/forgot-password';
-                }, 200);
+                }, 100);
               }
               }
             >

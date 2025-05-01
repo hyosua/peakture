@@ -18,7 +18,7 @@ import Profile from '@/pages/ProfilePage.jsx';
 import { useParams } from 'react-router-dom';
 import Loader from '@/components/ui/Loader.jsx'
 import Forbidden from '@/components/auth/Forbidden.jsx';
-import ForgotPassword from '@/pages/ForgotPassword';
+import ForgotPassword from '@/components/auth/ForgotPassword';
 
 // Family Wrapper
 const FamilyRouteWrapper = () => {
