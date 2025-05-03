@@ -11,6 +11,17 @@ const Peakture = () => {
     const {familyId} = useParams()
     const [peakture, setPeakture] = useState(null)
     const [showFullscreen, setShowFullscreen] = useState(false);
+    const [isPortrait, setIsPortrait] = useState(false);
+
+    useEffect(() => {
+      if(peakture){
+        const img = new Image();
+        img.onload = () => {
+          setIsPortrait(img.height > img.width);
+        }
+        img.src = peakture.src; 
+      }
+    }, [peakture]);
 
 
     useEffect(() => {
@@ -90,14 +101,20 @@ return (
     </motion.h1>
     
     <motion.div 
-      className="w-full aspect-[4/3] overflow-hidden rounded-xl relative"
+      className={`w-full  overflow-hidden rounded-xl relative ${
+          isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+      }`}
       variants={itemVariants}
     >
       <motion.img
         key={peakture._id} 
         src={peakture.src} 
         alt="Photo of the Month" 
-        className="w-full h-full object-cover rounded-xl cursor-pointer"
+        className={`rounded-xl cursor-pointer ${
+          isPortrait 
+            ? "h-full w-auto max-h-full mx-auto object-contain" 
+            : "w-full h-full object-cover"
+        }`}
         onClick={() => navigate(`/album/${peakture.albumId}`)}
         variants={imageVariants}
       />

@@ -40,7 +40,7 @@ const ContestResults = ( {results} ) => {
                         index === 0 ? "text-yellow-200" : index === 1 ? "text-slate-400" : index === 2 ? "text-amber-500" : "text-secondary"
                     }`}>{index+1}</div>
 
-                    <Avatar avatarSrc={result.user?.avaatar} />
+                    <Avatar avatarSrc={result.user?.avatar} />
 
                     <div className='list-grow'>
                          <div className="text-xs uppercase font-semibold opacity-60">{result.user?.username}</div> 
