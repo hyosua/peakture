@@ -95,7 +95,7 @@ return (
   >
     {/* Contenu de la carte */}
     <motion.h1 
-      className="font-bold text-3xl md:text-4xl text-center mb-4 md:mb-6"
+      className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6"
       variants={itemVariants}
     >
       Peakture
@@ -164,7 +164,7 @@ return (
         variants={itemVariants}
       >
         <motion.h4 
-          className="text-warning text-lg md:text-xl font-semibold"
+          className="text-primary text-lg md:text-xl font-semibold"
           initial={{ opacity: 0 }}
           animate={{ 
             opacity: 1,
@@ -199,7 +199,9 @@ return (
         <motion.img 
           src={peakture?.src} 
           alt="Fullscreen"
-          className="max-w-full max-h-screen p-4 rounded-xl shadow-lg"
+          className={`p-4 rounded-xl shadow-lg ${
+            isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
+          }`}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: showFullscreen ? 1 : 0.8, opacity: showFullscreen ? 1 : 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
