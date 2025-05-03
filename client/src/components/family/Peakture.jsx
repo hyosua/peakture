@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Expand  } from "lucide-react";
 import { motion } from "framer-motion";
+import Avatar from "@/components/user/Avatar";
 
 import { useState, useEffect } from "react";
 
@@ -138,8 +139,7 @@ return (
       className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center"
       variants={itemVariants}
     >
-      <motion.img 
-        className="w-12 h-12 md:w-16 md:h-16 border-3 border-warning rounded-full object-cover"
+      <motion.div 
         src={peakture.userId?.avatar} 
         alt="peakture winner"
         initial={{ opacity: 0, scale: 0 }}
@@ -150,7 +150,9 @@ return (
           type: "spring",
           stiffness: 200
         }}
-      />
+      >
+        <Avatar avatarSrc={peakture.userId?.avatar} />
+      </motion.div>
       <motion.h2 
         className="text-lg md:text-xl font-semibold"
         variants={itemVariants}
