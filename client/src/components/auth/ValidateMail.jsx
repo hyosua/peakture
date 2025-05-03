@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { CheckCircle, XCircle } from "lucide-react";
 import PropTypes from "prop-types";
 
-export default function ValidateMail({ onInputChange}) {
+export default function ValidateMail() {
   const [validation, setValidation] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
@@ -30,7 +30,6 @@ export default function ValidateMail({ onInputChange}) {
       const data = await result.json()
       const isValid = result.ok
       setValidation({valid: isValid, message: data.message})
-      onInputChange({email, isValid})
     } catch (error) {
       console.error("Erreur lors de la validation du mail:", error);
     }finally {

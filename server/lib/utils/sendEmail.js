@@ -255,7 +255,7 @@ export const sendTieNotification = async (userMail, username, albumId) => {
     }
 }
 
-export const sendPasswordResetNotification = async (userMail, username) => {
+export const sendPasswordResetNotification = async (emailData, username) => {
     const msg = {
         to: userMail,
         from: 'hyo@peakture.fr',
@@ -312,7 +312,7 @@ export const sendPasswordResetNotification = async (userMail, username) => {
 
                     <p>Pour réinitialiser ton mot de passe, clique sur le bouton ci-dessous :</p>
 
-                    <a href="https://www.peakture.fr/reset-password" class="button">Réinitialiser mon mot de passe</a>
+                    <a href="https://www.peakture.fr/reset-password/?emailData=${emailData}" class="button">Réinitialiser mon mot de passe</a>
 
                     <p>Si tu n’as pas demandé cette réinitialisation, ignore simplement ce message.</p>
 

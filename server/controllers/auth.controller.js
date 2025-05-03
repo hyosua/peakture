@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import User from '../models/user.model.js'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 import Family from '../models/family.model.js'
-import { sendSignupNotification } from '../lib/utils/sendEmail.js'
+import { sendPasswordResetNotification, sendSignupNotification } from '../lib/utils/sendEmail.js'
 
 export const signup = async (req, res) => {
     try {
@@ -179,8 +179,12 @@ export const validateMail = async (req, res) => {
         if(!existingUser){
             return res.status(404).json({ success: false, message: "Aucun utilisateur avec cet email"})
         }
-        
-        res.status(200).json({ message: "Adresse mail valide" })
+        const emailData = {
+            email,
+            isValid: true,
+        }
+        await sendPasswordResetNotification(emailData, existingUser.username)
+        res.status(200).json({ success: true, message: "Un email de réinitialisation a été envoyé à l'adresse indiquée" })
     }catch (error){
         console.log("Error in auth controller", error.message)
         return res.status(500).json({ success: true, error: "Internal Server Error"})

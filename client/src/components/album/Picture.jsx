@@ -84,7 +84,7 @@
         
         return (
             
-                <div className="w-full relative mb-20 p-1 group inline-block">
+                <div className="w-full relative mb-2 group inline-block">
                     
                     {/* Modifier L'image */}
                     { isPhotoOwner && (
