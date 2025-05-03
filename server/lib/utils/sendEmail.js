@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-
+const envLink = process.env.NODE_ENV === 'production' ? 'https://peakture.fr' : 'http://localhost:5173'
 export const sendSignupNotification = async (userMail, username) => {
     console.log('SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY);
     const msg = {
@@ -22,7 +22,7 @@ export const sendSignupNotification = async (userMail, username) => {
                     Je suis ravis de t’accueillir sur Peakture ! 📸✨
                     Partage tes plus belles photos, découvre celles des autres et monte dans le classement !
                 </p>
-                <a href="https://www.peakture.fr" class="btn">Accéder à mon compte</a>
+                <a href="${envLink}/?showLoginForm=true" style="display:inline-block;margin-top:20px;padding:12px 20px;background-color:rgb(141, 14, 226);color:white;text-decoration:none;border-radius:6px;font-weight:bold;">Accéder à mon compte</a>
                 <p style="font-size: 14px; color: #888; text-align: center; margin-top: 20px;">
                     À bientôt sur Peakture ! <br>
                     <em>Hyo</em>
@@ -92,18 +92,6 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
                             border-radius: 5px;
                             margin: 20px 0;
                         }
-                        .btn {
-                            display: block;
-                            width: 200px;
-                            margin: 20px auto;
-                            padding: 12px;
-                            background: #007BFF;
-                            color: white;
-                            text-align: center;
-                            text-decoration: none;
-                            border-radius: 5px;
-                            font-weight: bold;
-                        }
                         .footer {
                             text-align: center;
                             margin-top: 20px;
@@ -144,7 +132,7 @@ export const sendFamilyNotification = async (userMail, username, familyName, fam
 
                             <p>📅 <strong>Peakture</strong>, c’est un concours photo mensuel où chacun peut soumettre sa meilleure photo selon un thème défini. À la fin du mois, une photo est élue et permet de gagner des points pour le classement général.</p>
 
-                            <a href="https://www.peakture.fr/family/${familyId}" class="btn">Accéder à ma famille</a>
+                            <a href="${envLink}/family/${familyId}" style="display:inline-block;margin-top:20px;padding:12px 20px;background-color:rgb(141, 14, 226);color:white;text-decoration:none;border-radius:6px;font-weight:bold;">Accéder à ma famille</a>
                         </div>
                         <div class="footer">
                             <p>À très bientôt sur <strong>Peakture</strong> ! 🚀</p>
@@ -193,17 +181,7 @@ export const sendTieNotification = async (userMail, username, albumId) => {
                         padding: 30px;
                     }
                     h1 {
-                        color: #1a73e8;
-                    }
-                    .button {
-                        display: inline-block;
-                        margin-top: 20px;
-                        padding: 12px 20px;
-                        background-color: #1a73e8;
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 6px;
-                        font-weight: bold;
+                        color: rgb(141, 14, 226)
                     }
                     .footer {
                         margin-top: 40px;
@@ -225,7 +203,7 @@ export const sendTieNotification = async (userMail, username, albumId) => {
                     <p>En tant que gagnant du mois précédent, tu as l’honneur de départager les finalistes et de désigner la photo qui, selon toi, mérite de décrocher la première place ce mois-ci.</p>
 
                     <p><strong>Voici les photos en compétition :</strong></p>
-                    <a href="https://www.peakture.fr/album/${albumId}" class="button">Voir les finalistes</a>
+                    <a href="${envLink}/album/${albumId}" style="display:inline-block;margin-top:20px;padding:12px 20px;background-color:rgb(141, 14, 226);color:white;text-decoration:none;border-radius:6px;font-weight:bold;">Voir les finalistes</a>
 
                     <p>Tu as <strong>24 heures</strong> pour départager les votes, après cela, le gagnant sera tiré au sort.</p>
 
@@ -255,9 +233,9 @@ export const sendTieNotification = async (userMail, username, albumId) => {
     }
 }
 
-export const sendPasswordResetNotification = async (emailData, username) => {
+export const sendPasswordResetNotification = async (username, email, resetUrl) => {
     const msg = {
-        to: userMail,
+        to: email,
         from: 'hyo@peakture.fr',
         subject: `Réinitialisation de ton mot de passe Peakture`,
         text: `Salut ${username}, Tu as demandé la réinitialisation de ton mot de passe !`,
@@ -272,7 +250,7 @@ export const sendPasswordResetNotification = async (emailData, username) => {
                         font-family: Arial, sans-serif;
                         background-color: #f6f9fc;
                         padding: 20px;
-                        color: #333;
+                        
                     }
                     .container {
                         max-width: 600px;
@@ -283,13 +261,13 @@ export const sendPasswordResetNotification = async (emailData, username) => {
                         padding: 30px;
                     }
                     h1 {
-                        color: #1a73e8;
+                        color:rgb(141, 14, 226);
                     }
                     .button {
                         display: inline-block;
                         margin-top: 20px;
                         padding: 12px 20px;
-                        background-color: #1a73e8;
+                        background-color:rgb(141, 14, 226);
                         color: white;
                         text-decoration: none;
                         border-radius: 6px;
@@ -312,8 +290,8 @@ export const sendPasswordResetNotification = async (emailData, username) => {
 
                     <p>Pour réinitialiser ton mot de passe, clique sur le bouton ci-dessous :</p>
 
-                    <a href="https://www.peakture.fr/reset-password/?emailData=${emailData}" class="button">Réinitialiser mon mot de passe</a>
-
+                    <a href="${resetUrl}" style="display:inline-block;margin-top:20px;padding:12px 20px;background-color:rgb(141, 14, 226);color:white;text-decoration:none;border-radius:6px;font-weight:bold;">Réinitialiser mon mot de passe</a>
+                    <p>Ce lien est valable pendant 1 heure.</p>
                     <p>Si tu n’as pas demandé cette réinitialisation, ignore simplement ce message.</p>
 
                     <p>À très vite,<br>

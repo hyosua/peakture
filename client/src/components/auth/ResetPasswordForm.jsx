@@ -4,7 +4,7 @@ import { useToast } from "@/context/ToastContext.jsx"
 import { X } from "lucide-react"
 
 
-const ResetPasswordForm = ({ emailData }) => {
+const ResetPasswordForm = ({ resetToken }) => {
     const [showPassword, setShowPassword] = useState(false)
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
@@ -29,7 +29,7 @@ const ResetPasswordForm = ({ emailData }) => {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ email: emailData.email, password }),
+                    body: JSON.stringify({ resetToken, password }),
                 });
                 const data = await response.json();
                 if(data.success) {

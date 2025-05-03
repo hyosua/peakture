@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom';
 import Loader from '@/components/ui/Loader.jsx'
 import Forbidden from '@/components/auth/Forbidden.jsx';
 import ForgotPassword from '@/components/auth/ForgotPassword';
+import ResetPasswordPage from '@/pages/ResetPasswordPage.jsx';
 
 // Family Wrapper
 const FamilyRouteWrapper = () => {
@@ -98,7 +99,8 @@ const AppRoutes = () => {
         {/* Routes publiques */}
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/auth" element={<Auth />} /> 
-        <Route path="/forgot-password" element={<ForgotPassword />} /> 
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/album/:id" element={<AlbumPage />} />

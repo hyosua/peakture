@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 import User from '../models/user.model.js'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 import Family from '../models/family.model.js'
@@ -170,31 +171,33 @@ export const getMe = async (req, res) => {
     }
 }
 
-export const validateMail = async (req, res) => {
+export const requestPasswordReset = async (req, res) => {
     try {
         const { email } = req.body
         
-        const existingUser = await User.findOne({ email })
+        const user = await User.findOne({ email })
 
-        if(!existingUser){
-            return res.status(404).json({ success: false, message: "Aucun utilisateur avec cet email"})
-        }
-        const emailData = {
-            email,
-            isValid: true,
-        }
-        await sendPasswordResetNotification(emailData, existingUser.username)
+        const token = crypto.randomBytes(32).toString("hex")
+        const expiresAt = Date.now() + 1000 * 60 * 60; // Expire dans 1H
+
+        user.resetToken = token;
+        user.resetTokenExpires = expiresAt;
+        await user.save();
+        const base_url = process.env.NODE_ENV === "production" ? "https://www.peakture.fr" : "http://localhost:5173"
+        const resetUrl = `${base_url}/reset-password?token=${token}`;
+
+        await sendPasswordResetNotification(user.username, email, resetUrl)
         res.status(200).json({ success: true, message: "Un email de réinitialisation a été envoyé à l'adresse indiquée" })
     }catch (error){
-        console.log("Error in auth controller", error.message)
+        console.log("Error in auth controller (requestPasswordReset", error.message)
         return res.status(500).json({ success: true, error: "Internal Server Error"})
     }
 }
 
 export const resetPassword = async (req, res) => {
     try {
-        const { email, password } = req.body
-        const user = await User.findOne({ email })
+        const { resetToken, password } = req.body
+        const user = await User.findOne({ resetToken })
 
         if(!user){
             return res.status(404).json({ success: false, message: "Aucun utilisateur avec cet email"})
@@ -205,11 +208,31 @@ export const resetPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt)
 
         user.password = hashedPassword
+        user.resetToken = undefined
+        user.resetTokenExpires = undefined
         await user.save()
 
         res.status(200).json({ success: true, message: "Mot de passe mis à jour avec succès!" })
     }catch (error){
         console.log("Error in auth controller", error.message)
+        return res.status(500).json({ success: true, error: "Internal Server Error"})
+    }
+}
+
+export const verifyResetToken = async(req, res) => {
+    try{
+        const { token } = req.query;
+
+        const user = await User.findOne({
+            resetToken: token,
+            resetTokenExpires: { $gt: Date.now() }
+        });
+        console.log("User Reset Token", user)
+        if (!user) return  res.status(400).json({ isValid: false })
+
+        res.json({ isValid: true, email: user.email })
+    }catch(error){
+        console.log("Error in auth controller (verifyResetToken)", error.message)
         return res.status(500).json({ success: true, error: "Internal Server Error"})
     }
 }
