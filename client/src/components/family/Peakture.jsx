@@ -1,8 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Expand } from "lucide-react";
-import { motion } from "framer-motion";
 import Avatar from "@/components/user/Avatar";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 const Peakture = () => {
   const navigate = useNavigate();
@@ -10,44 +9,9 @@ const Peakture = () => {
   const [peakture, setPeakture] = useState(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageFailed, setImageFailed] = useState(false);
-  const imgRef = useRef(null);
 
-  // Use a proven working image as fallback
-  const fallbackImage = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
-
-  // Pre-load the fallback image to ensure it's in cache
-  useEffect(() => {
-    const preloadFallback = new Image();
-    preloadFallback.src = fallbackImage;
-  }, []);
-
-  useEffect(() => {
-    if (peakture && peakture.src) {
-      // Create an image object to test loading
-      const img = new Image();
-      
-      img.onload = () => {
-        setIsPortrait(img.height > img.width);
-        setImageLoaded(true);
-        setImageFailed(false);
-      };
-      
-      img.onerror = () => {
-        console.error("Image failed to load:", peakture.src);
-        setImageFailed(true);
-        // Immediately set fallback
-        if (imgRef.current) {
-          imgRef.current.src = fallbackImage;
-        }
-      };
-      
-      // Set crossOrigin attribute to handle potential CORS issues
-      img.crossOrigin = "anonymous";
-      img.src = peakture.src;
-    }
-  }, [peakture]);
+  // Working image you mentioned for fallback
+  const fallbackImage = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746286772/batgone-transp_ff1qk7.png';
 
   useEffect(() => {
     const getPeakture = async () => {
@@ -64,6 +28,15 @@ const Peakture = () => {
         
         const data = await res.json();
         setPeakture(data);
+        
+        // Check orientation after data is loaded
+        if (data && data.src) {
+          const img = new Image();
+          img.onload = () => {
+            setIsPortrait(img.height > img.width);
+          };
+          img.src = data.src;
+        }
       } catch (err) {
         console.error("Error fetching peakture:", err);
       }
@@ -72,148 +45,96 @@ const Peakture = () => {
     getPeakture();
   }, [familyId]);
 
-  // Variants pour les animations
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.2,
-        when: "beforeChildren",
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
-
-  // Handler for fullscreen view that's iOS-safe
-  const handleFullscreenClick = (e) => {
+  // Safe handler for opening fullscreen
+  const handleOpenFullscreen = (e) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
     }
     setShowFullscreen(true);
   };
-
-  // Handler for closing fullscreen that's iOS-safe
-  const handleCloseFullscreen = (e) => {
-    if (e) {
-      e.preventDefault();
-      if (e.stopPropagation) e.stopPropagation();
-    }
+  
+  // Safe handler for closing fullscreen
+  const handleCloseFullscreen = () => {
     setShowFullscreen(false);
   };
 
-  const getImageSource = () => {
-    if (!peakture || !peakture.src || imageFailed) {
-      return fallbackImage;
-    }
-    return peakture.src;
+  // Get safe image source
+  const getImageSrc = () => {
+    return (peakture && peakture.src) ? peakture.src : fallbackImage;
   };
+
+  if (!peakture) {
+    return <div className="flex justify-center items-center min-h-screen p-4">Loading...</div>;
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
-      {peakture && (
-        <div className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg">
-          <h1 className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6">
-            Peakture
-          </h1>
+      <div className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg">
+        <h1 className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6">
+          Peakture
+        </h1>
 
-          <motion.div
-            className={`w-full overflow-hidden rounded-xl relative ${
-              isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+        <div className={`w-full overflow-hidden rounded-xl relative ${
+          isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+        }`}>
+          {/* Plain HTML img element without animations */}
+          <img
+            key={peakture._id}
+            src={getImageSrc()}
+            alt="Photo of the Month"
+            className={`rounded-xl cursor-pointer ${
+              isPortrait
+                ? "h-full w-auto max-h-full mx-auto object-contain"
+                : "w-full h-full object-cover"
             }`}
-            variants={itemVariants}
-            initial="visible"
-            animate="visible"
+            onClick={() => navigate(`/album/${peakture.albumId}`)}
+            onError={(e) => {
+              console.error("Image failed to load, using fallback");
+              e.target.src = fallbackImage;
+              e.target.onerror = null; // Prevent infinite loops
+            }}
+            style={{ display: 'block' }}
+          />
+
+          <button
+            onClick={handleOpenFullscreen}
+            className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
+            title="Voir en plein écran"
           >
-            <motion.img
-              ref={imgRef}
-              key={peakture._id}
-              src={getImageSource()}
-              alt="Photo of the Month"
-              className={`rounded-xl cursor-pointer ${
-                isPortrait
-                  ? "h-full w-auto max-h-full mx-auto object-contain"
-                  : "w-full h-full object-cover"
-              }`}
-              onClick={() => navigate(`/album/${peakture.albumId}`)}
-              variants={imageVariants}
-              onLoad={(e) => {
-                console.log("Image loaded successfully");
-                setImageLoaded(true);
-              }}
-              onError={(e) => {
-                console.error("Main image failed to load");
-                setImageFailed(true);
-                e.target.src = fallbackImage;
-                e.target.onerror = null; // Prevent infinite error loop
-              }}
-              crossOrigin="anonymous"
-              loading="eager"
-              decoding="async"
-            />
-
-            <button
-              onClick={handleFullscreenClick}
-              className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
-              title="Voir en plein écran"
-            >
-              <Expand className="h-5 w-5" />
-            </button>
-          </motion.div>
-
-          <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
-            <Avatar avatarSrc={peakture.userId?.avatar} />
-            <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
-            <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
-              {peakture.votes}
-            </span>
-          </div>
+            <Expand className="h-5 w-5" />
+          </button>
         </div>
-      )}
 
-      {/* Single fullscreen implementation using motion.div */}
+        <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
+          <Avatar avatarSrc={peakture.userId?.avatar} />
+          <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
+          <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
+            {peakture.votes}
+          </span>
+        </div>
+      </div>
+
+      {/* Fullscreen modal */}
       {showFullscreen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+        <div 
           className="fixed inset-0 bg-black/90 flex justify-center items-center z-50"
           onClick={handleCloseFullscreen}
         >
-          <motion.img
-            src={getImageSource()}
+          <img
+            src={getImageSrc()}
             alt="Fullscreen"
             className={`p-4 rounded-xl shadow-lg ${
               isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
             }`}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            onLoad={(e) => console.log("Fullscreen image loaded")}
             onError={(e) => {
               console.error("Fullscreen image failed to load");
               e.target.src = fallbackImage;
-              e.target.onerror = null; // Prevent infinite error loop
+              e.target.onerror = null;
             }}
-            crossOrigin="anonymous"
-            loading="eager"
-            decoding="async"
+            style={{ display: 'block' }}
           />
-        </motion.div>
+        </div>
       )}
     </div>
   );
