@@ -78,12 +78,10 @@ const Peakture = () => {
     hidden: {
       opacity: 0,
       scale: 0.9,
-      filter: "brightness(0.4) contrast(1.1)",
     },
     visible: {
       opacity: 1,
       scale: 1,
-      filter: "brightness(1) contrast(1)",
       transition: {
         duration: 1.2,
         ease: "easeOut",
