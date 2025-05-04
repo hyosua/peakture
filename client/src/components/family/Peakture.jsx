@@ -116,11 +116,12 @@ const Peakture = () => {
               <span className="loading loading-bars text-primary loading-md"></span>
             </div>
             )}
-            <motion.img
+            {imageLoaded && (
+              <motion.img
               key={peakture._id}
               src={peakture.src}
               alt="Photo of the Month"
-              className={`rounded-xl cursor-pointer ${
+              className={`rounded-xl cursor-pointer z-50 ${
                 isPortrait
                   ? "h-full w-auto max-h-full mx-auto object-contain"
                   : "w-full h-full object-cover"
@@ -133,6 +134,8 @@ const Peakture = () => {
                 e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
               }}
             />
+            )}
+            
 
             <motion.span
               role="button"
