@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Expand } from "lucide-react";
 import Avatar from "@/components/user/Avatar";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const Peakture = () => {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ const Peakture = () => {
           >
             <motion.img
               key={peakture._id}
-              src={peakture.src}
+              src="https://shorturl.at/L5ahQ"
               alt="Photo of the Month"
               className={`rounded-xl cursor-pointer ${
                 isPortrait
