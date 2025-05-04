@@ -90,113 +90,79 @@ const Peakture = () => {
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       {peakture && (
-        <motion.div
-          className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col group items-center bg-base-200 rounded-xl overflow-hidden shadow-lg"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Contenu de la carte */}
-          <motion.h1
-            className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6"
-            variants={itemVariants}
-          >
-            Peakture
-          </motion.h1>
+  <div className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg">
+    <h1 className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6">
+      Peakture
+    </h1>
 
-          <motion.div
-            className={`w-full rounded-xl relative ${
-              isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
-            }`}
-            variants={itemVariants}
-          >
-
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-full overflow-hidden">
-              <span className="loading loading-bars text-primary loading-md"></span>
-            </div>
-            )}
-              {peakture && (
-                <motion.div
-                className="w-full overflow-hidden rounded-xl relative"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <img
-                  src={peakture.src}
-                  alt="Photo of the Month"
-                  className={`rounded-xl cursor-pointer ${
-                    isPortrait
-                      ? "h-full w-auto max-h-full mx-auto object-contain"
-                      : "w-full h-full object-cover"
-                  }`}
-                  onClick={() => navigate(`/album/${peakture.albumId}`)}
-                  onLoad={() => setImageLoaded(true)}
-                  onError={(e) => {
-                    console.error("Image failed to load in component");
-                    e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
-                  }}
-                />
-              </motion.div>
-
-            )}
-
-            
-            
-
-            <motion.span
-              role="button"
-              tabIndex={0}
-              onClick={handleFullscreenClick}
-              className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              title="Voir en plein écran"
-              variants={itemVariants}
-            >
-              <Expand className="h-5 w-5" />
-            </motion.span>
-          </motion.div>
-
-          <motion.div
-            className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center"
-            variants={itemVariants}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                delay: 1,
-                duration: 0.5,
-                type: "spring",
-                stiffness: 200,
-              }}
-            >
-              <Avatar avatarSrc={peakture.userId?.avatar} />
-            </motion.div>
-            <motion.h2
-              className="text-lg md:text-xl font-semibold"
-              variants={itemVariants}
-            >
-              {peakture.username}
-            </motion.h2>
-            <motion.span
-              className="mx-2 md:mx-4"
-              variants={itemVariants}
-            >
-              <motion.h4
-                className="text-primary text-lg md:text-xl font-semibold"
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: { delay: 1.2, duration: 0.5 },
-                }}
-              >
-                {peakture.votes}
-              </motion.h4>
-            </motion.span>
-          </motion.div>
-        </motion.div>
+    <div className={`w-full overflow-hidden rounded-xl relative ${
+      isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+    }`}>
+      {!imageLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-full overflow-hidden">
+          <span className="loading loading-bars text-primary loading-md"></span>
+        </div>
       )}
+
+      <img
+        src={peakture.src}
+        alt="Photo of the Month"
+        className={`rounded-xl cursor-pointer ${
+          isPortrait
+            ? "h-full w-auto max-h-full mx-auto object-contain"
+            : "w-full h-full object-cover"
+        }`}
+        onClick={() => navigate(`/album/${peakture.albumId}`)}
+        onLoad={() => setImageLoaded(true)}
+        onError={(e) => {
+          console.error("Image failed to load in component");
+          e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
+        }}
+      />
+
+      <span
+        role="button"
+        tabIndex={0}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowFullscreen(true);
+        }}
+        className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
+        title="Voir en plein écran"
+      >
+        <Expand className="h-5 w-5" />
+      </span>
+    </div>
+
+    <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
+      <Avatar avatarSrc={peakture.userId?.avatar} />
+      <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
+      <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
+        {peakture.votes}
+      </span>
+    </div>
+
+    {showFullscreen && (
+      <div
+        className="fixed inset-0 bg-black/90 flex justify-center items-center z-50"
+        onClick={() => setShowFullscreen(false)}
+      >
+        <img
+          src={peakture.src}
+          alt="Fullscreen"
+          className={`p-4 rounded-xl shadow-lg ${
+            isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
+          }`}
+          onError={(e) => {
+            console.error("Fullscreen image failed to load");
+            e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
+          }}
+        />
+      </div>
+    )}
+  </div>
+)}
+
 
       <motion.div
         initial={false}
