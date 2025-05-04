@@ -75,18 +75,8 @@ const Peakture = () => {
   };
 
   const imageVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.9,
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 1.2,
-        ease: "easeOut",
-      },
-    },
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   // Handler to prevent event propagation for Safari fullscreen issue
@@ -126,7 +116,7 @@ const Peakture = () => {
               <span className="loading loading-bars text-primary loading-md"></span>
             </div>
             )}
-            <img
+            <motion.img
               key={peakture._id}
               src={peakture.src}
               alt="Photo of the Month"
@@ -136,6 +126,7 @@ const Peakture = () => {
                   : "w-full h-full object-cover"
               }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
+              variants={imageVariants}
               onLoad={() => setImageLoaded(true)}
               onError={(e) => {
                 console.error("Image failed to load in component");
