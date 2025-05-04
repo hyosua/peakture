@@ -137,7 +137,7 @@ const Peakture = () => {
               }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
               variants={imageVariants}
-              onLoad={() => console.log("Component image loaded in DOM")}
+              onLoad={() => setImageLoaded(true)}
               onError={(e) => {
                 console.error("Image failed to load in component");
                 e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
