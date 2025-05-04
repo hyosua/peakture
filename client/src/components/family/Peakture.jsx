@@ -91,7 +91,7 @@ const Peakture = () => {
     <div className="flex justify-center items-center min-h-screen p-4">
       {peakture && (
         <motion.div
-          className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col group items-center bg-base-200 rounded-xl  shadow-lg"
+          className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col group items-center bg-base-200 rounded-xl overflow-hidden shadow-lg"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -116,23 +116,19 @@ const Peakture = () => {
               <span className="loading loading-bars text-primary loading-md"></span>
             </div>
             )}
-              <motion.img
-              key={peakture._id}
-              src={peakture.src}
-              alt="Photo of the Month"
-              className={`rounded-xl cursor-pointer z-50 ${
-                isPortrait
-                  ? "h-full w-auto max-h-full mx-auto object-contain"
-                  : "w-full h-full object-cover"
-              }`}
-              onClick={() => navigate(`/album/${peakture.albumId}`)}
-              variants={imageVariants}
-              onLoad={() => setImageLoaded(true)}
-              onError={(e) => {
-                console.error("Image failed to load in component");
-                e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
-              }}
-            />
+              {peakture && (
+              <div>
+                <p className="text-white">{peakture.src}</p>
+                <img
+                  src={peakture.src}
+                  alt="iOS debug image"
+                  className="w-full"
+                  onLoad={() => console.log("Hardcoded image loaded")}
+                  onError={() => console.error("Hardcoded image failed")}
+                />
+              </div>
+            )}
+
             
             
 
