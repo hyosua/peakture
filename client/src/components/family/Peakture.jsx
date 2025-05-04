@@ -10,6 +10,7 @@ const Peakture = () => {
   const [peakture, setPeakture] = useState(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (peakture) {
@@ -23,23 +24,35 @@ const Peakture = () => {
 
   useEffect(() => {
     const getPeakture = async () => {
-      fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`)
-        .then((res) => {
-          if (!res.ok) {
-            if (res.status === 404) {
-              console.log("Aucun album trouvé");
-              return null;
-            }
-            throw new Error(`HTTP error! Status: ${res.status}`);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            console.log("Aucun album trouvé");
+            return;
           }
-          return res.json();
-        })
-        .then((data) => {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Log the received data to check if image URL is correctly formed
+        console.log("Peakture data received:", data);
+        
+        if (data && data.src) {
           setPeakture(data);
-        })
-        .catch((err) => console.error(err));
+        } else {
+          console.error("Peakture data missing image source:", data);
+        }
+      } catch (err) {
+        console.error("Error fetching peakture:", err);
+      }
     };
-    getPeakture();
+    
+    if (familyId) {
+      getPeakture();
+    }
   }, [familyId]);
 
   // Variants pour les animations
@@ -109,6 +122,12 @@ const Peakture = () => {
             }`}
             variants={itemVariants}
           >
+
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-full overflow-hidden">
+              <span className="loading loading-bars text-primary loading-md"></span>
+            </div>
+            )}
             <motion.img
               key={peakture._id}
               src={peakture.src}
@@ -120,6 +139,11 @@ const Peakture = () => {
               }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
               variants={imageVariants}
+              onLoad={() => console.log("Component image loaded in DOM")}
+              onError={(e) => {
+                console.error("Image failed to load in component");
+                e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
+              }}
             />
 
             <motion.span
@@ -202,6 +226,10 @@ const Peakture = () => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: showFullscreen ? 1 : 0.8, opacity: showFullscreen ? 1 : 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
+          onError={(e) => {
+            console.error("Fullscreen image failed to load");
+            e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
+          }}
         />
       </motion.div>
     </div>
