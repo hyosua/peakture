@@ -81,24 +81,24 @@ const Peakture = () => {
       Peakture
     </h1>
 
-    <motion.div
-      className={`w-full overflow-hidden rounded-xl relative ${
-        isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
-      }`}
-      variants={itemVariants}
-    >
-      <motion.img
-        key={peakture._id}
-        src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1746286772/batgone-transp_ff1qk7.png"
-        alt="Photo of the Month"
-        className={`rounded-xl cursor-pointer ${
-          isPortrait
-            ? "h-full w-auto max-h-full mx-auto object-contain"
-            : "w-full h-full object-cover"
-        }`}
-        onClick={() => navigate(`/album/${peakture.albumId}`)}
-        variants={imageVariants}
-      />
+          <motion.div
+            className={`w-full overflow-hidden rounded-xl relative ${
+              isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+            }`}
+            variants={itemVariants}
+          >
+            <motion.img
+              key={peakture._id}
+              src={peakture.src}
+              alt="Photo of the Month"
+              className={`rounded-xl cursor-pointer ${
+                isPortrait
+                  ? "h-full w-auto max-h-full mx-auto object-contain"
+                  : "w-full h-full object-cover"
+              }`}
+              onClick={() => navigate(`/album/${peakture.albumId}`)}
+              variants={imageVariants}
+            />
 
       <span
         role="button"
