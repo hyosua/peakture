@@ -105,7 +105,7 @@ const Peakture = () => {
       )}
 
       <img
-        src={peakture.src}
+        src="https://images.pexels.com/photos/1955134/pexels-photo-1955134.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
         alt="Photo of the Month"
         className={`rounded-xl cursor-pointer ${
           isPortrait
