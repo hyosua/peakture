@@ -90,7 +90,7 @@ const Peakture = () => {
     >
       <motion.img
         key={peakture._id}
-        src={peakture.src}
+        src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png"
         alt="Photo of the Month"
         className={`rounded-xl cursor-pointer ${
           isPortrait
@@ -129,7 +129,7 @@ const Peakture = () => {
         onClick={() => setShowFullscreen(false)}
       >
         <img
-          src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png"
+          src={peakture.src}
           alt="Fullscreen"
           className={`p-4 rounded-xl shadow-lg ${
             isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
