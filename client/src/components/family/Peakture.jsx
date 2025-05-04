@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Expand } from "lucide-react";
 import { motion } from "framer-motion";
 import Avatar from "@/components/user/Avatar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const Peakture = () => {
   const navigate = useNavigate();
@@ -12,22 +12,39 @@ const Peakture = () => {
   const [isPortrait, setIsPortrait] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+  const imgRef = useRef(null);
 
-  // Fallback image for when the original fails to load
+  // Use a proven working image as fallback
   const fallbackImage = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
 
+  // Pre-load the fallback image to ensure it's in cache
   useEffect(() => {
-    if (peakture) {
+    const preloadFallback = new Image();
+    preloadFallback.src = fallbackImage;
+  }, []);
+
+  useEffect(() => {
+    if (peakture && peakture.src) {
+      // Create an image object to test loading
       const img = new Image();
+      
       img.onload = () => {
         setIsPortrait(img.height > img.width);
         setImageLoaded(true);
         setImageFailed(false);
       };
+      
       img.onerror = () => {
-        console.error("Image failed to load");
+        console.error("Image failed to load:", peakture.src);
         setImageFailed(true);
+        // Immediately set fallback
+        if (imgRef.current) {
+          imgRef.current.src = fallbackImage;
+        }
       };
+      
+      // Set crossOrigin attribute to handle potential CORS issues
+      img.crossOrigin = "anonymous";
       img.src = peakture.src;
     }
   }, [peakture]);
@@ -81,19 +98,24 @@ const Peakture = () => {
 
   // Handler for fullscreen view that's iOS-safe
   const handleFullscreenClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setShowFullscreen(true);
   };
 
   // Handler for closing fullscreen that's iOS-safe
   const handleCloseFullscreen = (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+    }
     setShowFullscreen(false);
   };
 
   const getImageSource = () => {
-    if (!peakture || imageFailed) {
+    if (!peakture || !peakture.src || imageFailed) {
       return fallbackImage;
     }
     return peakture.src;
@@ -112,8 +134,11 @@ const Peakture = () => {
               isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
             }`}
             variants={itemVariants}
+            initial="visible"
+            animate="visible"
           >
             <motion.img
+              ref={imgRef}
               key={peakture._id}
               src={getImageSource()}
               alt="Photo of the Month"
@@ -124,12 +149,19 @@ const Peakture = () => {
               }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
               variants={imageVariants}
-              onLoad={() => setImageLoaded(true)}
+              onLoad={(e) => {
+                console.log("Image loaded successfully");
+                setImageLoaded(true);
+              }}
               onError={(e) => {
                 console.error("Main image failed to load");
-                e.target.src = fallbackImage;
                 setImageFailed(true);
+                e.target.src = fallbackImage;
+                e.target.onerror = null; // Prevent infinite error loop
               }}
+              crossOrigin="anonymous"
+              loading="eager"
+              decoding="async"
             />
 
             <button
@@ -171,10 +203,15 @@ const Peakture = () => {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
+            onLoad={(e) => console.log("Fullscreen image loaded")}
             onError={(e) => {
               console.error("Fullscreen image failed to load");
               e.target.src = fallbackImage;
+              e.target.onerror = null; // Prevent infinite error loop
             }}
+            crossOrigin="anonymous"
+            loading="eager"
+            decoding="async"
           />
         </motion.div>
       )}
