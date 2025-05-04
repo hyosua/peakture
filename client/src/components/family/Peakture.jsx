@@ -90,7 +90,7 @@ const Peakture = () => {
     >
       <motion.img
         key={peakture._id}
-        src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1745935496/IMG-20250426-WA0026_qne36z.jpg"
+        src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1746286772/batgone-transp_ff1qk7.png"
         alt="Photo of the Month"
         className={`rounded-xl cursor-pointer ${
           isPortrait
