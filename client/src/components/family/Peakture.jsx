@@ -10,7 +10,6 @@ const Peakture = () => {
   const [peakture, setPeakture] = useState(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (peakture) {
@@ -24,35 +23,23 @@ const Peakture = () => {
 
   useEffect(() => {
     const getPeakture = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            console.log("Aucun album trouvé");
-            return;
+      fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`)
+        .then((res) => {
+          if (!res.ok) {
+            if (res.status === 404) {
+              console.log("Aucun album trouvé");
+              return null;
+            }
+            throw new Error(`HTTP error! Status: ${res.status}`);
           }
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Log the received data to check if image URL is correctly formed
-        console.log("Peakture data received:", data);
-        
-        if (data && data.src) {
+          return res.json();
+        })
+        .then((data) => {
           setPeakture(data);
-        } else {
-          console.error("Peakture data missing image source:", data);
-        }
-      } catch (err) {
-        console.error("Error fetching peakture:", err);
-      }
+        })
+        .catch((err) => console.error(err));
     };
-    
-    if (familyId) {
-      getPeakture();
-    }
+    getPeakture();
   }, [familyId]);
 
   // Variants pour les animations
@@ -95,17 +82,15 @@ const Peakture = () => {
       Peakture
     </h1>
 
-    <div className={`w-full overflow-hidden rounded-xl relative ${
-      isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
-    }`}>
-      {!imageLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none rounded-full overflow-hidden">
-          <span className="loading loading-bars text-primary loading-md"></span>
-        </div>
-      )}
-
-      <img
-        src="https://images.pexels.com/photos/1955134/pexels-photo-1955134.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+    <motion.div
+      className={`w-full overflow-hidden rounded-xl relative ${
+        isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+      }`}
+      variants={itemVariants}
+    >
+      <motion.img
+        key={peakture._id}
+        src={peakture.src}
         alt="Photo of the Month"
         className={`rounded-xl cursor-pointer ${
           isPortrait
@@ -113,11 +98,7 @@ const Peakture = () => {
             : "w-full h-full object-cover"
         }`}
         onClick={() => navigate(`/album/${peakture.albumId}`)}
-        onLoad={() => setImageLoaded(true)}
-        onError={(e) => {
-          console.error("Image failed to load in component");
-          e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
-        }}
+        variants={imageVariants}
       />
 
       <span
@@ -132,7 +113,7 @@ const Peakture = () => {
       >
         <Expand className="h-5 w-5" />
       </span>
-    </div>
+    </motion.div>
 
     <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
       <Avatar avatarSrc={peakture.userId?.avatar} />
@@ -191,10 +172,6 @@ const Peakture = () => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: showFullscreen ? 1 : 0.8, opacity: showFullscreen ? 1 : 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          onError={(e) => {
-            console.error("Fullscreen image failed to load");
-            e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
-          }}
         />
       </motion.div>
     </div>
