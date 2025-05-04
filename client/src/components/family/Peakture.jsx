@@ -127,6 +127,7 @@ const Peakture = () => {
             </div>
             )}
             <motion.img
+              layout
               key={peakture._id}
               src={peakture.src}
               alt="Photo of the Month"
