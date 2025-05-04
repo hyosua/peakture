@@ -126,8 +126,7 @@ const Peakture = () => {
               <span className="loading loading-bars text-primary loading-md"></span>
             </div>
             )}
-            <motion.img
-              layout
+            <img
               key={peakture._id}
               src={peakture.src}
               alt="Photo of the Month"
@@ -137,7 +136,6 @@ const Peakture = () => {
                   : "w-full h-full object-cover"
               }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
-              variants={imageVariants}
               onLoad={() => setImageLoaded(true)}
               onError={(e) => {
                 console.error("Image failed to load in component");
