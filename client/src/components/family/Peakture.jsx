@@ -90,7 +90,11 @@ const Peakture = () => {
           >
             <motion.img
               key={peakture._id}
-              src="https://shorturl.at/L5ahQ"
+              src={peakture.src}
+              onError={(e) => {
+                console.error("Image failed to load");
+                e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
+              }}
               alt="Photo of the Month"
               className={`rounded-xl cursor-pointer ${
                 isPortrait
