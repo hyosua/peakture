@@ -117,16 +117,29 @@ const Peakture = () => {
             </div>
             )}
               {peakture && (
-              <div>
-                <p className="text-white">{peakture.src}</p>
+                <motion.div
+                className="w-full overflow-hidden rounded-xl relative"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
                 <img
                   src={peakture.src}
-                  alt="iOS debug image"
-                  className="w-full"
-                  onLoad={() => console.log("Hardcoded image loaded")}
-                  onError={() => console.error("Hardcoded image failed")}
+                  alt="Photo of the Month"
+                  className={`rounded-xl cursor-pointer ${
+                    isPortrait
+                      ? "h-full w-auto max-h-full mx-auto object-contain"
+                      : "w-full h-full object-cover"
+                  }`}
+                  onClick={() => navigate(`/album/${peakture.albumId}`)}
+                  onLoad={() => setImageLoaded(true)}
+                  onError={(e) => {
+                    console.error("Image failed to load in component");
+                    e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
+                  }}
                 />
-              </div>
+              </motion.div>
+
             )}
 
             
