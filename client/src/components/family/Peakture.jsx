@@ -10,12 +10,23 @@ const Peakture = () => {
   const [peakture, setPeakture] = useState(null);
   const [showFullscreen, setShowFullscreen] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  // Fallback image for when the original fails to load
+  const fallbackImage = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
 
   useEffect(() => {
     if (peakture) {
       const img = new Image();
       img.onload = () => {
         setIsPortrait(img.height > img.width);
+        setImageLoaded(true);
+        setImageFailed(false);
+      };
+      img.onerror = () => {
+        console.error("Image failed to load");
+        setImageFailed(true);
       };
       img.src = peakture.src;
     }
@@ -23,22 +34,24 @@ const Peakture = () => {
 
   useEffect(() => {
     const getPeakture = async () => {
-      fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`)
-        .then((res) => {
-          if (!res.ok) {
-            if (res.status === 404) {
-              console.log("Aucun album trouvé");
-              return null;
-            }
-            throw new Error(`HTTP error! Status: ${res.status}`);
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${familyId}/peakture`);
+        
+        if (!res.ok) {
+          if (res.status === 404) {
+            console.log("Aucun album trouvé");
+            return;
           }
-          return res.json();
-        })
-        .then((data) => {
-          setPeakture(data);
-        })
-        .catch((err) => console.error(err));
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        
+        const data = await res.json();
+        setPeakture(data);
+      } catch (err) {
+        console.error("Error fetching peakture:", err);
+      }
     };
+    
     getPeakture();
   }, [familyId]);
 
@@ -66,114 +79,105 @@ const Peakture = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  // Handler to prevent event propagation for Safari fullscreen issue
-  const handleFullscreenClick = (event) => {
-    if (event && typeof event.stopPropagation === 'function') {
-      event.stopPropagation();
-    }
+  // Handler for fullscreen view that's iOS-safe
+  const handleFullscreenClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setShowFullscreen(true);
+  };
+
+  // Handler for closing fullscreen that's iOS-safe
+  const handleCloseFullscreen = (e) => {
+    e.preventDefault();
+    setShowFullscreen(false);
+  };
+
+  const getImageSource = () => {
+    if (!peakture || imageFailed) {
+      return fallbackImage;
+    }
+    return peakture.src;
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4">
       {peakture && (
-  <div className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg">
-    <h1 className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6">
-      Peakture
-    </h1>
+        <div className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg">
+          <h1 className="font-bold text-3xl md:text-4xl text-center text-white mb-4 md:mb-6">
+            Peakture
+          </h1>
 
-    <motion.div
-      className={`w-full overflow-hidden rounded-xl relative ${
-        isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
-      }`}
-      variants={itemVariants}
-    >
-      <motion.img
-        key={peakture._id}
-        src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1746286772/batgone-transp_ff1qk7.png"
-        alt="Photo of the Month"
-        className={`rounded-xl cursor-pointer ${
-          isPortrait
-            ? "h-full w-auto max-h-full mx-auto object-contain"
-            : "w-full h-full object-cover"
-        }`}
-        onClick={() => navigate(`/album/${peakture.albumId}`)}
-        variants={imageVariants}
-      />
+          <motion.div
+            className={`w-full overflow-hidden rounded-xl relative ${
+              isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
+            }`}
+            variants={itemVariants}
+          >
+            <motion.img
+              key={peakture._id}
+              src={getImageSource()}
+              alt="Photo of the Month"
+              className={`rounded-xl cursor-pointer ${
+                isPortrait
+                  ? "h-full w-auto max-h-full mx-auto object-contain"
+                  : "w-full h-full object-cover"
+              }`}
+              onClick={() => navigate(`/album/${peakture.albumId}`)}
+              variants={imageVariants}
+              onLoad={() => setImageLoaded(true)}
+              onError={(e) => {
+                console.error("Main image failed to load");
+                e.target.src = fallbackImage;
+                setImageFailed(true);
+              }}
+            />
 
-      <span
-        role="button"
-        tabIndex={0}
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowFullscreen(true);
-        }}
-        className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
-        title="Voir en plein écran"
-      >
-        <Expand className="h-5 w-5" />
-      </span>
-    </motion.div>
+            <button
+              onClick={handleFullscreenClick}
+              className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
+              title="Voir en plein écran"
+            >
+              <Expand className="h-5 w-5" />
+            </button>
+          </motion.div>
 
-    <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
-      <Avatar avatarSrc={peakture.userId?.avatar} />
-      <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
-      <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
-        {peakture.votes}
-      </span>
-    </div>
+          <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
+            <Avatar avatarSrc={peakture.userId?.avatar} />
+            <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
+            <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
+              {peakture.votes}
+            </span>
+          </div>
+        </div>
+      )}
 
-    {showFullscreen && (
-      <div
-        className="fixed inset-0 bg-black/90 flex justify-center items-center z-50"
-        onClick={() => setShowFullscreen(false)}
-      >
-        <img
-          src={peakture.src}
-          alt="Fullscreen"
-          className={`p-4 rounded-xl shadow-lg ${
-            isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
-          }`}
-          onError={(e) => {
-            console.error("Fullscreen image failed to load");
-            e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
-          }}
-        />
-      </div>
-    )}
-  </div>
-)}
-
-
-      <motion.div
-        initial={false}
-        animate={{ opacity: showFullscreen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        style={{
-          display: showFullscreen ? "flex" : "none",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          backgroundColor: "rgba(0,0,0,0.9)",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 50,
-        }}
-        onClick={() => setShowFullscreen(false)}
-      >
-        <motion.img
-          src={peakture?.src}
-          alt="Fullscreen"
-          className={`p-4 rounded-xl shadow-lg ${
-            isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
-          }`}
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: showFullscreen ? 1 : 0.8, opacity: showFullscreen ? 1 : 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        />
-      </motion.div>
+      {/* Single fullscreen implementation using motion.div */}
+      {showFullscreen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 bg-black/90 flex justify-center items-center z-50"
+          onClick={handleCloseFullscreen}
+        >
+          <motion.img
+            src={getImageSource()}
+            alt="Fullscreen"
+            className={`p-4 rounded-xl shadow-lg ${
+              isPortrait ? "max-h-screen w-auto" : "max-w-full max-h-screen"
+            }`}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            onError={(e) => {
+              console.error("Fullscreen image failed to load");
+              e.target.src = fallbackImage;
+            }}
+          />
+        </motion.div>
+      )}
     </div>
   );
 };
