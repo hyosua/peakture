@@ -115,7 +115,7 @@ const Peakture = () => {
           </motion.h1>
 
           <motion.div
-            className={`w-full overflow-hidden rounded-xl relative ${
+            className={`w-full rounded-xl relative ${
               isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
             }`}
             variants={itemVariants}
