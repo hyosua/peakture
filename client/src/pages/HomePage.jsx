@@ -187,6 +187,7 @@ const HomePage = () => {
 
     return () => clearTimeout(timer);
   }, []);
+  console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">

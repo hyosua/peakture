@@ -13,9 +13,13 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         secure: true, // le cookie ne sera envoyé que sur HTTPS
         path: "/", // le cookie sera accessible sur tout le site
     }
+<<<<<<< HEAD
     console.log('Cookie set with options:', cookieOptions);
 
 
+=======
+    console.log("cookieOptions", cookieOptions)
+>>>>>>> debug/ios-picture
     if(userId){
         const token = jwt.sign({ userId }, process.env.JWT_SECRET,{
             expiresIn: '15d'
