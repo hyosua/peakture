@@ -92,13 +92,12 @@ const Peakture = () => {
       Peakture
     </h1>
 
-          <motion.div
+          <div
             className={`w-full overflow-hidden rounded-xl relative ${
               isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
             }`}
-            variants={itemVariants}
           >
-            <motion.img
+            <img
               key={peakture._id}
               src={peakture.src}
               onError={(e) => {
@@ -112,7 +111,6 @@ const Peakture = () => {
                   : "w-full h-full object-cover"
               }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
-              variants={imageVariants}
             />
 
       <span
@@ -127,7 +125,7 @@ const Peakture = () => {
       >
         <Expand className="h-5 w-5" />
       </span>
-    </motion.div>
+    </div>
 
     <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
       <Avatar avatarSrc={peakture.userId?.avatar} />
