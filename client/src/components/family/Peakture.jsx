@@ -105,11 +105,11 @@ const Peakture = () => {
                 e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
               }}
               alt="Photo of the Month"
-              className={`rounded-xl cursor-pointer ${
-                isPortrait
-                  ? "h-full w-auto max-h-full mx-auto object-contain"
-                  : "w-full h-full object-cover"
-              }`}
+              style={{ 
+                display: 'inline-block',
+                maxWidth: '100%',
+                height: 'auto'
+              }}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
             />
 
