@@ -62,18 +62,8 @@ const Peakture = () => {
   };
 
   const imageVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.9,
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 1.2,
-        ease: "easeOut",
-      },
-    },
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   // Handler to prevent event propagation for Safari fullscreen issue
@@ -92,12 +82,13 @@ const Peakture = () => {
       Peakture
     </h1>
 
-          <div
+          <motion.div
             className={`w-full overflow-hidden rounded-xl relative ${
               isPortrait ? "h-auto max-h-[70vh]" : "aspect-[4/3]"
             }`}
+            variants={itemVariants}
           >
-            <img
+            <motion.img
               key={peakture._id}
               src={peakture.src}
               onError={(e) => {
@@ -105,12 +96,13 @@ const Peakture = () => {
                 e.target.src = 'https://res.cloudinary.com/djsj0pfm3/image/upload/v1746356352/not-found_ganlxz.png';
               }}
               alt="Photo of the Month"
-              style={{ 
-                display: 'inline-block',
-                maxWidth: '100%',
-                height: 'auto'
-              }}
+              className={`rounded-xl cursor-pointer ${
+                isPortrait
+                  ? "max-h-[70vh] w-auto block mx-auto"
+                  : "w-full h-full object-cover"
+              }`}
               onClick={() => navigate(`/album/${peakture.albumId}`)}
+              variants={imageVariants}
             />
 
       <span
@@ -125,7 +117,7 @@ const Peakture = () => {
       >
         <Expand className="h-5 w-5" />
       </span>
-    </div>
+    </motion.div>
 
     <div className="w-full mt-4 md:mt-6 flex gap-3 md:gap-4 justify-center items-center">
       <Avatar avatarSrc={peakture.userId?.avatar} />
