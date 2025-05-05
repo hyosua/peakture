@@ -21,11 +21,16 @@ const allowedOrigins = [
   'http://localhost:5174',
 ];
 
+// Regex for Vercel preview URLs
+const vercelPreviewRegex = /^https:\/\/peakture-[\w-]+-drykissfffos-projects\.vercel\.app$/;
+
 app.use(cors({
   origin: function (origin, callback) {
     // Autoriser les requêtes sans origin (comme curl ou mobile)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.includes(origin) ||
+      vercelPreviewRegex.test(origin)
+  ) {
       return callback(null, true);
     } else {
       return callback(new Error('Not allowed by CORS'));
