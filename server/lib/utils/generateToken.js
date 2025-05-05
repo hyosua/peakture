@@ -12,7 +12,7 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         secure: true, // le cookie ne sera envoyé que sur HTTPS
         Path: "/", // le cookie sera accessible sur tout le site
     }
-
+    console.log("cookieOptions", cookieOptions)
     if(userId){
         const token = jwt.sign({ userId }, process.env.JWT_SECRET,{
             expiresIn: '15d'
