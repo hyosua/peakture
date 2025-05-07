@@ -205,6 +205,7 @@ export const closeVotes = async (req, res) => {
             { $set: {status : "closed" }},
             { $new: true }
         )
+        console.log("Classement photos:", classementPhotos)
 
         await assignPoints(classementPhotos)
         return res.json(closedAlbum)

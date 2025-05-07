@@ -75,10 +75,10 @@ const Peakture = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-4">
+    <div className={`flex justify-center items-center my-6²`}>
       {peakture && (
         <motion.div
-          className="relative w-80 md:w-96 lg:w-[450px] mx-auto my-8 p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg"
+          className="relative w-80 md:w-96 lg:w-[450px] mx-auto p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -119,7 +119,7 @@ const Peakture = () => {
         tabIndex={0}
         onClick={(e) => {
           e.stopPropagation();
-          setShowFullscreen(true);
+          handleFullscreenClick(e);
         }}
         className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
         title="Voir en plein écran"

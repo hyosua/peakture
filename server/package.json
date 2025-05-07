@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "vitest",
+    "test": "jest",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "type": "module",
+  
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
     "bcryptjs": "^3.0.2",
@@ -29,6 +30,9 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "supertest": "^7.1.0",
