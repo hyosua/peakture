@@ -40,6 +40,22 @@ const userSchema = new mongoose.Schema({
     },
     resetTokenExpires:{
         type: Date,
+    },
+    totalWins:{
+        type: Number,
+    },
+    totalContestParticipations:{
+        type: Number,
+    },
+    participationSeries:{
+        type: Number,
+    },
+    votedForWinnerCount:{
+        type: Number,
+    },
+    badges:{
+        type : [String],
+        default: []
     }
 
 },{timestamps: true})

@@ -37,7 +37,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                         {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
                     </span>
                 <h3 className='mb-2 font-semibold'>{getMonthName(album.month)}</h3>
-                <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png"} 
+                <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/v1746696335/bat-empty-cover_jqwv0x.png"} 
                     alt={getMonthName(album.month)} 
                     className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
                 />

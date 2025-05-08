@@ -421,7 +421,7 @@ const AlbumPage = () => {
             {/* Header */}
             <div className="flex items-center relative justify-center">
                 <button 
-                    className="fixed z-30 left-4 top-4 text-accent btn btn-sm btn-soft"
+                    className="fixed z-30 left-4 top-4 text-primary btn btn-sm btn-soft"
                     onClick={() => navigate(`/family/${album.familyId}`)}
                 >
                     <ArrowBigLeft size={22}/>
@@ -618,7 +618,7 @@ const AlbumPage = () => {
                 ) : (
                     <div className="flex flex-col items-center justify-center py-6 text-white">
                         <motion.img 
-                            className="w-64" src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-album_sowbvd.png" 
+                            className="w-50" src="https://res.cloudinary.com/djsj0pfm3/image/upload/v1746694571/bat-at-cafe_x9lyyx.png" 
                             initial={{ opacity: 0, scale: 0.6 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{
@@ -629,7 +629,7 @@ const AlbumPage = () => {
                             }}
                         />
                         <motion.p 
-                            className="text-xl mb-2"
+                            className="text-xl mt-2 mb-2"
                             initial={{ opacity: 0, scale: 0.6 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{

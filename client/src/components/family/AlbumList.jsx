@@ -394,7 +394,7 @@ const AlbumList = () => {
                 ) : albums?.length === 0 ? ( 
                         <div className='flex flex-col items-center justify-center'>
                             <motion.img 
-                                src='https://res.cloudinary.com/djsj0pfm3/image/upload/v1745782856/sleeping-family_wzcfav.png' 
+                                src='https://res.cloudinary.com/djsj0pfm3/image/upload/v1746722965/3_ytkgo9.png' 
                                 alt='Aucun album trouvé' 
                                 className='w-1/2 h-1/2 lg:w-80 mb-4'
                                 initial={{ opacity: 0, scale: 0.6 }}
