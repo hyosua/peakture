@@ -258,6 +258,7 @@ export const getAlbums = async (req, res) => {
     try{
         const familyId = req.params.id
         const albums = await Album.find({ familyId: new ObjectId(familyId) })
+            .sort({ createdAt: -1 })
             .populate({
                 path: 'winner',
                 select: '-password'
