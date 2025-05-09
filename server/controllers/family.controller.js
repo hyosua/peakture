@@ -52,14 +52,13 @@ export const familyLogout = async (req, res) => {
 export const create = async (req, res) => {
     try {
         const familyName = req.body.name
-
         if(!familyName){
-            return res.status(400).json({message: "Tu dois rentrer un nom de Famille valide."})
+            return res.status(400).json({success: false, message: "Tu dois rentrer un nom de Famille valide."})
         }
 
         const existingFamily = await Family.findOne({name: familyName})
         if(existingFamily){
-            return res.status(401).json({message: "Cette famille existe déjà"})
+            return res.status(401).json({success: false, message: "Cette famille existe déjà"})
         }
 
         const inviteCode = crypto.randomBytes(3).toString('hex').toUpperCase()
@@ -96,7 +95,7 @@ export const create = async (req, res) => {
             const family = newFamily
 
             if (req.user) { // Envoi de l'email de notification à l'utilisateur enregistré
-                 sendFamilyNotification(user.email, user.username, family.name, family._id, family.inviteCode)
+                sendFamilyNotification(user.email, user.username, family.name, family._id, family.inviteCode)
             }
 
             res.status(201).json({

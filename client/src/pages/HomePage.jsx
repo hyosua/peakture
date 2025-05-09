@@ -5,6 +5,7 @@ import Auth from '@/components/auth/Auth.jsx'
 import { CheckCircle, HelpCircle } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import ConfirmMessage from '@/components/ui/ConfirmMessage.jsx';
+import { useToast } from "@/context/ToastContext.jsx"
 
 const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');
@@ -22,6 +23,7 @@ const HomePage = () => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const {currentUser, logout, fetchCurrentUser, error} = useAuth()
+  const {showToast} = useToast()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -152,6 +154,7 @@ const HomePage = () => {
       setServerResponse(familyData)
     }catch(error){
       setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
+      showToast({ message: error, type: "error"})
     }
   };
 
@@ -187,7 +190,6 @@ const HomePage = () => {
 
     return () => clearTimeout(timer);
   }, []);
-  console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
   return (
     <div className="min-h-screen bg-base-300 flex flex-col">

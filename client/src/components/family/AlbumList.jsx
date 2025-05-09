@@ -396,7 +396,7 @@ const AlbumList = () => {
                             <motion.img 
                                 src='https://res.cloudinary.com/djsj0pfm3/image/upload/v1746722965/3_ytkgo9.png' 
                                 alt='Aucun album trouvé' 
-                                className='w-1/2 h-1/2 lg:w-80 mb-4'
+                                className='w-1/2 h-1/2 lg:w-80 mb-4 border-2 border-neutral rounded-full'
                                 initial={{ opacity: 0, scale: 0.6 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{
