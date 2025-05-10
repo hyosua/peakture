@@ -827,12 +827,7 @@ const AlbumPage = () => {
                                 </div>
 
                                 {uploading && (
-                                    <div className="w-full bg-base-200 rounded-full h-2.5">
-                                        <div
-                                            className="bg-primary h-2.5 rounded-full"
-                                            style={{ width: `${uploadProgress}%`}}
-                                        ></div>
-                                    </div>
+                                    <progress className="progress progress-secondary w-full" />
                                 )}
 
                                 <div className="flex justify-end gap-2">
