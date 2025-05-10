@@ -32,6 +32,17 @@ const FamilyRouteWrapper = () => {
   )
 }
 
+// Family Wrapper
+const AlbumRouteWrapper = () => {
+  const {familyId} = useParams()
+
+  return (
+    <ProtectedRoute familyId={familyId}>
+      <AlbumPage />
+    </ProtectedRoute>
+  )
+}
+
 // Protected Route
 const ProtectedRoute = ({ children, familyId}) => {
   const {currentUser, loading} = useAuth()
@@ -96,6 +107,12 @@ const AppRoutes = () => {
             <FamilyRouteWrapper />
           } 
         />
+        <Route 
+          path="/family/:familyId/album/:id" 
+          element={ 
+            <AlbumRouteWrapper />
+          } 
+        />
         {/* Routes publiques */}
         <Route path="/profile" element={<Profile />} /> 
         <Route path="/auth" element={<Auth />} /> 
@@ -103,7 +120,6 @@ const AppRoutes = () => {
         <Route path="/reset-password" element={<ResetPasswordPage />} /> 
         <Route path="/login" element={<Login />} /> 
         <Route path="/forbidden" element={<Forbidden />} />
-        <Route path="/album/:id" element={<AlbumPage />} />
         <Route path="/classement" element={<Classements />} />
       </Routes>
     </Layout>

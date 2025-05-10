@@ -21,6 +21,7 @@ const AlbumList = () => {
     const [errorMessage, setErrorMessage] = useState('')
     
     const {isAdmin, currentUser} = useAuth()
+    const currentFamily = currentUser?.familyId
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: 0,
         theme: '',
@@ -283,7 +284,7 @@ const AlbumList = () => {
 
     // Navigate to album page
     const handleAlbumClick = (id) => {
-        navigate(`/album/${id}`)
+        navigate(`/family/${currentFamily}/album/${id}`)
     }
   
     
