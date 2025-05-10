@@ -246,7 +246,7 @@ export const editFamilyName = async (req, res) => {
             new : true,
             runValidators: true, // Verifie le format défini dans le schéma mongoose
         })
-        return res.status(200).json({ success: true, message: "Le non de la Family a bien été modifié", updatedFamily })
+        return res.status(200).json({ success: true, message: "Le nom de la Family a bien été modifié", updatedFamily })
     } catch (error) {
         console.error("Erreur dans change Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })

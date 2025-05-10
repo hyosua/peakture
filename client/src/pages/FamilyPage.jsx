@@ -115,7 +115,8 @@ const FamilyHome = () => {
                     >
                         <NameEditor 
                             isAdmin={isAdmin}
-                            familyName={family?.name}
+                            as="h1"
+                            text={family?.name}
                             onSave={handleSaveFamilyName}
                     />
                     </motion.div>

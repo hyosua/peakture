@@ -5,6 +5,8 @@ import { Upload, Plus, X, ArrowBigLeft } from "lucide-react"
 import Picture  from "@/components/album/Picture.jsx"
 import { motion } from "framer-motion";
 import { useAuth } from '@/context/AuthContext.jsx';
+import { useToast } from "@/context/ToastContext.jsx"
+import NameEditor from '@/components/ui/NameEditor.jsx';
 import  Auth  from '@/components/auth/Auth.jsx'
 import ContestResults from "@/components/album/ContestResults.jsx"
 import TieBreakView from "@/components/album/TieBreakView.jsx"
@@ -45,11 +47,12 @@ const AlbumPage = () => {
     const [photoToConfirm, setPhotoToConfirm] = useState(null);
     const [isLoading, setIsLoading] = useState(true)
     const [fullscreenIndex, setFullscreenIndex] = useState(null);
-
-
+    const [showDescriptionForm, setShowDescriptionForm] = useState(false)
 
     const {currentUser} = useAuth()
-        
+    const {showToast} = useToast()
+    const isAdmin = currentUser?._id === album?.admin
+      
     // Fetch Album data
     useEffect(() => {
         async function getAlbumData() {
@@ -385,6 +388,38 @@ const AlbumPage = () => {
         }
     }
 
+    const handleSaveAlbumDescription = async (input) => {
+        if(!input){
+            return;
+        }
+        try{
+            const response = await fetch(`${API_BASE_URL}/api/albums/${id}/edit-description`,{
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    description: input
+                })
+            })
+
+            const serverResponse = await response.json()
+            if(serverResponse.success){
+                showToast({ message: serverResponse.message, type: "success"})
+                const updatedAlbum = {...album, description: input };
+
+                setAlbum(updatedAlbum);
+            }
+        }catch(error){
+            showToast({ message: "Erreur lors de la mise à jour de la description", type: "error"})
+            console.error('Error updating album description:', error);
+            if (error.response) {
+                console.error('Error details:', error.response.data);
+                console.error('Status:', error.response.status);
+            }
+        }
+    }
+
     const handleError = () => {
         setShowError(true)
 
@@ -455,6 +490,37 @@ const AlbumPage = () => {
                     >
                         {album?.theme}
                     </motion.h3>
+
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.4,
+                        }}
+                      >
+                        {album?.description || showDescriptionForm ? (
+                            <NameEditor 
+                                isAdmin={isAdmin}
+                                text={album?.description ? album.description : "Ajouter une description"}
+                                onSave={handleSaveAlbumDescription}
+                            />  
+                        ) : (
+                            isAdmin && (
+                            <button 
+                                className={`btn btn-xs btn-circle m-2 hover:bg-base-100 hover:text-primary btn-soft transition duration-200`}
+                                title="Modifier la description de l'album"
+                                onClick={() => setShowDescriptionForm(true)}
+                            >
+                                <Plus size={14} />
+                            </button>
+                            )
+                        )}
+                        
+                    </motion.div>
+                    
 
                     {album?.isRandomWinner && (
                         <motion.p

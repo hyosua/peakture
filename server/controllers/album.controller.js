@@ -27,7 +27,7 @@ export const getAlbum = async (req, res) => {
 
 export const createAlbum = async (req, res) => {
     try {
-        const { familyId, month, theme } = req.body
+        const { familyId, month, theme, admin } = req.body
         const year = new Date().getFullYear()
 
         if(await Album.findOne({familyId, month, year})){
@@ -37,7 +37,8 @@ export const createAlbum = async (req, res) => {
             year,
             month,
             familyId,
-            theme
+            theme,
+            admin
         };
         const result = await Album.create(newDocument);
         res.status(201).send(result);
@@ -47,7 +48,23 @@ export const createAlbum = async (req, res) => {
     }
 }
 
-export const editAlbum = async (req, res) => {
+export const editAlbumDescription = async (req, res) => {
+    try {
+        const update = req.body
+        console.log("update description", update)
+        console.log("id album", req.params.id)
+        const updatedDescription = await Album.findByIdAndUpdate(req.params.id, update, {
+            new : true,
+            runValidators: true, // Verifie le format défini dans le schéma mongoose
+        })
+        return res.status(200).json({ success: true, message: "La description a bien été modifiée", updatedDescription })
+    } catch (error) {
+        console.error("Erreur dans Album Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}
+
+export const editAlbumTheme = async (req, res) => {
     try {      
         const query = { _id: new ObjectId(req.params.id) };
         const updates = {

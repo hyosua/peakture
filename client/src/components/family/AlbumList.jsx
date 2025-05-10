@@ -18,14 +18,15 @@ const AlbumList = () => {
     const [albumLoading, setAlbumLoading] = useState(false)
 
     const { familyId } = useParams() 
+    const [errorMessage, setErrorMessage] = useState('')
+    
+    const {isAdmin, currentUser} = useAuth()
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: 0,
         theme: '',
-        familyId: familyId
+        familyId: familyId,
+        admin: currentUser._id
     })
-    const [errorMessage, setErrorMessage] = useState('')
-    
-    const {isAdmin} = useAuth()
     const {showToast} = useToast()
     const navigate = useNavigate()
 
@@ -200,12 +201,13 @@ const AlbumList = () => {
             const newAlbumFromServer = await response.json()
             const newAlbum = {
                 _id: newAlbumFromServer._id,
+                admin: newAlbumFromServer.admin,
                 month: newAlbumFromServer.month,
                 theme: newAlbumFromServer.theme,
                 familyId: newAlbumFromServer.familyId
             }
             setAlbums(prev => [...prev, newAlbum])
-            setNewAlbumForm({ month: 0, theme: "", familyId: familyId })
+            setNewAlbumForm({ month: 0, theme: "", familyId: familyId, admin: currentUser._id })
             setShowAddForm(false)
         } catch (error) {
             console.error('Error creating a new album: ', error)

@@ -1,11 +1,11 @@
-import { Pencil, Check, X } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { useState } from "react"
 import PropTypes from 'prop-types'
 
 
-const NameEditor = ({ familyName, onSave, isAdmin }) => {
+const NameEditor = ({ text, onSave, isAdmin, as: Tag = 'p' }) => {
     const [isEditing, setIsEditing] = useState(false)
-    const [editedName, setEditedName] = useState(familyName)
+    const [editedName, setEditedName] = useState(text)
     const [isLoading, setIsLoading] = useState(false)
 
     const handleClick = async () => {
@@ -15,13 +15,22 @@ const NameEditor = ({ familyName, onSave, isAdmin }) => {
         setIsEditing(false)
     }
 
+    const tagStyles = {
+        h1: 'text-4xl mt-4 lg:text-5xl text-primary font-extrabold',
+        h2: 'text-3xl lg:text-4xl font-bold',
+        h3: 'text-2xl lg:text-3xl font-semibold',
+        p: 'text-base  font-normal text-gray-500',
+        default: 'text-base  font-normal text-gray-500',
+    }
+
+    const appliedStyle = tagStyles[Tag] || tagStyles.default;
     
     return (
         <>
         {isEditing ? (
             
-            <div className='flex items-center gap-2 mt-4'>
-                <input className='input input-bordered border-success text-4xl font-bold'
+            <div className='flex items-center gap-2'>
+                <input className={`input input-bordered border-success ${appliedStyle}}`}
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
                 />
@@ -34,32 +43,31 @@ const NameEditor = ({ familyName, onSave, isAdmin }) => {
                 </button>
                 <button onClick={() => {
                     setIsEditing(false);
-                    setEditedName(familyName);
+                    setEditedName(text);
                 }}> 
                  <X className="text-error cursor-pointer" size={20} />
                 </button>
             </div>
                 
         ) : (
-            <div className='flex items-center gap-2'>
-                <h1 className="mt-4 text-4xl lg:text-5xl font-extrabold">
-                <span className="text-primary">{familyName}</span>    
-                </h1>
-                { isAdmin &&(
-                    <button onClick={() => {
-                        setEditedName(familyName);
-                        setIsEditing(true);
-                    }}>
-                        <Pencil className="cursor-pointer" size={15}/>
-                    </button>
-                )}
+            <div className={`flex text-center items-center gap-2 ${isAdmin ? 'cursor-pointer' : ''}`}
+                onClick={() => {
+                    if (!isAdmin) return;
+                    setEditedName(text);
+                    setIsEditing(true);
+                }}
+            >
+                <Tag className={`${appliedStyle} ${isAdmin ? 'cursor-pointer' : ''}`}>
+                <span className={appliedStyle}>{text}</span>    
+                </Tag>
             </div>
         )}
         </>
     )
 }
 NameEditor.propTypes = {
-    familyName: PropTypes.string.isRequired,
+    as: PropTypes.string,
+    text: PropTypes.string.isRequired,
     onSave: PropTypes.func.isRequired,
     isAdmin: PropTypes.bool.isRequired,
 }

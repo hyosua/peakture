@@ -13,6 +13,9 @@ const albumSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    description:{
+        type: String,
+    },
     cover:{
         type: String,
     },
@@ -30,7 +33,12 @@ const albumSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: false,
         refPath: 'userModel'
-      },
+    },
+    admin: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        refPath: 'userModel'
+    },
     userModel: {
     type: String,
     enum: ['User', 'Guest']
