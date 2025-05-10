@@ -3,7 +3,7 @@ import { useState } from "react"
 import PropTypes from 'prop-types'
 
 
-const NameEditor = ({ text, onSave, isAdmin, as: Tag = 'p' }) => {
+const NameEditor = ({ text, onSave, isAdmin, as: Tag = 'p'}) => {
     const [isEditing, setIsEditing] = useState(false)
     const [editedName, setEditedName] = useState(text)
     const [isLoading, setIsLoading] = useState(false)
@@ -19,7 +19,7 @@ const NameEditor = ({ text, onSave, isAdmin, as: Tag = 'p' }) => {
         h1: 'text-4xl mt-4 lg:text-5xl text-primary font-extrabold',
         h2: 'text-3xl lg:text-4xl font-bold',
         h3: 'text-2xl lg:text-3xl font-semibold',
-        p: 'text-base  font-normal text-gray-500',
+        p: 'text-base  font-normal text-gray-300',
         default: 'text-base  font-normal text-gray-500',
     }
 

@@ -27,7 +27,7 @@ export const getAlbum = async (req, res) => {
 
 export const createAlbum = async (req, res) => {
     try {
-        const { familyId, month, theme, admin } = req.body
+        const { familyId, month, theme, description, admin } = req.body
         const year = new Date().getFullYear()
 
         if(await Album.findOne({familyId, month, year})){
@@ -38,6 +38,7 @@ export const createAlbum = async (req, res) => {
             month,
             familyId,
             theme,
+            description,
             admin
         };
         const result = await Album.create(newDocument);

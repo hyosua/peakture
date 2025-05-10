@@ -462,7 +462,7 @@ const AlbumPage = () => {
                     <ArrowBigLeft size={22}/>
                 </button>
                     
-                <div className="relative flex pt-4 mb-6 items-center flex-col ">
+                <div className="relative flex pt-4 mb-2 items-center flex-col ">
                     <motion.h2 
                         className="text-primary text-5xl"
                         initial={{ opacity: 0, scale: 0.6 }}
@@ -478,7 +478,7 @@ const AlbumPage = () => {
                     </motion.h2>
 
                     <motion.h3 
-                        className="font-semibold text-secondary"
+                        className="font-semibold text-2xl text-secondary"
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{
@@ -539,7 +539,7 @@ const AlbumPage = () => {
 
                     {photos?.length > 0 && album?.status === "open" && (
                         <motion.p 
-                        className="text-gray-500 mb-6"
+                        className="text-gray-500 text-sm mb-6"
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{

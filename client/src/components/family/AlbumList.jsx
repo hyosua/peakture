@@ -24,6 +24,7 @@ const AlbumList = () => {
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: 0,
         theme: '',
+        description: '',
         familyId: familyId,
         admin: currentUser._id
     })
@@ -204,6 +205,7 @@ const AlbumList = () => {
                 admin: newAlbumFromServer.admin,
                 month: newAlbumFromServer.month,
                 theme: newAlbumFromServer.theme,
+                description: newAlbumFromServer.description,
                 familyId: newAlbumFromServer.familyId
             }
             setAlbums(prev => [...prev, newAlbum])
@@ -352,6 +354,21 @@ const AlbumList = () => {
                                             onChange={handleFormChange}
                                             className='w-full px-3 py-2 border-2 rounded-lg focus:border-0 focus:outline-none focus:ring-2 focus:ring-primary'
                                             required
+                                        />
+                                    </label>
+                                    
+                                </div>
+
+                                <div className='mb-4'>
+                                    
+                                    <label className='font-semibold block mb-2'>Description (facultatif)
+                                        <textarea                                            
+                                            name='description'
+                                            rows={2}
+                                            value={newAlbumForm.description}
+                                            onChange={handleFormChange}
+                                            className='w-full px-3 py-2 border-2 rounded-lg focus:border-0 focus:outline-none focus:ring-2 focus:ring-primary'
+                                            
                                         />
                                     </label>
                                     
