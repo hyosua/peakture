@@ -110,7 +110,7 @@ const Peakture = () => {
                   ? "max-h-[70vh] w-auto block mx-auto"
                   : "w-full h-full object-cover"
               }`}
-              onClick={() => navigate(`/album/${peakture.albumId}`)}
+              onClick={() => navigate(`/family/${familyId}/album/${peakture.albumId}`)}
               variants={imageVariants}
             />
 
