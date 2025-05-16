@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
                     
                     if(familyResponse.status === 200){
                         const familyData = await familyResponse.json()
+                        console.log("AuthContext, fetchCurrentUser: familyData:", familyData)
                         setCurrentFamily(familyData)
                         // Redirige l'utilisateur vers la page de la famille si il n'est pas déjà dessus
                         const currentPath = window.location.pathname

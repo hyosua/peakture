@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import SettingsMenu from "./SettingsMenu.jsx";
 import { useAuth } from '@/context/AuthContext.jsx';
+import { Vote } from 'lucide-react';
 
 
 const Dock = () => {
@@ -21,6 +22,10 @@ const Dock = () => {
               <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
                 <path fill="currentColor" d="M7 14H3v7h4v-7Zm7-9h-4v16h4V5Zm7 5h-4v11h4V10Z"/>
               </svg>
+            </button>
+
+            <button className={`${currentPath === "/poll" ? "dock-active" : ""}`} disabled={!currentUser} onClick={() => navigate('/poll')}>
+              <Vote size={20} />
             </button>
 
             <SettingsMenu />

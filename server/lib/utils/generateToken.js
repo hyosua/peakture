@@ -13,7 +13,6 @@ export const generateTokenAndSetCookie = (res, userId=null) => {
         secure: true, // le cookie ne sera envoyé que sur HTTPS
         path: "/", // le cookie sera accessible sur tout le site
     }
-    console.log('Cookie set with options:', cookieOptions);
 
 
     if(userId){

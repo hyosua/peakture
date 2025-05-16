@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes.js'
 import family from './routes/family.routes.js'
 import user from './routes/user.routes.js'
 import close from './routes/close.routes.js'
+import poll from './routes/poll.routes.js'
 import classement from './routes/classement.routes.js'
 import { errorHandler } from './errorHandler.js'
 
@@ -55,6 +56,7 @@ app.use("/api/albums/close", close)
 app.use("/api/photos", photos)
 app.use("/api/user", user)
 app.use("/api/classement", classement)
+app.use("/api/poll", poll)
 
 app.use(errorHandler)
 

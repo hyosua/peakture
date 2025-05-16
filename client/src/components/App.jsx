@@ -20,6 +20,7 @@ import Loader from '@/components/ui/Loader.jsx'
 import Forbidden from '@/components/auth/Forbidden.jsx';
 import ForgotPassword from '@/components/auth/ForgotPassword';
 import ResetPasswordPage from '@/pages/ResetPasswordPage.jsx';
+import PollPage from '@/pages/PollPage.jsx';
 
 // Family Wrapper
 const FamilyRouteWrapper = () => {
@@ -121,6 +122,7 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} /> 
         <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/classement" element={<Classements />} />
+        <Route path="/poll" element={<PollPage />} />
       </Routes>
     </Layout>
     

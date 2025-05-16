@@ -171,7 +171,7 @@
                                         initial={{ y: 20 }}
                                         animate={{ y: [0, -10, 0, -5, 0] }}
                                         transition={{ duration: 2, times: [0, 0.25, 0.5, 0.75, 1], ease: "easeInOut" }}
-                                        className="absolute -top-10 left-1/2 -translate-x-1/2 w-12 h-12"
+                                        className="absolute -top-10 left-1/4 -translate-x-1/2 w-12 h-12"
                                     >
                                         <img 
                                         src="https://img.icons8.com/?size=100&id=Gb6fHoXK4exM&format=png&color=000000" 
