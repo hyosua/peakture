@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 
 
 const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,10 +17,10 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
-    console.log("Login tentative pour:", username);
+    console.log("Login tentative pour:", identifier);
     
     try {
-      const userData = await login(username, password);
+      const userData = await login(identifier, password);
       console.log("Résultat du login:", userData);
       
       if (userData && !userData.error) {
@@ -55,10 +55,10 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
         >
           <input
             type="text"
-            placeholder="Nom d'utilisateur"
+            placeholder="Email ou pseudo"
             className="input input-bordered w-full"
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
+            onChange={(e) => setIdentifier(e.target.value)}
+            value={identifier}
             required
           />
           <div className='relative'>
@@ -90,10 +90,9 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
                 setTimeout(() => {
                   window.location.href = '/forgot-password';
                 }, 100);
-              }
-              }
+              }}
             >
-            Mot de passe oublié ?
+              Mot de passe oublié ?
             </button>
           </div>
           
