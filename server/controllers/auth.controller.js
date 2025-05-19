@@ -7,7 +7,9 @@ import { sendPasswordResetNotification, sendSignupNotification } from '../lib/ut
 
 export const signup = async (req, res) => {
     try {
-        const { username, email, password, inviteCode } = req.body
+        let { username, email, password, inviteCode } = req.body
+        username = username.trim()
+        email = email.trim().toLowerCase()
         
         const existingUser = await User.findOne({ username })
         if(existingUser){
@@ -70,7 +72,8 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { identifier, password } = req.body
+        let { identifier, password } = req.body
+        identifier = identifier.trim();
         const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
         const query = isEmail ? { email: identifier } : { username: identifier };
         const user = await User.findOne(query)
