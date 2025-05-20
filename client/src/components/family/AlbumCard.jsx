@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 
 
-const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsDeleteAlbumId, setIsCloseVotesConfirm }) => {
+const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsDeleteAlbumId, showCloseVotesConfirm }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.9 });
 
@@ -75,7 +75,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                                     label: "Cloturer les votes",
                                     icon: <Vote className="h-4 w-4" />,
                                     disabled: album.status === "closed" || album.status === "tie-break",
-                                    onClick: () => setIsCloseVotesConfirm(true),
+                                    onClick: () => showCloseVotesConfirm(album._id),
                                     
                                 },
                                 {
@@ -114,5 +114,5 @@ AlbumCard.propTypes = {
     handleAlbumClick: PropTypes.func,
     isAdmin: PropTypes.bool.isRequired,
     setIsDeleteAlbumId: PropTypes.func.isRequired,
-    setIsCloseVotesConfirm: PropTypes.func.isRequired,
+    showCloseVotesConfirm: PropTypes.func.isRequired,
 };
