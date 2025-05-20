@@ -190,7 +190,9 @@ export const closeVotes = async (req, res) => {
         const albumId = req.params.id
         const album = await Album.findById(albumId)
         const classementPhotos = await Photo.find({albumId}).sort({ votes: -1 });
+        console.log("close.controller: Classement photos:", classementPhotos)
         const tiePhotos = classementPhotos.filter(photo => photo.votes === classementPhotos[0].votes);
+        console.log("close.controller: Photos à départager:", tiePhotos)
 
         if (tiePhotos.length > 1) {
             return res.status(400).json({ error: "égalité" });

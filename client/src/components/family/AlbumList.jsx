@@ -14,7 +14,7 @@ const AlbumList = () => {
     const [editingAlbum, setEditingAlbum] = useState(null)
     const [showAddForm, setShowAddForm] = useState(false)
     const [isDeleteAlbumId, setIsDeleteAlbumId] = useState(null);
-    const [isCloseVotesConfirm, setIsCloseVotesConfirm] = useState(false);
+    const [albumToCloseId, setAlbumToCloseId] = useState(null); // New state for closing votes
     const [albumLoading, setAlbumLoading] = useState(false)
 
     const { familyId } = useParams() 
@@ -43,6 +43,7 @@ const AlbumList = () => {
                 }
                 const albumsData = await response.json()
                 setAlbums(albumsData)
+                console.log("Albums data:", albumsData)
                 setAlbumLoading(false)
             } catch (error){
                 console.error('Error fetching albums:', error)
@@ -79,7 +80,7 @@ const AlbumList = () => {
 
     // Handle Vote Ending
     const handleAlbumClose = async (albumId) =>{
-
+        console.log("Closing album with ID:", albumId)
         try{
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/close-votes`,{
                 method: "PATCH",
@@ -170,8 +171,6 @@ const AlbumList = () => {
         setEditingAlbum(null)
         setNewTheme('')
     }
-
-
 
     // Handle form change for new album
     function handleFormChange(e) {
@@ -285,6 +284,11 @@ const AlbumList = () => {
     // Navigate to album page
     const handleAlbumClick = (id) => {
         navigate(`/family/${currentFamily}/album/${id}`)
+    }
+
+    // Show confirmation for closing votes
+    const showCloseVotesConfirm = (albumId) => {
+        setAlbumToCloseId(albumId);
     }
   
     
@@ -466,9 +470,8 @@ const AlbumList = () => {
                                 handleEdit={handleEdit}
                                 isAdmin={isAdmin}
                                 setIsDeleteAlbumId={setIsDeleteAlbumId}
-                                setIsCloseVotesConfirm={setIsCloseVotesConfirm}
+                                showCloseVotesConfirm={showCloseVotesConfirm}
                                 handleAlbumClick={handleAlbumClick}
-
                             />
                             {/* Edit Album */}
                             {editingAlbum === album._id && (
@@ -499,62 +502,62 @@ const AlbumList = () => {
                                         
                                     </div>
                                 </div>
-
                             )}
-
-                        <ConfirmMessage
-                            title="Supprimer cet album ?"
-                            message="Cette action est irréversible et tout son contenu sera perdu."
-                            onConfirm={(e) => {
-                                deleteAlbum(isDeleteAlbumId)
-                                setIsDeleteAlbumId(null)
-                                e.stopPropagation()
-                            }}
-                            onCancel={(e) => {
-                                setIsDeleteAlbumId(null)
-                                e.stopPropagation()
-                            }}
-                            isOpen={isDeleteAlbumId}
-                        />     
-                        <ConfirmMessage
-                            title="Clotûrer l'album ?"
-                            message="Cette action est irréversible, tu es sur le point de clotûrer l'album."
-                            onConfirm={(e) => {
-                                handleAlbumClose(album._id)
-                                setIsCloseVotesConfirm(false)
-                                e.stopPropagation()
-                            }}
-                            onCancel={(e) => {
-                                setIsCloseVotesConfirm(false)
-                                e.stopPropagation()
-                            }}
-                            isOpen={isCloseVotesConfirm}
-                        />     
-
                         </div>
-                        
                     ))}
-    
                 </div>
             )}
+            
+            {/* Delete Album Confirmation */}
+            <ConfirmMessage
+                title="Supprimer cet album ?"
+                message="Cette action est irréversible et tout son contenu sera perdu."
+                onConfirm={(e) => {
+                    deleteAlbum(isDeleteAlbumId)
+                    setIsDeleteAlbumId(null)
+                    e.stopPropagation()
+                }}
+                onCancel={(e) => {
+                    setIsDeleteAlbumId(null)
+                    e.stopPropagation()
+                }}
+                isOpen={isDeleteAlbumId}
+            />     
+            
+            {/* Close Votes Confirmation */}
+            <ConfirmMessage
+                title="Clotûrer l'album ?"
+                message="Cette action est irréversible, tu es sur le point de clotûrer l'album."
+                onConfirm={(e) => {
+                    console.log("OnClose: Album ID:", albumToCloseId)
+                    handleAlbumClose(albumToCloseId)
+                    setAlbumToCloseId(null)
+                    e.stopPropagation()
+                }}
+                onCancel={(e) => {
+                    setAlbumToCloseId(null)
+                    e.stopPropagation()
+                }}
+                isOpen={albumToCloseId}
+            />     
                                 
             
-                { isAdmin && (
-                        <motion.button
-                            className='p-6 btn btn-primary mt-6 rounded-full hover:text-neutral flex items-center cursor-pointer'
-                            onClick={() => setShowAddForm(true)}
-                            initial={{ opacity: 0, scale: 0.6 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{
-                                type: "spring",
-                                stiffness: 500,
-                                damping: 20,
-                                delay: 0.7,
-                            }}
-                        >
-                            <Plus size={24} />
-                        </motion.button>
-                    )}
+            {isAdmin && (
+                <motion.button
+                    className='p-6 btn btn-primary mt-6 rounded-full hover:text-neutral flex items-center cursor-pointer'
+                    onClick={() => setShowAddForm(true)}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 20,
+                        delay: 0.7,
+                    }}
+                >
+                    <Plus size={24} />
+                </motion.button>
+            )}
            
         </div>
     )
