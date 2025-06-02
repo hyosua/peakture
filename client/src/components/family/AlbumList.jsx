@@ -367,13 +367,12 @@ const AlbumList = () => {
                                 <div className='mb-4'>
                                     
                                     <label className='font-semibold block mb-2'>Description (facultatif)
-                                        <textarea                                            
-                                            name='description'
+                                        <textarea
+                                            name='description' 
                                             rows={2}
                                             value={newAlbumForm.description}
                                             onChange={handleFormChange}
                                             className='w-full px-3 py-2 border-2 rounded-lg focus:border-0 focus:outline-none focus:ring-2 focus:ring-primary'
-                                            
                                         />
                                     </label>
                                     
