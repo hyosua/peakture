@@ -74,6 +74,11 @@ const Peakture = () => {
     setShowFullscreen(true);
   };
 
+  // If no peakture, return null to avoid rendering
+  if (!peakture) {
+    return null;
+  }
+  
   return (
     <div className={`flex justify-center items-center my-6²`}>
       {peakture && (
@@ -135,7 +140,7 @@ const Peakture = () => {
             <Avatar avatarSrc={peakture.userId?.avatar} />
             <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
             <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
-              {peakture.votes}
+              {peakture.userId?.score || 0}
             </span>
           </motion.div>
         </motion.div>

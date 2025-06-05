@@ -286,7 +286,7 @@ export const getPeakture = async (req, res) => {
         }
         const peakture = await Photo.findOne({
             _id: lastClosedAlbum.peakture
-        }).populate("userId", "username avatar")
+        }).populate("userId", "username avatar score")
         return res.json(peakture)
     }catch (error){
         console.error("Erreur dans getPeakture Family Controller:", error.message)
