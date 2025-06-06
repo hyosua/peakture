@@ -140,7 +140,7 @@ const Peakture = () => {
             <Avatar avatarSrc={peakture.userId?.avatar} />
             <h2 className="text-lg md:text-xl font-semibold">{peakture.username}</h2>
             <span className="mx-2 md:mx-4 text-primary text-lg md:text-xl font-semibold">
-              {peakture.userId?.score}
+              {peakture.userId?.score || 0}
             </span>
           </motion.div>
         </motion.div>
