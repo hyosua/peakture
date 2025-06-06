@@ -21,9 +21,13 @@ const albumSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["open", "tie-break", "closed"],
+        enum: ["open", "tie-break", "closed", "countdown"],
         default: "open",
         required: true,
+    },
+    countdownDate: {
+        type: Date,
+        required: false,
     },
     tieBreakJudge: { // l'utilisateur qui doit départager (ancien gagnant)
         type: mongoose.Schema.Types.ObjectId,
