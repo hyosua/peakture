@@ -119,24 +119,15 @@ export const getWinner = async (req, res) => {
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winningPhoto.userId, userModel: userType, peakture: winningPhoto._id }},
+            { $set: { winner: winningPhoto.userId, userModel: userType, peakture: winningPhoto._id, cover: winningPhoto.src }},
             { new: true }
         ).populate('winner').populate('peakture')
 
-        console.log("Album with winner: ",result)
 
         if(!result) {
             console.log("Erreur lors de l'ajout du winner")
             return res.status(404).json({ message: "Album non trouvé" });
         }
-
-        // Mettre à jour l'album cover'
-        await Album.updateOne(
-            {_id: req.params.id}, 
-            { $set: { cover: winningPhoto.src } }
-        )
-
-        const albumUpdated = await Album.findById({ _id: req.params.id })
 
         res.status(200).json({
             updatedAlbum: result, 
@@ -164,14 +155,14 @@ export const handleTie = async (req, res) => {
             { familyId, status: "closed" }
         ).sort({ createdAt: -1 });
 
-        if (lastClosedAlbum) {
+        if (lastClosedAlbum) { // Si un album cloturé existe, on vérifie le gagnant
             let lastWinner = await User.findById(lastClosedAlbum.winner);
             if(!lastWinner){
                 lastWinner = await Guest.findById(lastClosedAlbum.winner)
             }
             const lastWinnerIsFinalist = tiePhotos.some(photo => photo.userId.toString() === lastClosedAlbum.winner.toString());
 
-            if (!lastWinnerIsFinalist) {
+            if (!lastWinnerIsFinalist) { // Si le dernier gagnant n'est pas dans les finalistes
                 await sendTieNotification(
                     lastWinner.email,
                     lastWinner.username,
@@ -195,7 +186,8 @@ export const handleTie = async (req, res) => {
 
                 return res.status(200).json({
                     message: `Le précédent vainqueur (${lastWinner.username}) doit départager les finalistes.`,
-                    pendingAlbum: pendingTieAlbum
+                    pendingAlbum: pendingTieAlbum,
+                    updatedTiedPhotos
                 });
             }
         }
