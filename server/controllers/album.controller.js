@@ -235,6 +235,31 @@ export const handleTie = async (req, res) => {
     }
 }
 
+export const setCountdown = async (req, res) => {
+    try {      
+        const { countDownDays } = req.body;
+        const countdownDate = new Date(Date.now() + countDownDays * 24 * 60 * 60 * 1000); // Convert days to milliseconds
+
+        const updatedAlbum = await Album.findByIdAndUpdate(
+            req.params.id,
+            { $set: { countdownDate, status: "countdown" } },
+            { new: true }
+        );
+
+        if (!updatedAlbum) {
+            return res.status(404).json({ message: "Album non trouvé" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Compte à rebours enclenché pour ${countdownDate} jour${countdownDate > 1 ? "s" : ""}`,
+            updatedAlbum
+        });
+    } catch (error) {
+        console.error('Error setting album countdown:', error);
+        res.status(500).json({ success: false, message: 'Erreur lors de la configuration du compte à rebours', error: error.message });
+    }
+}
 
 export const deleteAlbum = async (req, res) => {
     try {
