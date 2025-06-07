@@ -4,15 +4,15 @@ import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb";
 import cloudinary from "../cloudinaryConfig.js"
-import mongoose from "mongoose";
+import mongoose, { set } from "mongoose";
 import { sendTieNotification } from "../lib/utils/sendEmail.js";
-
+import { assignRandomWinner, assignRandomWinningPhoto, assignWinnerRandomly, checkTie, getUserOrGuestById, setTieBreak, shouldResolveTieWithPreviousWinner } from "../services/album.service.js";
 
 export const getAlbum = async (req, res) => {
     try {
         const album = await Album.findOne({
             _id: req.params.id
-        }).populate("winner");
+        }).populate("winnerId");
 
         if (!album) {
             return res.status(404).json({ message: 'Album non trouvé' });
@@ -119,9 +119,9 @@ export const getWinner = async (req, res) => {
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winner: winningPhoto.userId, userModel: userType, peakture: winningPhoto._id, cover: winningPhoto.src }},
+            { $set: { winnerId: winningPhoto.userId, userModel: userType, peakture: winningPhoto._id, cover: winningPhoto.src }},
             { new: true }
-        ).populate('winner').populate('peakture')
+        ).populate('winnerId').populate('peakture')
 
 
         if(!result) {
@@ -141,8 +141,9 @@ export const getWinner = async (req, res) => {
 }
 
 export const handleTie = async (req, res) => {
-    try {      
-        const classementPhotos = await Photo.find({ albumId: req.params.id }).sort({ votes: -1 });
+    try { 
+        const albumId = req.params.id;     
+        const classementPhotos = await Photo.find({ albumId }).sort({ votes: -1 });
         const tiePhotos = classementPhotos.filter(photo => photo.votes === classementPhotos[0].votes);
         const { familyId } = req.body;
 
@@ -155,77 +156,22 @@ export const handleTie = async (req, res) => {
             { familyId, status: "closed" }
         ).sort({ createdAt: -1 });
 
-        if (lastClosedAlbum) { // Si un album cloturé existe, on vérifie le gagnant
-            let lastWinner = await User.findById(lastClosedAlbum.winner);
-            if(!lastWinner){
-                lastWinner = await Guest.findById(lastClosedAlbum.winner)
-            }
-            const lastWinnerIsFinalist = tiePhotos.some(photo => photo.userId.toString() === lastClosedAlbum.winner.toString());
+        if (shouldResolveTieWithPreviousWinner(lastClosedAlbum, tiePhotos)) { 
+            const lastWinner = await getUserOrGuestById(lastClosedAlbum.winnerId);
+            const tieBreak = await setTieBreak(lastWinner, albumId, tiePhotos);
 
-            if (!lastWinnerIsFinalist) { // Si le dernier gagnant n'est pas dans les finalistes
-                await sendTieNotification(
-                    lastWinner.email,
-                    lastWinner.username,
-                    req.params.id
-                );
-
-                const updatedTiedPhotos = await Photo.updateMany(
-                    { _id: { $in: tiePhotos.map(photo => photo._id) } },
-                    { $set: { isTied: true } }
-                );
-
-                const pendingTieAlbum = await Album.findByIdAndUpdate(
-                    req.params.id,
-                    { $set: { status: "tie-break", tieBreakJudge: lastWinner._id } },
-                    { new: true }
-                );
-
-                if (!pendingTieAlbum) {
-                    return res.status(404).json({ message: "Album non trouvé" });
-                }
-
-                return res.status(200).json({
-                    message: `Le précédent vainqueur (${lastWinner.username}) doit départager les finalistes.`,
-                    pendingAlbum: pendingTieAlbum,
-                    updatedTiedPhotos
-                });
-            }
+            return res.status(200).json({
+                message: `Le précédent vainqueur (${lastWinner.username}) doit départager les finalistes.`,
+                pendingAlbum: tieBreak.pendingTieAlbum,
+                updatedTiedPhotos: tieBreak.updatedTiedPhotos
+            });
         }
 
         // Sinon, tirage au sort
-        const indexGagnant = Math.floor(Math.random() * tiePhotos.length);
-        const winningPhoto = tiePhotos[indexGagnant];
-
-        const updatedWinningPhoto = await Photo.findByIdAndUpdate(
-            winningPhoto._id,
-            { $inc: { votes: 1 } },
-            { new: true }
-        );
-
-        let winner = await User.findById(winningPhoto.userId);
-        if(!winner){
-            winner = await Guest.findById(winningPhoto.userId)
-        }
-
-        const updatedAlbum = await Album.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: {
-                    winner: winningPhoto.userId,
-                    peakture: updatedWinningPhoto._id,
-                    status: "closed",
-                    cover: updatedWinningPhoto.src
-                }
-            },
-            { new: true }
-        ).populate('winner').populate('peakture');
-
-        if (!updatedAlbum) {
-            return res.status(404).json({ message: "Erreur lors de la fermeture de l'album" });
-        }
+        const { winnerId, updatedAlbum } = await assignWinnerRandomly(albumId, tiePhotos);
 
         return res.status(200).json({
-            winner,
+            winnerId,
             updatedAlbum
         });
 
@@ -289,16 +235,16 @@ export const closeVotes = async (req, res) => {
     try{    
         const albumId = req.params.id
         const album = await Album.findById(albumId)
-        const classementPhotos = await Photo.find({albumId}).sort({ votes: -1 });
-        const tiePhotos = classementPhotos.filter(photo => photo.votes === classementPhotos[0].votes);
-
-        if (tiePhotos.length > 1) {
-            return res.status(400).json({ error: "égalité" });
-        }
+        const photos = await Photo.find({albumId});
 
         if(!album){
             return res.status(404).json({ error: "Album non trouvé"})
         }
+        const isTied = await checkTie(photos);
+        if (isTied) {
+            return res.status(400).json({ error: "égalité" });
+        }
+
 
         const closedAlbum = await Album.findByIdAndUpdate( 
             albumId, 
