@@ -4,20 +4,22 @@ import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb";
 import cloudinary from "../cloudinaryConfig.js"
-import mongoose, { set } from "mongoose";
-import { sendTieNotification } from "../lib/utils/sendEmail.js";
-import { assignRandomWinner, assignRandomWinningPhoto, assignWinnerRandomly, checkTie, getUserOrGuestById, setTieBreak, shouldResolveTieWithPreviousWinner } from "../services/album.service.js";
 
 export const getAlbum = async (req, res) => {
     try {
-        const album = await Album.findOne({
-            _id: req.params.id
-        }).populate("winnerId");
+        const album = await Album.findById(req.params.id);
 
         if (!album) {
             return res.status(404).json({ message: 'Album non trouvé' });
         }
-        
+
+        // Populate uniquement si winnerId et winnerModel sont définis
+        if (album.winnerId && album.winnerModel) {
+            await album.populate('winnerId');
+        }
+
+        // Peux aussi ajouter peakture
+        // await album.populate('peakture');
         res.json(album);
     } catch (error) {
         console.error('Error fetching album:', error);
@@ -96,90 +98,6 @@ export const editAlbumTheme = async (req, res) => {
     }
 }
 
-export const getWinner = async (req, res) => {
-    try {      
-        
-        const classementPhotos = await Photo.find({albumId: req.params.id}).sort({ votes: -1 })
-
-        if(!classementPhotos || classementPhotos.length === 0){
-            return res.status(404).send("Aucun winner")
-        }
-
-        if(classementPhotos[0].votes === classementPhotos[1]?.votes){
-            return res.status(400).json({ message: "égalité" })
-        }
-
-        const winningPhoto = classementPhotos[0]
-        const userType = winningPhoto.userModel;
-        const UserModel = mongoose.model(userType);
-        const winner = await UserModel.findById(winningPhoto.userId);
-        if (!winner) {
-            return res.status(404).json({ message: "Utilisateur gagnant non trouvé" });
-        }
-        
-        const result = await Album.findByIdAndUpdate(
-            req.params.id, 
-            { $set: { winnerId: winningPhoto.userId, winnerModel: userType, userModel: userType, peakture: winningPhoto._id, cover: winningPhoto.src }},
-            { new: true }
-        ).populate('winnerId').populate('peakture')
-
-
-        if(!result) {
-            console.log("Erreur lors de l'ajout du winner")
-            return res.status(404).json({ message: "Album non trouvé" });
-        }
-
-        res.status(200).json({
-            updatedAlbum: result, 
-            classementPhotos
-        })
-
-    } catch (error) {
-        console.error('Error in winner route:', error);
-        res.status(500).json({ message: 'Erreur pour trouver un gagnant:', error: error.message });
-    }
-}
-
-export const handleTie = async (req, res) => {
-    try { 
-        const albumId = req.params.id;     
-        const classementPhotos = await Photo.find({ albumId }).sort({ votes: -1 });
-        const tiePhotos = classementPhotos.filter(photo => photo.votes === classementPhotos[0].votes);
-        const { familyId } = req.body;
-
-        // Si pas d'égalité, inutile de continuer
-        if (tiePhotos.length <= 1) {
-            return res.status(400).json({ message: "Pas d'égalité détectée." });
-        }
-
-        const lastClosedAlbum = await Album.findOne(
-            { familyId, status: "closed" }
-        ).sort({ createdAt: -1 });
-
-        if (shouldResolveTieWithPreviousWinner(lastClosedAlbum, tiePhotos)) { 
-            const lastWinner = await getUserOrGuestById(lastClosedAlbum.winnerId);
-            const tieBreak = await setTieBreak(lastWinner, albumId, tiePhotos);
-
-            return res.status(200).json({
-                message: `Le précédent vainqueur (${lastWinner.username}) doit départager les finalistes.`,
-                pendingAlbum: tieBreak.pendingTieAlbum,
-                updatedTiedPhotos: tieBreak.updatedTiedPhotos
-            });
-        }
-
-        // Sinon, tirage au sort
-        const { winnerId, updatedAlbum } = await assignWinnerRandomly(albumId, tiePhotos);
-
-        return res.status(200).json({
-            winnerId,
-            updatedAlbum
-        });
-
-    } catch (error) {
-        console.error('Error in handleTie Controller:', error);
-        res.status(500).json({ message: 'Erreur pour trouver un gagnant:', error: error.message });
-    }
-}
 
 export const setCountdown = async (req, res) => {
     try {      
@@ -230,35 +148,6 @@ export const deleteAlbum = async (req, res) => {
         res.status(500).send("Error deleting album");
     }
 }
-
-export const closeVotes = async (req, res) => {
-    try{    
-        const albumId = req.params.id
-        const album = await Album.findById(albumId)
-        const photos = await Photo.find({albumId});
-
-        if(!album){
-            return res.status(404).json({ error: "Album non trouvé"})
-        }
-        const isTied = await checkTie(photos);
-        if (isTied) {
-            return res.status(400).json({ error: "égalité" });
-        }
-
-
-        const closedAlbum = await Album.findByIdAndUpdate( 
-            albumId, 
-            { $set: {status : "closed" }},
-            { $new: true }
-        )
-
-        return res.json(closedAlbum)
-    }catch(error){
-        console.error("Erreur dans Close Album route:", error.message)
-        return res.status(500).json({ error: "Erreur interne du serveur." })
-    }
-}
-
 
 
 export const deleteAlbumFromCloudinary = async (req, res) => {
