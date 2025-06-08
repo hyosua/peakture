@@ -44,7 +44,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                 <h5 className='text-white mb-1'><i>{album.theme}</i></h5>
 
                 {/* Winner Banner */}
-                {album?.winner && (
+                {album?.winnerId && (
                     <ConfettiElement 
                         id={album._id}
                         options={{
@@ -56,7 +56,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                             colors: ['#ff7d5d', '#9fe88d']
                         }}
                     >
-                        <WinnerBanner winner={album?.winner} />
+                        <WinnerBanner winner={album?.winnerId} />
                     </ConfettiElement>
                 )}
 
@@ -107,7 +107,7 @@ AlbumCard.propTypes = {
         theme: PropTypes.string,
         cover: PropTypes.string,
         status: PropTypes.string.isRequired,
-        winner: PropTypes.string,
+        winnerId: PropTypes.string,
     }).isRequired,
     index: PropTypes.number,
     handleEdit: PropTypes.func.isRequired,

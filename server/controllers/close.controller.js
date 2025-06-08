@@ -1,11 +1,6 @@
-import User from "../models/user.model.js"
 import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
-import mongoose from "mongoose";
-import { sendTieNotification } from "../lib/utils/sendEmail.js";
-import { closeAlbumService } from "../services/closeAlbum.service.js";
-import { assignPoints } from "../services/album.service.js";
-import Guest from "../models/guest.model.js";
+import { closeAlbumService, assignPoints } from "../services/closeAlbum.service.js";
 
 export const closeAlbum = async (req, res) => {
     try {
@@ -14,14 +9,14 @@ export const closeAlbum = async (req, res) => {
             return res.status(200).json({
                 message: result.message,
                 tieJudge: result.tieJudge,
-                album: result.updatedAlbum
+                updatedAlbum: result.updatedAlbum
             });
         }
 
         return res.status(200).json({
             message: "Album clotûré",
             winner: result.winner,
-            album: result.updatedAlbum
+            updatedAlbum: result.updatedAlbum
         })
     }catch (error){
         console.error("Erreur dans close.controller :", error);

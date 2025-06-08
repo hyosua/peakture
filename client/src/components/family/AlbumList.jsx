@@ -43,7 +43,6 @@ const AlbumList = () => {
                 }
                 const albumsData = await response.json()
                 setAlbums(albumsData)
-                console.log("Albums data:", albumsData)
                 setAlbumLoading(false)
             } catch (error){
                 console.error('Error fetching albums:', error)
@@ -82,40 +81,30 @@ const AlbumList = () => {
     const handleAlbumClose = async (albumId) =>{
         console.log("Closing album with ID:", albumId)
         try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/close-votes`,{
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/close-album`,{
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ familyId })
             })
-            console.log("Response from server:", response)
+
             if (!response.ok) {
                 const errorData = await response.json();
                 console.log("Error response:", errorData);
-                
-                // Si le serveur renvoie une égalité on appelle handleTie
-                if (errorData.error === "égalité") {
-                    console.log("Il y'a une égalité");
-                    handleTie(albumId); 
-                    return;
-                } else {
-                    throw new Error(errorData.error || "Unknown error occurred");
-                }
+
             }
-            const updatedAlbum = await response.json()
-            console.log("Updated album:", updatedAlbum)
+            const { updatedAlbum, message } = await response.json()
     
             setAlbums(prevAlbums =>
                 prevAlbums.map(album =>
-                    album._id === albumId ? { ...album, status: "closed" } : album
+                    album._id === albumId ? { ...album, status: updatedAlbum.status, cover: updatedAlbum.cover } : album
                 )
             )
-            handleWinner(albumId)
-
+            showToast({ message, type: "success" })
         }catch (error) {
-            console.error('Error Closing album:', error);
-            if (error.response) {
-                console.error('Error details:', error.response.data);
-                console.error('Status:', error.response.status);
-            }
+            console.error("Error closing album:", error)
+            showToast({ message: "Erreur lors de la fermeture de l'album", type: "error" })
+        }finally {
+            setAlbumToCloseId(null);
         }
     }
 
@@ -214,71 +203,6 @@ const AlbumList = () => {
         } catch (error) {
             console.error('Error creating a new album: ', error)
         }
-    }
-
-    // Album Winner
-    const handleWinner = async (albumId) => {
-        try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/winner`, {
-                method: 'PATCH',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Server response:', errorText);
-                if(response.message === "égalité"){
-                    handleTie(albumId)
-                    return
-                }
-            }
-
-            const {updatedAlbum} = await response.json()
-
-            setAlbums(prevAlbums =>
-                prevAlbums.map(album =>
-                    album._id === albumId ? { ...album, winner: updatedAlbum.winner } : album
-                )
-            )
-        }catch(error){
-            console.error('Impossible de récupérer le gagnant:', error)
-        }
-    }
-
-    // Gérer une égalité
-    const handleTie = async (albumId) => {
-        try{
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/tie`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify({ familyId})
-            })
-            const tieResult = await response.json()
-            console.log("Updated album after tieHandling:", tieResult) 
-            if(!response.ok){
-                console.error("Erreur lors de la gestion de l'égalité:", tieResult)
-                return
-            }
-            // Maj de l'état de l'album 
-            if(tieResult.pendingAlbum){
-                setAlbums(prevAlbums =>
-                    prevAlbums.map(album =>
-                        album._id === albumId ? { ...album, status: "tie-break" } : album
-                    )
-                )
-            }else{
-                setAlbums(prevAlbums =>
-                    prevAlbums.map(album =>
-                        album._id === albumId ? { ...album, status: "closed", winner: tieResult.winner, cover: tieResult.updatedAlbum.cover } : album
-                    )
-                )
-            }
-        }catch(error){
-            console.error('Error handling tie:', error)
-        }
-        
     }
 
     // Navigate to album page

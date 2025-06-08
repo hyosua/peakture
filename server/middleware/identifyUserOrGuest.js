@@ -8,10 +8,7 @@ export const identifyUserOrGuest = async (req, res, next) => {
     try {
         const token = req.cookies.jwt
         let sessionId = req.cookies.sessionId
-        
-        // Debug log to see what cookies we're receiving
-        console.log("Cookies received:", req.cookies)
-        
+                
         if (token) {
             // Registered user logic - unchanged
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -30,7 +27,6 @@ export const identifyUserOrGuest = async (req, res, next) => {
 
         if (sessionId) {
             // Guest User logic
-            console.log("Found existing sessionId:", sessionId)
             let guest = await Guest.findOne({ sessionId })
             
             if (!guest) {
@@ -50,12 +46,10 @@ export const identifyUserOrGuest = async (req, res, next) => {
         }
 
         // New guest logic
-        console.log("No sessionId found, generating new one")
         sessionId = generateTokenAndSetCookie(res)
         const username = generatePseudo()
         const guest = new Guest({ sessionId, username });
         await guest.save();
-        console.log("Created new guest with sessionId:", sessionId)
 
         req.guest = guest;
         return next();

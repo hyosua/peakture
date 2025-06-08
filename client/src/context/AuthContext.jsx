@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                 credentials: 'include'  // pour inclure les cookies
             })
-            console.log("fetch /api/auth/me response:", response);
             if(!response.ok){
                 // User not logged in ou autre erreur
                 console.log("fetch /api/auth/me error status:", response.status);
@@ -33,12 +32,10 @@ export const AuthProvider = ({ children }) => {
             }
 
             const userData = await response.json()
-            console.log("AuthContext, fetchCurrentUser: userData:", userData)
             setCurrentUser(userData)
             
             if(userData.familyId){
                 try {
-                    console.log("Fetching family data for familyId:", userData.familyId)
                     const familyResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/family/${userData.familyId}`, {
                         method: 'GET',
                         headers: {
