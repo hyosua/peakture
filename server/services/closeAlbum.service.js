@@ -48,10 +48,10 @@ export const assignPoints = async (photos) => {
 }
 
 export const checkTie =  (photos) => {
+    if(!photos || photos.length < 2) return false; // Pas de photos à vérifier
     try {
         // Récupérer les photos triées par nombre de votes décroissant
         const sortedPhotos = photos.sort((a, b) => b.votes - a.votes);
-        if (photos.length < 2) return false; // Pas assez de photos pour un tie
         const tiePhotos = sortedPhotos.filter(photo => photo.votes === sortedPhotos[0].votes);
         return tiePhotos.length > 1;
     } catch (error) {
@@ -111,7 +111,7 @@ export const setTieBreak = async (lastWinner, albumId, tiePhotos) => {
 
 // détermine s'il existe un gagnant précédant qui n'est pas finaliste dans les photos à départager
 export const shouldResolveTieWithPreviousWinner =  (lastAlbum, tiedPhotos) => {    
-    return lastAlbum && !tiedPhotos.some(photo => photo.userId.toString() === lastAlbum.winnerId.toString());
+    return !!(lastAlbum && !tiedPhotos.some(photo => photo.userId.toString() === lastAlbum.winnerId.toString()));
 }
 
 export const assignWinnerRandomly = async (albumId, tiePhotos) => {
@@ -123,8 +123,8 @@ export const assignWinnerRandomly = async (albumId, tiePhotos) => {
         { new: true }
     );
     
-    const updatedAlbum = await Album.findByIdAndUpdate(
-        albumId,
+    const updatedAlbum = await Album.findOneAndUpdate(
+        { _id: albumId },
         {
             $set: {
                 winnerId: winningPhoto.userId,

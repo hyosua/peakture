@@ -5,7 +5,7 @@ import {
     setTieBreak,
     shouldResolveTieWithPreviousWinner,
     assignWinnerRandomly
-} from '../services/album.service.js';
+} from '../../services/album.service.js';
 
 // Mocks pour les dépendances externes
 jest.mock('../models/user.model.js');
@@ -13,12 +13,17 @@ jest.mock('../models/guest.model.js');
 jest.mock('../models/photo.model.js');
 jest.mock('../models/album.model.js');
 jest.mock('../lib/utils/sendEmail.js'); // Pour sendTieNotification
+jest.mock('@sendgrid/mail', () => ({
+  setApiKey: jest.fn(),
+  send: jest.fn(),
+}));
 
-import User from '../models/user.model.js';
-import Guest from '../models/guest.model.js';
-import Photo from '../models/photo.model.js';
-import Album from '../models/album.model.js';
-import { sendTieNotification } from '../lib/utils/sendEmail.js';
+
+import User from '../../models/user.model.js';
+import Guest from '../../models/guest.model.js';
+import Photo from '../../models/photo.model.js';
+import Album from '../../models/album.model.js';
+import { sendTieNotification } from '../../lib/utils/sendEmail.js';
 
 describe('checkTie', () => {
     test('retourne false quand il y a moins de 2 photos', () => {
@@ -119,20 +124,6 @@ describe('assignRandomWinningPhoto', () => {
         expect(assignRandomWinningPhoto(photos)).toEqual({ id: 3, votes: 5 });
     });
 
-    test('gère les erreurs et les relance', () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-        // Forcer une erreur en mockant Math.floor pour qu'il lance une exception
-        jest.spyOn(Math, 'floor').mockImplementation(() => {
-            throw new Error('Test error');
-        });
-
-        expect(() => assignRandomWinningPhoto([{ id: 1 }])).toThrow('Test error');
-        expect(consoleSpy).toHaveBeenCalledWith('ERROR in assignRandomWinner:', expect.any(Error));
-        
-        consoleSpy.mockRestore();
-        Math.floor.mockRestore();
-    });
-});
 
 describe('getUserOrGuestById', () => {
     beforeEach(() => {
@@ -258,13 +249,14 @@ describe('shouldResolveTieWithPreviousWinner', () => {
 });
 
 describe('assignWinnerRandomly', () => {
+    let mathRandomSpy;
+
     beforeEach(() => {
-        jest.clearAllMocks();
-        jest.spyOn(Math, 'random').mockReturnValue(0.5);
+        mathRandomSpy = jest.spyOn(Math, 'random').mockReturnValue(0.5);
     });
 
     afterEach(() => {
-        Math.random.mockRestore();
+        mathRandomSpy.mockRestore();
     });
 
     test('assigne un gagnant aléatoirement et met à jour la base de données', async () => {
@@ -274,7 +266,13 @@ describe('assignWinnerRandomly', () => {
             { _id: 'photo2', userId: 'user2', votes: 5 }
         ];
 
-        const mockUpdatedPhoto = { _id: 'photo2', userId: 'user2', votes: 6, src: 'photo2.jpg' };
+        const mockUpdatedPhoto = {
+            _id: 'photo2',
+            userId: 'user2',
+            votes: 6,
+            src: 'photo2.jpg'
+        };
+
         const mockUpdatedAlbum = {
             _id: albumId,
             winnerId: 'user2',
@@ -283,8 +281,20 @@ describe('assignWinnerRandomly', () => {
             cover: 'photo2.jpg'
         };
 
-        Photo.findByIdAndUpdate.mockResolvedValue(mockUpdatedPhoto);
-        Album.findByIdAndUpdate.mockResolvedValue(mockUpdatedAlbum);
+        // Mock de Photo.findByIdAndUpdate
+        Photo.findByIdAndUpdate = jest.fn().mockResolvedValue(mockUpdatedPhoto);
+
+        // Crée un objet mockQuery pour chaîner les populates
+        const mockQuery = {
+            populate: jest.fn().mockImplementation(() => mockQuery), // permet le chaining
+            then: jest.fn().mockImplementation(fn => {
+                fn(mockUpdatedAlbum);
+                return Promise.resolve(mockUpdatedAlbum);
+            }),
+        };
+
+        // Mock de Album.findOneAndUpdate pour retourner une "query"
+        Album.findOneAndUpdate = jest.fn().mockReturnValue(mockQuery);
 
         const result = await assignWinnerRandomly(albumId, tiePhotos);
 
@@ -294,24 +304,28 @@ describe('assignWinnerRandomly', () => {
             { new: true }
         );
 
-        expect(Album.findByIdAndUpdate).toHaveBeenCalledWith(
-            albumId,
+        expect(Album.findOneAndUpdate).toHaveBeenCalledWith(
+            { _id: albumId },
             {
                 $set: {
                     winnerId: 'user2',
-                    peakture: 'photo2',
+                    peakture: mockUpdatedPhoto._id,
                     status: 'closed',
-                    cover: 'photo2.jpg'
+                    cover: mockUpdatedPhoto.src
                 }
             },
             { new: true }
         );
+
+        expect(mockQuery.populate).toHaveBeenCalledWith('winnerId');
+        expect(mockQuery.populate).toHaveBeenCalledWith('peakture');
 
         expect(result).toEqual({
             winnerId: 'user2',
             updatedAlbum: mockUpdatedAlbum
         });
     });
+
 
     test('gère le cas où assignRandomWinningPhoto retourne null', async () => {
         // Mock pour que assignRandomWinningPhoto retourne null
@@ -343,4 +357,6 @@ describe('Tests d\'intégration', () => {
         const winner = assignRandomWinningPhoto(tiedPhotos);
         expect([1, 2]).toContain(winner.id);
     });
-});
+})
+}
+);

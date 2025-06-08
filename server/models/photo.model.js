@@ -19,11 +19,10 @@ const photoSchema = new mongoose.Schema({
     },
     username:{
         type: String, 
-        refPath: 'userModel' 
     },
     votedBy: [{ 
         type: mongoose.Schema.Types.ObjectId, 
-        refPath: 'userModel' 
+        ref: 'User' 
     }],
     isTied:{
         type: Boolean,
