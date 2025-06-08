@@ -27,9 +27,7 @@ export const getWinResult = (photos) => {
 }
 
 export const determineUserOrGuest = async (userId) => {
-    if (!userId) {
-        throw new Error("User ID is required to determine user or guest");
-    }
+
     const user = await User.findById(userId);
     if (user) {
         return { model: 'User', user };
@@ -38,14 +36,14 @@ export const determineUserOrGuest = async (userId) => {
     if (guest) {
         return { model: 'Guest', guest };
     }
-    throw new Error("User or Guest not found");
+    return { model: null, user: null };
 }
 
 export const resolveTie = async (tiePhotos, albumId, familyId) => {
     const lastClosedAlbum = await Album.findOne(
             { familyId, status: "closed" }
     ).sort({ createdAt: -1 });
-    
+    console.log("Last winner:", lastClosedAlbum.winnerId);
     const lastWinner = await determineUserOrGuest(lastClosedAlbum.winnerId);
 
     if (shouldResolveTieWithPreviousWinner(lastWinner, tiePhotos)) { 
@@ -251,7 +249,10 @@ export const closeAlbumService = async (albumId, familyId) => {
         },
         { new: true }
     );
-    updatedAlbum = await updatedAlbum.populate('winnerId').populate('peakture');
+    updatedAlbum = await updatedAlbum.populate([
+        { path: 'winnerId' },
+        { path: 'peakture' }
+    ]);
 
     if (!updatedAlbum) {
         throw new Error("Failed to update album with winner information");

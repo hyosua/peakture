@@ -166,7 +166,7 @@ const AlbumPage = () => {
                 }
             }
             setUploadProgress(70)
-            console.log("Current User uploading photo:", currentUser)
+            // console.log("Current User uploading photo:", currentUser)
             // save to database
             const response = await fetch(`${API_BASE_URL}/api/photos${endRoute}`, {
                 method : fetchMethod,
@@ -189,7 +189,7 @@ const AlbumPage = () => {
             }
 
             const responseData = await response.json()
-            console.log("Photo uploaded:", responseData.photo || responseData)
+            // console.log("Photo uploaded:", responseData.photo || responseData)
 
             const newPhoto = responseData.photo || responseData 
 

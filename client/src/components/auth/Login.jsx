@@ -17,12 +17,9 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
-    console.log("Login tentative pour:", identifier);
     
     try {
-      const userData = await login(identifier, password);
-      console.log("Résultat du login:", userData);
-      
+      const userData = await login(identifier, password);      
       if (userData && !userData.error) {
         console.log("Login réussi, appel à onLoginSuccess");
         onLoginSuccess(userData);
