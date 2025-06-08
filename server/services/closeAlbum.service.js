@@ -6,6 +6,75 @@ import Album from "../models/album.model.js";
 import Guest from "../models/guest.model.js";
 import { sendTieNotification } from "../lib/utils/sendEmail.js";
 
+export const getClassementPhotos = async (albumId) => {
+    if(!albumId) {
+        throw new Error("Album ID is required to get classement photos");
+    }
+    const classementPhotos = await Photo.find({ albumId }).sort({ votes: -1 });
+    return classementPhotos;
+}
+
+export const getWinResult = (photos) => {
+    if(!photos || photos.length === 0) {
+        throw new Error("No photos available to determine a winner");
+    }
+    const winningPhoto = photos[0];
+    const tiePhotos = photos.filter(photo => photo.votes === winningPhoto.votes);
+    if (tiePhotos.length > 1) {
+        return { isTie: true, tiePhotos };
+    }
+    return { isTie: false, winningPhoto };
+}
+
+export const determineUserOrGuest = async (userId) => {
+    if (!userId) {
+        throw new Error("User ID is required to determine user or guest");
+    }
+    const user = await User.findById(userId);
+    if (user) {
+        return { model: 'User', user };
+    }
+    const guest = await Guest.findById(userId);
+    if (guest) {
+        return { model: 'Guest', guest };
+    }
+    throw new Error("User or Guest not found");
+}
+
+export const resolveTie = async (tiePhotos, albumId, familyId) => {
+    const lastClosedAlbum = await Album.findOne(
+            { familyId, status: "closed" }
+    ).sort({ createdAt: -1 });
+    
+    const lastWinner = await determineUserOrGuest(lastClosedAlbum.winnerId);
+
+    if (shouldResolveTieWithPreviousWinner(lastWinner, tiePhotos)) { 
+        const tieBreakResult = await setTieBreak(lastWinner.user, albumId, tiePhotos);
+        if (!tieBreakResult) {
+            throw new Error("Failed to set tie break");
+        }
+        return {
+            updatedAlbum: tieBreakResult.pendingTieAlbum,
+            updatedTiedPhotos: tieBreakResult.updatedTiedPhotos,
+            manualTieBreak: true,
+            tieJudge: lastWinner,
+        };
+    }
+    // Si le gagnant précédent n'est pas un User ou est finaliste, on choisit un gagnant aléatoire
+    const winningPhoto = assignRandomWinningPhoto(tiePhotos);
+    const updatedWinningPhoto = await Photo.findByIdAndUpdate(
+        winningPhoto._id,
+        { $inc: { votes: 1 } },
+        { new: true }
+    );
+    return {
+        manualTieBreak: false,
+        winningPhoto: updatedWinningPhoto,
+        winnerId: winningPhoto.userId
+    };
+    
+}
+
 export const assignPoints = async (photos) => {
     try{
         if(!photos || photos.length === 0) return;
@@ -74,9 +143,6 @@ export const assignRandomWinningPhoto = (photos) => {
     }
 }
 
-export const getUserOrGuestById = async (id) => {
-    return await User.findById(id) || await Guest.findById(id);
-}
 
 export const setTieBreak = async (lastWinner, albumId, tiePhotos) => {
     await sendTieNotification(
@@ -109,9 +175,9 @@ export const setTieBreak = async (lastWinner, albumId, tiePhotos) => {
     };
 }
 
-// détermine s'il existe un gagnant précédant qui n'est pas finaliste dans les photos à départager
-export const shouldResolveTieWithPreviousWinner =  (lastAlbum, tiedPhotos) => {    
-    return !!(lastAlbum && !tiedPhotos.some(photo => photo.userId.toString() === lastAlbum.winnerId.toString()));
+// détermine si le gagnant précédant est un User et n'est pas finaliste dans les photos à départager
+export const shouldResolveTieWithPreviousWinner =  (lastWinner, tiedPhotos) => {    
+    return lastWinner.model === 'User' && !tiedPhotos.some(photo => photo.userId.toString() === lastAlbum.winnerId.toString());
 }
 
 export const assignWinnerRandomly = async (albumId, tiePhotos) => {
@@ -139,5 +205,63 @@ export const assignWinnerRandomly = async (albumId, tiePhotos) => {
     return {
         winnerId: winningPhoto.userId,
         updatedAlbum
+    }
+}
+
+export const closeAlbumService = async (albumId, familyId) => {
+    if (!albumId || !familyId) {
+        throw new Error ("Album ID and Family ID are required to close an album");
+    }
+    const classementPhotos = await getClassementPhotos(albumId);
+    if (!classementPhotos || classementPhotos.length === 0) {
+        throw new Error("No photos found for the album to determine a winner");
+    }
+    let { isTie, winningPhoto, tiePhotos } = getWinResult(classementPhotos);
+    let isRandomWinner = false;
+
+    if (isTie) {
+        const tieResult = await resolveTie(tiePhotos, albumId, familyId);
+        if (tieResult.manualTieBreak) {
+            return {
+                status: "tie-break",
+                tieJudge: tieResult.tieJudge,
+                message: `Le précédent vainqueur (${tieResult.tieJudge.user.name}) doit départager les finalistes.`,
+                updatedAlbum: tieResult.updatedAlbum,
+            }
+        }
+        isRandomWinner = true;
+        winningPhoto = tieResult.winningPhoto;
+    }
+
+    const { model: userModel, user: winner } = await determineUserOrGuest(winningPhoto.userId);
+    if (!winner) {
+        throw new Error("Winner not found");
+    }
+    let updatedAlbum = await Album.findByIdAndUpdate(
+        albumId,
+        {
+            $set: {
+                winnerId: winner._id,
+                winnerModel: userModel,
+                peakture: winningPhoto._id,
+                status: "closed",
+                cover: winningPhoto.src,
+                isRandomWinner
+            }
+        },
+        { new: true }
+    );
+    updatedAlbum = await updatedAlbum.populate('winnerId').populate('peakture');
+
+    if (!updatedAlbum) {
+        throw new Error("Failed to update album with winner information");
+    }
+
+    await assignPoints(classementPhotos);
+
+    return {
+        winner,
+        updatedAlbum,
+        status: "closed"
     }
 }
