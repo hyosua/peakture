@@ -119,7 +119,7 @@ export const getWinner = async (req, res) => {
         
         const result = await Album.findByIdAndUpdate(
             req.params.id, 
-            { $set: { winnerId: winningPhoto.userId, userModel: userType, peakture: winningPhoto._id, cover: winningPhoto.src }},
+            { $set: { winnerId: winningPhoto.userId, winnerModel: userType, userModel: userType, peakture: winningPhoto._id, cover: winningPhoto.src }},
             { new: true }
         ).populate('winnerId').populate('peakture')
 
