@@ -103,6 +103,12 @@ const AlbumList = () => {
                 return;
             }
 
+            setAlbums(prevAlbums =>
+                prevAlbums.map(album =>
+                    album._id === albumId ? { ...album, status: "countdown", countdownDate: new Date(Date.now() + days * 24 * 60 * 60 * 1000) } : album
+                )
+            )
+
             const { message } = await response.json()
             showToast({ message, type: "success" })
         }catch (error) {
@@ -131,7 +137,7 @@ const AlbumList = () => {
                 console.log("Error response:", data.error);
                 return;
             }
-            
+
             const { updatedAlbum, message } = data;
     
             setAlbums(prevAlbums =>

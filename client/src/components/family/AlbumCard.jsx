@@ -13,6 +13,29 @@ import PropTypes from 'prop-types';
 const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsDeleteAlbumId, showCloseVotesConfirm }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.9 });
+    const albumStatusStyles = {
+        closed: {
+            border: "border-neutral",
+            badge: "badge-neutral",
+            text: "text-neutral"
+        },
+        countdown: {
+            border: "border-error",
+            badge: "badge-error",
+            text: "text-error"
+        },
+        "tie-break": {
+            border: "border-accent",
+            badge: "badge-accent",
+            text: "text-accent"
+        },
+        open: {
+            border: "border-primary",
+            badge: "badge-primary",
+            text: "text-primary"
+        }
+    };
+    const statusStyle = albumStatusStyles[album?.status] || "primary";
 
     return(
         <div
@@ -21,7 +44,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
             onClick={() => handleAlbumClick(album._id)}
         >
             <motion.div 
-                className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${album.status === "closed" ? "border-secondary" : album.status === "tie-break" ? "border-accent" : "border-primary"} rounded-lg indicator group`}
+                className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${statusStyle.border} rounded-lg indicator group`}
                 initial={{ opacity: 0, scale: 0.6 }}
                 animate={isInView ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.6, y: 20 }}
                     transition={{
@@ -33,8 +56,8 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                     duration: 0.9
                     }}
                 >
-                    <span className={`indicator-item badge " + ${(album.status === "closed" ? "badge-secondary" : album.status === "tie-break" ? "badge-accent" :"badge-primary")}`}>
-                        {album.status === "closed" ? "Closed" : album.status === "tie-break" ? "Départage": "Open"}
+                    <span className={`indicator-item badge ${statusStyle.badge}`}>
+                        {album?.status}
                     </span>
                 <h3 className='mb-2 font-semibold'>{getMonthName(album.month)}</h3>
                 <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/v1746696335/bat-empty-cover_jqwv0x.png"} 
