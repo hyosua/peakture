@@ -25,7 +25,7 @@ export const closeAlbum = async (req, res) => {
     }
 }
 
-export const tieBreak = async (req,res) => {
+export const tieBreakVote = async (req,res) => {
     try{
         const photoId = req.params.id
         const userId = req.user._id
@@ -39,7 +39,7 @@ export const tieBreak = async (req,res) => {
 
        const updatedAlbum = await Album.findByIdAndUpdate(
             { _id: albumId },
-            { $set: { winner: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src }},
+            { $set: { winnerId: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src }},
             { new: true }
         )
 
@@ -60,5 +60,31 @@ export const tieBreak = async (req,res) => {
     }catch(error){
         console.error("Erreur dans le tie break (photos controller):", error)
         return res.status(500).json({ message: "Erreur interne du serveur." })
+    }
+}
+
+export const setCountdown = async (req, res) => {
+    try {      
+        const { days } = req.body;
+        const countdownDate = new Date(Date.now() + days * 60 * 1000); // 24 * 60 * 60 * 1000 = 24 hours in milliseconds
+
+        const updatedAlbum = await Album.findByIdAndUpdate(
+            req.params.id,
+            { $set: { countdownDate, status: "countdown" } },
+            { new: true }
+        );
+
+        if (!updatedAlbum) {
+            return res.status(404).json({ message: "Album non trouvé" });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `Compte à rebours enclenché pour ${days} jour${days > 1 ? "s" : ""}`,
+            updatedAlbum
+        });
+    } catch (error) {
+        console.error('Error setting album countdown:', error);
+        res.status(500).json({ success: false, message: 'Erreur lors de la configuration du compte à rebours', error: error.message });
     }
 }

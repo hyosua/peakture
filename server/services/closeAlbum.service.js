@@ -175,7 +175,7 @@ export const setTieBreak = async (lastWinner, albumId, tiePhotos) => {
 
 // détermine si le gagnant précédant est un User et n'est pas finaliste dans les photos à départager
 export const shouldResolveTieWithPreviousWinner =  (lastWinner, tiedPhotos) => {    
-    return lastWinner.model === 'User' && !tiedPhotos.some(photo => photo.userId.toString() === lastAlbum.winnerId.toString());
+    return lastWinner.model === 'User' && !tiedPhotos.some(photo => photo.userId.toString() === lastWinner.user._id.toString());
 }
 
 export const assignWinnerRandomly = async (albumId, tiePhotos) => {
@@ -223,7 +223,7 @@ export const closeAlbumService = async (albumId, familyId) => {
             return {
                 status: "tie-break",
                 tieJudge: tieResult.tieJudge,
-                message: `Le précédent vainqueur (${tieResult.tieJudge.user.name}) doit départager les finalistes.`,
+                message: `(${tieResult.tieJudge.username}) doit départager les finalistes.`,
                 updatedAlbum: tieResult.updatedAlbum,
             }
         }

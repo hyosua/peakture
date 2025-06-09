@@ -7,6 +7,7 @@ import ConfirmMessage from '@/components/ui/ConfirmMessage.jsx'
 import { useToast } from "@/context/ToastContext.jsx"
 import {  monthsList } from '@/utils/dateConvert.js';
 import AlbumCard from './AlbumCard';
+import AlbumCloseModal from '../album/AlbumCloseModal';
 
 const AlbumList = () => {
     const [albums, setAlbums] = useState([])
@@ -77,6 +78,42 @@ const AlbumList = () => {
         setNewTheme(album.theme)
     }
 
+    // Handle Album Close Confirmation
+    const handleAlbumCloseConfirm = (albumId, mode, days) => {
+        if(mode === 'now') {
+            handleAlbumClose(albumId)
+        }else if(mode === 'timer') {
+            handleCloseTimer(albumId, days)
+        }
+    }
+
+    // Handle Close Timer
+    const handleCloseTimer = async (albumId, days) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/set-countdown`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ days })
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.log("Error response:", errorData);
+                showToast({ message: errorData.message || "Erreur lors de la config du countdown", type: "error" })
+                return;
+            }
+
+            const { message } = await response.json()
+            showToast({ message, type: "success" })
+        }catch (error) {
+            console.error("Error setting close timer:", error)
+            showToast({ message: "Erreur lors de la configuration du countdown", type: "error" })
+        }
+        finally {
+            setAlbumToCloseId(null);
+        }
+    }
+
     // Handle Vote Ending
     const handleAlbumClose = async (albumId) =>{
         console.log("Closing album with ID:", albumId)
@@ -85,18 +122,21 @@ const AlbumList = () => {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ familyId })
-            })
+            });
+
+            const data = await response.json();
 
             if (!response.ok) {
-                const errorData = await response.json();
-                console.log("Error response:", errorData);
-
+                showToast({ message: data.error || "Erreur lors de la fermeture de l'album", type: "error" })
+                console.log("Error response:", data.error);
+                return;
             }
-            const { updatedAlbum, message } = await response.json()
+            
+            const { updatedAlbum, message } = data;
     
             setAlbums(prevAlbums =>
                 prevAlbums.map(album =>
-                    album._id === albumId ? { ...album, status: updatedAlbum.status, cover: updatedAlbum.cover } : album
+                    album._id === albumId ? { ...album, status: updatedAlbum.status, cover: updatedAlbum.cover, winnerId: updatedAlbum.winnerId } : album
                 )
             )
             showToast({ message, type: "success" })
@@ -447,22 +487,16 @@ const AlbumList = () => {
                 isOpen={isDeleteAlbumId}
             />     
             
-            {/* Close Votes Confirmation */}
-            <ConfirmMessage
-                title="Clotûrer l'album ?"
-                message="Cette action est irréversible, tu es sur le point de clotûrer l'album."
-                onConfirm={(e) => {
-                    console.log("OnClose: Album ID:", albumToCloseId)
-                    handleAlbumClose(albumToCloseId)
-                    setAlbumToCloseId(null)
-                    e.stopPropagation()
-                }}
-                onCancel={(e) => {
-                    setAlbumToCloseId(null)
-                    e.stopPropagation()
-                }}
+            {/* Album Close Confirmation */} 
+
+            <AlbumCloseModal 
                 isOpen={albumToCloseId}
-            />     
+                onConfirm={({albumId, mode, days }) => {
+                    handleAlbumCloseConfirm(albumId, mode, days)
+                }}
+                albumId={albumToCloseId}
+                onCancel={() => setAlbumToCloseId(null)}
+            />  
                                 
             
             {isAdmin && (

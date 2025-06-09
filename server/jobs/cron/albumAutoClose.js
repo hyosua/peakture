@@ -1,6 +1,8 @@
 import cron from 'node-cron'
 import mongoose from 'mongoose'
 import Album from '../../models/album.model.js'
+import Photo from '../../models/photo.model.js'
+import { closeAlbumService } from '../../services/closeAlbum.service.js'
 
 const closeAlbum = async () => {
     try {
@@ -17,13 +19,21 @@ const closeAlbum = async () => {
             console.log("Aucun album à cloturer");
             return;
         }
-        // Etape 2: Mettre à jour le statut de ces albums à "closed"
-        const albumIds = albumsToClose.map(album => album._id);
-        const updateResult = await Album.updateMany(
-            { _id: { $in: albumIds } },
-            { status: "closed" }
-        );
-        console.log(`Albums cloturés : ${updateResult.modifiedCount}`);
+        // Etape 2: Clôturer les albums
+        for (const album of albumsToClose) {
+            console.log(`Clôture de l'album ${album._id}`);
+            const updatedAlbum = await closeAlbumService(album._id, album.familyId);
+            if (updatedAlbum.status === 'tie-break') {
+                console.log(`L'album ${album._id} est en tie-break, le juge de départage est ${updatedAlbum.tieBreakJudge}`);
+            } else {
+                console.log(`L'album ${album._id} a été cloturé avec le gagnant : ${updatedAlbum.winner.username}`);
+            }
+            // Mettre à jour les photos restantes pour qu'elles ne soient plus en égalité
+            await Photo.updateMany(
+                { albumId: album._id },
+                { $set: { isTied: false } }
+            );
+        }
 
         console.log("Cloture automatique terminée");
     } catch (error) {
@@ -31,7 +41,7 @@ const closeAlbum = async () => {
     }
 };
 
-cron.schedule('0 43 7 * * *', closeAlbum, {
+cron.schedule('0 36 10 * * *', closeAlbum, {
     scheduled: true,
     timezone: "Europe/Paris"
 });
