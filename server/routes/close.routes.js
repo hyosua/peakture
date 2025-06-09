@@ -1,5 +1,5 @@
 import express from "express";
-import { tieBreak, closeAlbum} from '../controllers/close.controller.js'
+import { closeAlbum, setCountdown, tieBreakVote} from '../controllers/close.controller.js'
 import { identifyUserOrGuest } from "../middleware/identifyUserOrGuest.js";
 
 
@@ -8,7 +8,8 @@ const router = express.Router();
 
 
 router.patch("/:id/close-album", closeAlbum)
-router.patch('/:id/tie-break', identifyUserOrGuest, tieBreak)
+router.put("/:id/set-countdown", setCountdown)
+router.patch('/:id/tie-break', identifyUserOrGuest, tieBreakVote)
 
 
 export default router;
