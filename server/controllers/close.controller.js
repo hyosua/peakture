@@ -39,7 +39,7 @@ export const tieBreakVote = async (req,res) => {
 
        const updatedAlbum = await Album.findByIdAndUpdate(
             { _id: albumId },
-            { $set: { winnerId: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src }},
+            { $set: { winnerId: peakture.userId, peakture: peakture._id, status: "closed", cover: peakture.src, winnerModel: userModel }},
             { new: true }
         )
 

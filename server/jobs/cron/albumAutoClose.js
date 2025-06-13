@@ -24,15 +24,16 @@ const closeAlbum = async () => {
             console.log(`Clôture de l'album ${album._id}`);
             const updatedAlbum = await closeAlbumService(album._id, album.familyId);
             if (updatedAlbum.status === 'tie-break') {
-                console.log(`L'album ${album._id} est en tie-break, le juge de départage est ${updatedAlbum.tieBreakJudge}`);
+                console.log(`L'album ${album._id} est en tie-break`);
             } else {
-                console.log(`L'album ${album._id} a été cloturé avec le gagnant : ${updatedAlbum.winner.username}`);
+                console.log(`L'album ${album._id} a été cloturé avec un gagnant`);
+                // Mettre à jour les photos restantes pour qu'elles ne soient plus en égalité
+                await Photo.updateMany(
+                    { albumId: album._id },
+                    { $set: { isTied: false } }
+                );
             }
-            // Mettre à jour les photos restantes pour qu'elles ne soient plus en égalité
-            await Photo.updateMany(
-                { albumId: album._id },
-                { $set: { isTied: false } }
-            );
+            
         }
 
         console.log("Cloture automatique terminée");
@@ -41,7 +42,7 @@ const closeAlbum = async () => {
     }
 };
 
-cron.schedule('0 36 10 * * *', closeAlbum, {
+cron.schedule('0 52 11 * * *', closeAlbum, {
     scheduled: true,
     timezone: "Europe/Paris"
 });
