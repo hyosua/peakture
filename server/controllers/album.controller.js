@@ -4,22 +4,31 @@ import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb";
 import cloudinary from "../cloudinaryConfig.js"
+import { isClosed, isCountdown, isCountdownActive } from "../services/album.service.js";
+import { closeAlbumService } from "../services/closeAlbum.service.js";
+import { closeAlbum } from "./close.controller.js";
 
 export const getAlbum = async (req, res) => {
     try {
-        const album = await Album.findById(req.params.id);
+        let album = await Album.findById(req.params.id);
 
         if (!album) {
             return res.status(404).json({ message: 'Album non trouvé' });
         }
-
-        // Populate uniquement si winnerId et winnerModel sont définis
-        if (album.winnerId && album.winnerModel) {
-            await album.populate('winnerId');
+        const now = new Date();
+        // Vérifie si l'album est en countdown et si la date de countdown est passée
+        if (album.status === 'countdown' && album.countdownDate < now) {
+            await closeAlbumService(album._id, album.familyId);
+            album = await Album.findById(req.params.id);
         }
 
-        // Peux aussi ajouter peakture
-        // await album.populate('peakture');
+        // Populate uniquement si winnerId et winnerModel sont définis
+        if (album.status === 'closed' && album.winnerId && album.winnerModel) {
+            await Album.findById(req.params.id).populate([
+                { path: 'winnerId' },
+                { path: 'peakture' }
+            ]);
+        }
         res.json(album);
     } catch (error) {
         console.error('Error fetching album:', error);

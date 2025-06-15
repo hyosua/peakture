@@ -13,7 +13,7 @@ import TieBreakView from "@/components/album/TieBreakView.jsx"
 import ConfirmMessage from "@/components/ui/ConfirmMessage.jsx"
 import { getMonthName } from '@/utils/dateConvert.js'
 import FullscreenSwiper from "@/components/album/FullscreenSwiper.jsx";
-
+import CountdownDisplay from "../components/album/CountdownDisplay.jsx";    
 
 
 const breakpointColumns = {
@@ -34,9 +34,8 @@ const AlbumPage = () => {
     const [image, setImage] = useState(null)
     const [preview, setPreview] = useState(null)
     const [uploading, setUploading] = useState(false)
-    const [uploadProgress, setUploadProgress] = useState(0)
     const [votedPhotoId, setVotedPhotoId] = useState(null)
-    const [cloudinaryURL, setCloudinaryUrl] = useState(null)
+    const [cloudinaryURL, setCloudinaryURL] = useState(null)
     const [showError, setShowError] = useState(false)
     const [showVoteError, setShowVoteError] = useState(false)
     const [showSignupForm, setShowSignupForm] = useState(false)
@@ -150,9 +149,7 @@ const AlbumPage = () => {
         }
 
         setUploading(true)
-        setUploadProgress(10)
         try {
-            setUploadProgress(30)
             const imageUrl = await uploadToCloudinary(image)
             let endRoute = ""
             let fetchMethod = "POST"
@@ -165,7 +162,6 @@ const AlbumPage = () => {
                     await handleCloudinaryDelete(cloudinaryURL)
                 }
             }
-            setUploadProgress(70)
             // console.log("Current User uploading photo:", currentUser)
             // save to database
             const response = await fetch(`${API_BASE_URL}/api/photos${endRoute}`, {
@@ -182,7 +178,6 @@ const AlbumPage = () => {
                 })
             })
 
-            setUploadProgress(90)
 
             if(!response.ok){
                 throw new Error(`Error saving photo: ${response.statusText}`)
@@ -204,9 +199,8 @@ const AlbumPage = () => {
                 }
             })
 
-            setUploadProgress(100)
             setReplacingPhoto(null)
-            setCloudinaryUrl(null)
+            setCloudinaryURL(null)
             // Reset le form
             setImage(null)
             setPreview(null)
@@ -556,10 +550,40 @@ const AlbumPage = () => {
                     
                     </div>
 
-
+                
+                {/* Countdown Display */}
+                {album?.status === "countdown" && (
+                    <div className="absolute top-4 right-4 lg:right-4 z-10">
+                        <div className="scale-75 origin-top-right lg:scale-100">
+                            <CountdownDisplay
+                                album={album}
+                                onCountdownEnd={() => {
+                                    setAlbum(prev => ({ ...prev, status: "closed" }))
+                                    setPhotos([])
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
+                {/* Album Status */}
+                {album?.status === "open" && (
+                    <motion.div
+                        className="absolute top-4 right-4 bg-success text-neutral text-xs px-3 py-1 rounded-full"
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 20,
+                            delay: 0.5,
+                        }}
+                    >
+                        Ouvert
+                    </motion.div>
+                )}
                 {album?.status === "closed" && (
                         <div className="absolute top-4 right-4 bg-error text-neutral text-xs px-3 py-1 rounded-full">
-                            Votes clos
+                            Fermé
                         </div>
                      )}
             </div>
@@ -667,7 +691,7 @@ const AlbumPage = () => {
                                         deletePhoto={deletePhoto}
                                         showUploadForm={setShowUploadForm}
                                         replacingPhoto={setReplacingPhoto}
-                                        cloudinaryURL={setCloudinaryUrl}
+                                        cloudinaryURL={setCloudinaryURL}
                                         isVotedId={photo.votedBy.includes(currentUser?._id)}
                                         votes={photo.votes || 0}
                                         albumStatus={album?.status}
