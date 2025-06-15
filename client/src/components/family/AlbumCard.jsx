@@ -36,7 +36,6 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
         }
     };
     const statusStyle = albumStatusStyles[album?.status] || "primary";
-    console.log("Albumcard with winnerId:", album?.winnerId);
 
     return(
         <div
