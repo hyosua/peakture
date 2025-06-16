@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useNavigate, useParams} from "react-router-dom"
 import Masonry from "react-masonry-css"
 import { Upload, Plus, X, ArrowBigLeft } from "lucide-react"
@@ -52,38 +52,38 @@ const AlbumPage = () => {
     const {showToast} = useToast()
     const isAdmin = currentUser?._id === album?.admin
       
-    // Fetch Album data
-    useEffect(() => {
-        async function getAlbumData() {
-            setIsLoading(true)
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/albums/${id}`)
-                if(!response.ok){
-                    throw new Error(`Erreur: ${response.statusText}`)
-                }
-                
-                const albumData = await response.json()
-                setAlbum(albumData)
-
-                // Fetch photos de l'album
-                const photosResponse = await fetch(`${API_BASE_URL}/api/photos/${albumData._id}`)
-                if(!photosResponse.ok){
-                    throw new Error(`Erreur: ${photosResponse.statusText}`)
-                }
-                const photosData = await photosResponse.json()
-                setPhotos(photosData.photos || [])
-
-
-            } catch(error){
-                console.error("Error while fetching album data:", error)
-                navigate("/")
-            } finally {
-                setIsLoading(false)
+    const getAlbumData = useCallback(async () => {
+        setIsLoading(true)
+        try {
+            // Fetch album
+            const response = await fetch(`${API_BASE_URL}/api/albums/${id}`)
+            if (!response.ok) {
+                throw new Error(`Erreur: ${response.statusText}`)
             }
+
+            const albumData = await response.json()
+            setAlbum(albumData)
+
+            // Fetch photos
+            const photosResponse = await fetch(`${API_BASE_URL}/api/photos/${albumData._id}`)
+            if (!photosResponse.ok) {
+                throw new Error(`Erreur: ${photosResponse.statusText}`)
+            }
+
+            const photosData = await photosResponse.json()
+            setPhotos(photosData.photos || [])
+
+        } catch (error) {
+            console.error("Error while fetching album data:", error)
+            navigate("/") 
+        } finally {
+            setIsLoading(false)
         }
+    }, [id, navigate]) 
+
+    useEffect(() => {
         getAlbumData()
-        
-    }, [id, navigate])
+    }, [getAlbumData])
 
     useEffect(() => {
         // Only run when album is not null and status is "closed"
@@ -557,10 +557,7 @@ const AlbumPage = () => {
                         <div className="scale-75 origin-top-right lg:scale-100">
                             <CountdownDisplay
                                 album={album}
-                                onCountdownEnd={() => {
-                                    setAlbum(prev => ({ ...prev, status: "closed" }))
-                                    setPhotos([])
-                                }}
+                                onCountdownEnd={getAlbumData}
                             />
                         </div>
                     </div>

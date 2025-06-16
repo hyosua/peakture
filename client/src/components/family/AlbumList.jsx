@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+
 import { useNavigate, useParams } from 'react-router-dom'
 import { Plus, X, Check } from 'lucide-react'
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,27 +33,26 @@ const AlbumList = () => {
     })
     const {showToast} = useToast()
     const navigate = useNavigate()
+    
+    const getAlbums = useCallback(async () => { // useCallback permet de mémoriser la fonction et de ne pas la recréer à chaque rendu
+        try {
+            setAlbumLoading(true);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/albums/${familyId}`);
+            if (!response.ok) throw new Error(`An error occurred: ${response.statusText}`);
+            const albumsData = await response.json();
+            setAlbums(albumsData);
+        } catch (error) {
+            console.error('Error fetching albums:', error);
+        } finally {
+            setAlbumLoading(false);
+        }
+    }, [familyId]);
+
 
     // Fetch albums from the server
     useEffect(() => {
-        async function getAlbums() {
-            try {
-                setAlbumLoading(true)
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/family/albums/${familyId}`)
-                if(!response.ok) {
-                    throw new Error(`An error has occured: ${response.statusText}`)
-                }
-                const albumsData = await response.json()
-                setAlbums(albumsData)
-                setAlbumLoading(false)
-            } catch (error){
-                console.error('Error fetching albums:', error)
-                setAlbumLoading(false)
-
-            } 
-        }
-        getAlbums()
-    }, [familyId])
+        getAlbums();
+    }, [getAlbums]);
 
     // Delete an album
     const deleteAlbum = async (id) => {
@@ -441,6 +441,7 @@ const AlbumList = () => {
                                 setIsDeleteAlbumId={setIsDeleteAlbumId}
                                 showCloseVotesConfirm={showCloseVotesConfirm}
                                 handleAlbumClick={handleAlbumClick}
+                                onAlbumRefresh={getAlbums}
                             />
                             {/* Edit Album */}
                             {editingAlbum === album._id && (

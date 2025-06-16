@@ -6,11 +6,12 @@ import WinnerBanner from '@/components/contest/WinnerBanner.jsx';
 import EditDropdown from '@/components/ui/EditDropdown.jsx'
 import {Edit, Trash, Vote} from 'lucide-react'
 import PropTypes from 'prop-types';
+import CountdownDisplay from '@/components/album/CountdownDisplay.jsx';
 
 
 
 
-const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsDeleteAlbumId, showCloseVotesConfirm }) => {
+const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsDeleteAlbumId, showCloseVotesConfirm, onAlbumRefresh }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, amount: 0.9 });
     const albumStatusStyles = {
@@ -59,7 +60,18 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                     <span className={`indicator-item badge ${statusStyle.badge}`}>
                         {album?.status}
                     </span>
-                <h3 className='mb-2 font-semibold'>{getMonthName(album.month)}</h3>
+                <div className="flex items-center justify-between mb-2">
+                    <h3 className='font-semibold'>{getMonthName(album.month)}</h3>
+                    {/* Countdown Display */}
+                        {album?.status === "countdown" && (
+                            <div className="scale-75">
+                                <CountdownDisplay
+                                    album={album}
+                                    onCountdownEnd={onAlbumRefresh}
+                                />
+                            </div>
+                     )}
+                </div>
                 <img src={album.cover ? album.cover : "https://res.cloudinary.com/djsj0pfm3/image/upload/v1746696335/bat-empty-cover_jqwv0x.png"} 
                     alt={getMonthName(album.month)} 
                     className='w-full h-36  max-w-60 max-h-60 rounded-md object-cover mb-2' 
@@ -138,4 +150,5 @@ AlbumCard.propTypes = {
     isAdmin: PropTypes.bool.isRequired,
     setIsDeleteAlbumId: PropTypes.func.isRequired,
     showCloseVotesConfirm: PropTypes.func.isRequired,
+    onAlbumRefresh: PropTypes.func, // Added prop validation for onAlbumRefresh
 };

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Clock } from 'lucide-react';
 
 const CountdownDisplay = ({ album, onCountdownEnd }) => {
     const [timeLeft, setTimeLeft] = useState(null);
@@ -12,9 +11,7 @@ const CountdownDisplay = ({ album, onCountdownEnd }) => {
             const now = new Date();
             const countdownDate = new Date(album.countdownDate);
             const remaining = countdownDate.getTime() - now.getTime();
-            console.log('Now (UTC):', now.toISOString());
-            console.log('Countdown (UTC):', countdownDate.toISOString());
-            console.log('Remaining seconds:', Math.floor(remaining / 1000));
+
             if (remaining <= 0) {
                 clearInterval(timer);
                 setTimeLeft(null);
@@ -43,7 +40,7 @@ const CountdownDisplay = ({ album, onCountdownEnd }) => {
     }
   
     return (
-    <div className=" rounded-lg p-4 mb-6">
+    <div className=" rounded-lg p-2">
       
       <div className="grid grid-flow-col gap-2 text-center auto-cols-max justify-center">
         {currentCountdown.days > 0 && (
