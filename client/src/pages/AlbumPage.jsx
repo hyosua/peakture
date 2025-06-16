@@ -762,7 +762,7 @@ const AlbumPage = () => {
                 )}
 
                 {/* Add Photo Button */}
-                {album?.status === "open" && (
+                {["open", "countdown"].includes(album?.status) && (
                     <div className={showError ? "tooltip tooltip-open tooltip-error font-semibold" : ""} data-tip={error}>
                     <div className='pb-20'>
                       <motion.button
