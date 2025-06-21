@@ -485,6 +485,25 @@ const AlbumPage = () => {
                         {album?.theme}
                     </motion.h3>
 
+                    {/* Countdown Display */}
+                    {album?.status === "countdown" && (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.6 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 500,
+                                damping: 20,
+                                delay: 0.9,
+                            }}
+                            className="scale-75 lg:scale-100">
+                                <CountdownDisplay
+                                    album={album}
+                                    onCountdownEnd={getAlbumData}
+                                />
+                        </motion.div>
+                    )}
+
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -551,17 +570,7 @@ const AlbumPage = () => {
                     </div>
 
                 
-                {/* Countdown Display */}
-                {album?.status === "countdown" && (
-                    <div className="absolute top-4 right-4 lg:right-4 z-10">
-                        <div className="scale-75 origin-top-right lg:scale-100">
-                            <CountdownDisplay
-                                album={album}
-                                onCountdownEnd={getAlbumData}
-                            />
-                        </div>
-                    </div>
-                )}
+                
                 {/* Album Status */}
                 {album?.status === "open" && (
                     <motion.div
