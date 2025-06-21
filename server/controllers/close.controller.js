@@ -1,6 +1,6 @@
 import Album from "../models/album.model.js"
 import Photo from "../models/photo.model.js"
-import { closeAlbumService, assignPoints } from "../services/closeAlbum.service.js";
+import { closeAlbumService, assignPoints, determineUserOrGuest } from "../services/closeAlbum.service.js";
 
 export const closeAlbum = async (req, res) => {
     try {
@@ -29,6 +29,7 @@ export const tieBreakVote = async (req,res) => {
     try{
         const photoId = req.params.id
         const userId = req.user._id
+        const { model: userModel } = await determineUserOrGuest(userId);
         const {albumId} = req.body
 
         const peakture = await Photo.findByIdAndUpdate(
@@ -66,7 +67,7 @@ export const tieBreakVote = async (req,res) => {
 export const setCountdown = async (req, res) => {
     try {      
         const { days } = req.body;
-        const countdownDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 = 24 hours in milliseconds
+        const countdownDate = new Date(Date.now() + days * 60 * 1000); // 24 * 60 * 60 * 1000 = 24 hours in milliseconds
 
         const updatedAlbum = await Album.findByIdAndUpdate(
             req.params.id,

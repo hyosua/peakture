@@ -8,6 +8,7 @@ import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 import { sendFamilyNotification } from '../lib/utils/sendEmail.js'
+import { closeAlbumService } from '../services/closeAlbum.service.js'
 
 import Photo from '../models/photo.model.js'
 
@@ -256,18 +257,31 @@ export const editFamilyName = async (req, res) => {
 export const getAlbums = async (req, res) => {
     try{
         const familyId = req.params.id
-        const albums = await Album.find({ familyId: new ObjectId(familyId) })
-            .sort({ createdAt: -1 })
-            .populate({
-                path: 'winnerId',
-                select: '-password'
-            })
+        const albums = await Album.find({ familyId}).sort({ month: -1, year: -1})
+        const updatedAlbums = []
+        const now = new Date();
 
         if (!albums) {
             return res.status(404).json({ message: 'Aucun album trouvé' });
         }
 
-        res.json(albums)
+        for (let album of albums) {
+            // Vérifie si l'album est en countdown et si la date de countdown est passée
+            if (album.status === 'countdown' && album.countdownDate < now) {
+                await closeAlbumService(album._id, album.familyId);
+                album = await Album.findById(album._id)
+            }
+
+            if (album.status === 'closed' && album.winnerId && album.winnerModel) {
+                album = await Album.findById(album._id).populate([
+                    { path: 'winnerId' },
+                    { path: 'peakture' }
+                ]);
+            }
+            updatedAlbums.push(album);
+        }
+
+        res.json(updatedAlbums)
     } catch (error){
         console.error("Erreur dans getAlbums Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
