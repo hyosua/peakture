@@ -47,7 +47,7 @@
             try{
                 const isSelfVote = currentUser?._id === photo.userId;
 
-                if (!isSelfVote && albumStatus === "open") {
+                if (!isSelfVote && ["open", "countdown"].includes(albumStatus)) {
                     await onVote(photo._id);
                     return
                 }
