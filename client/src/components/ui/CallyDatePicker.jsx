@@ -31,8 +31,9 @@ const CallyDatePicker = ({ id = "cally1", onDateChange, placeholder="Choisis une
   return (
     <>
       <button
+        type="button"
         ref={buttonRef}
-        popovertarget="cally-popover1"
+        popoverTarget="cally-popover1"
         className="input input-border"
         id={id}
         style={{ anchorName: `--${id}` }}

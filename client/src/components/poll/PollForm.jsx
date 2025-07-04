@@ -23,7 +23,7 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/poll/${currentFamilyId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/poll/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -95,7 +95,6 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
                                 id="month"
                                 value={month}
                                 onChange={(e) => setMonth(e.target.value)}
-                                defaultValue={nextMonth}
                                 className="select select-secondary"
                                 required
                             >
@@ -118,7 +117,7 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
                                     {(options.length > 1 || option !== '') && (
                                         <button 
                                         type="button"
-                                        onClick={handleRemoveOption(index)}
+                                        onClick={() => handleRemoveOption(index)}
                                         className="btn-xs btn-circle text-error"
                                         >
                                             <X />

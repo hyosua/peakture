@@ -22,7 +22,6 @@ export const create = async (req, res) => {
             family,
             month,
             expiresAt,
-            isActive
         })
         res.status(201).json({ success: true, message: "Sondage créé avec succès", poll })
     }catch (error){
