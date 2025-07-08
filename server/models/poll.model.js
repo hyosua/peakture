@@ -12,9 +12,9 @@ const optionSchema = new mongoose.Schema({
     },
     addedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        refPath: 'userModel'
+        refPath: 'addedByModel'
     },
-    userModel: {
+    addedByModel: {
         type: String,
         enum: ['User', 'Guest']
     },
@@ -29,11 +29,11 @@ const pollSchema = new mongoose.Schema({
     options: [optionSchema],
     votes: [{
         optionId: { type: mongoose.Schema.Types.ObjectId },
-        userId: { type: mongoose.Schema.Types.ObjectId, refPath: 'userModel' }
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     }],
     admin: {
         type: mongoose.Schema.Types.ObjectId,
-        refPath: 'userModel'
+        refPath: 'adminModel'
     },
     family: {
         type: mongoose.Schema.Types.ObjectId,
@@ -55,7 +55,7 @@ const pollSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    userModel: {
+    adminModel: {
         type: String,
         enum: ['User', 'Guest']
     },

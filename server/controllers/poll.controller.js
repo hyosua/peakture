@@ -1,16 +1,11 @@
-import Family from '../models/family.model.js'
-import User from '../models/user.model.js'
-import Guest from '../models/guest.model.js'
-import Album from '../models/album.model.js'
 
-
-import Photo from '../models/photo.model.js'
 import Poll from '../models/poll.model.js'
 
 
 export const create = async (req, res) => {
     try {
         const { options, admin, family, month, expiresAt} = req.body
+        console.log("Creating poll with data:", req.body)
         if(!options || options.length < 2){
             return res.status(400).json({success: false, message: "Il faut au moins deux options pour créer un sondage."})
         }   
@@ -43,3 +38,40 @@ export const getPoll = async (req, res) => {
         return res.status(500).json({ error: "Erreur interne du serveur." })
     }
 }
+
+export const vote = async (req, res) => {
+    try {
+        const { pollId, optionId } = req.body
+        const userId = req.user._id
+        const poll = await Poll.findById(pollId)
+        if(!poll){
+            return res.status(404).json({ success: false, message: "Sondage non trouvé" })
+        }
+
+        if(!poll.isActive || new Date() > poll.expiresAt){
+            return res.status(400).json({ success: false, message: "Le sondage est terminé" })
+        }
+
+       const hasVoted = poll.votes.some(v => v.userId.equals(userId))
+
+       if(hasVoted){
+        return res.status(400).json({ success: false, message: "Tu as déjà voté dans ce sondage"})
+       }
+       console.log("User ID:", userId)
+        console.log("Option ID:", optionId)
+       const option = poll.options.find(o => o._id.equals(optionId))
+       if(!option){
+              return res.status(400).json({ success: false, message: "Option introuvable" })
+       }
+
+       option.votes += 1
+       poll.votes.push({ optionId, userId })
+       await poll.save()
+         return res.status(200).json({ success: true, message: "Vote enregistré avec succès", poll })
+    } catch (error) {
+        console.error("Erreur dans poll Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+
+}
+

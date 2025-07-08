@@ -18,10 +18,16 @@ const PollDisplay = ({ poll, onVote}) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ optionId: selectedOption })
+                body: JSON.stringify({ pollId: poll._id, optionId: selectedOption })
             });
-            const updatedPoll = await res.json()
-            onVote(updatedPoll)
+
+            const data = await res.json()
+            if(!res.ok || !data.success){
+                setLoading(false)
+                return showToast({ message: data.message || "Erreur lors du vote", type: "error" })
+            }
+            setLoading(false)
+            onVote(data.poll)
         }catch(error){
             console.log("Erreur lors du vote", error)
             showToast({ message: error, type:"error"})
@@ -51,14 +57,7 @@ const PollDisplay = ({ poll, onVote}) => {
                                 {option.theme}<span className="text-sm text-gray-500">({option.votes} vote{option.votes > 1 ? 's' : ''})</span>
                             </label>
                             
-                            <button
-                                type="button"
-                                disabled={loading || !selectedOption}
-                                onClick={handleVote}
-                                className="btn btn-primary mt-4 disabled:opacity-50"
-                                >
-                                {loading ? <span className="loading loading-spinner loading-sm"></span>  : "Voter"}
-                            </button>
+                            
                             {/* {(options.length > 1 || option !== '') && (
                                 <button 
                                 type="button"
@@ -70,6 +69,14 @@ const PollDisplay = ({ poll, onVote}) => {
                             )} */}
                         </div>
                     ))}
+                    <button
+                        type="button"
+                        disabled={loading || !selectedOption}
+                        onClick={handleVote}
+                        className="btn btn-primary mt-4 disabled:opacity-50"
+                        >
+                        {loading ? <span className="loading loading-spinner loading-sm"></span>  : "Voter"}
+                    </button>
                 </div>
             </form>
         </div>

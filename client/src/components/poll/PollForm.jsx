@@ -15,7 +15,7 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
     const currentMonthIndex = new Date().getMonth();
     const nextMonth = months[currentMonthIndex + 1];
     const [month, setMonth] = useState(nextMonth);
-    const [expiresAt, setexpiresAt] = useState(null)
+    const [expiresAt, setExpiresAt] = useState(null)
 
     const {showToast} = useToast()
     
@@ -23,6 +23,14 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
+            console.log('Submitting poll with data:', {
+                month,
+                options: options.filter(option => option.trim() !== '').map(option => ({ theme: option.trim()})), // Remove empty options
+                expiresAt,
+                admin: currentUserId,
+                family: currentFamilyId,
+            })
+
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/poll/create`, {
                 method: 'POST',
                 headers: {
@@ -30,7 +38,9 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
                 },
                 body: JSON.stringify({
                         month, 
-                        options, 
+                        options: options
+                        .filter(option => option.trim() !== '') // Remove empty options
+                        .map(option => ({ theme: option.trim()})),
                         expiresAt, 
                         admin: currentUserId, 
                         family: currentFamilyId,})
@@ -67,8 +77,9 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
         setOptions(newOptions)
     }
 
-    const handleexpiresAt = (date) => {
-        setexpiresAt(date)
+    const handleExpiresAt = (date) => {
+        console.log("Selected expiration date:", date);
+        setExpiresAt(date)
     }
 
     return (
@@ -126,7 +137,7 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
                                 </div>
                             ))}
 
-                            <CallyDatePicker onDateChange={handleexpiresAt} placeholder={"Fin du sondage"} />
+                            <CallyDatePicker onDateChange={handleExpiresAt} placeholder={"Date de fin du sondage"} />
                         </div>
                         <button type="submit" className="btn btn-primary hover:text-secondary w-full mt-6 text-lg">
                             Créer 

@@ -12,9 +12,13 @@ const CallyDatePicker = ({ id = "cally1", onDateChange, placeholder="Choisis une
     const calendar = calendarRef.current;
 
     const handleChange = (e) => {
+      console.log("Raw event:", e);
+      console.log("e.target.value:", e.target.value);
       const value = e.target.value;
+      const parsedDate = new Date(value);
+      console.log("Parsed date:", parsedDate);
       setSelectedDate(value);
-      if (onDateChange) onDateChange(value);
+      if (onDateChange) onDateChange(parsedDate);
     };
 
     if (calendar) {

@@ -14,8 +14,6 @@ const Poll = () => {
 
     const familyId = currentFamily?.family?._id
     const isAdmin = currentUser?._id === currentFamily?.family?.admin
-    console.log("Current Family", currentFamily)
-
     // Fetch Poll from the server
     useEffect(() => {
         async function getPoll() {
@@ -24,7 +22,6 @@ const Poll = () => {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/api/poll/${familyId}`, {
                     credentials: "include",
                 })
-                console.log("Response", response)
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                   }
@@ -57,13 +54,11 @@ const Poll = () => {
                 <div className=''>
                     <p> Aucun sondage pour l&apos;instant...</p>
                     {isAdmin && (
-                        <>
-                            <PollForm 
-                                currentFamilyId={familyId}
-                                currentUser={currentUser._id}
-                                onPollCreated={handleNewPoll}
-                            />
-                        </>
+                        <PollForm 
+                            currentFamilyId={familyId}
+                            currentUserId={currentUser._id}
+                            onPollCreated={handleNewPoll}
+                        />
                     )}
                 </div>
             )}
