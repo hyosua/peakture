@@ -261,13 +261,13 @@ export const getAlbums = async (req, res) => {
         const updatedAlbums = []
         const now = new Date();
 
-        if (!albums) {
+        if (albums.length === 0) {
             return res.status(404).json({ message: 'Aucun album trouvé' });
         }
 
         for (let album of albums) {
             // Vérifie si l'album est en countdown et si la date de countdown est passée
-            if (album.status === 'countdown' && album.countdownDate < now) {
+            if (album.status === 'countdown' && album.expiresAt < now) {
                 await closeAlbumService(album._id, album.familyId);
                 album = await Album.findById(album._id)
             }

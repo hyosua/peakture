@@ -6,7 +6,7 @@ import WinnerBanner from '@/components/contest/WinnerBanner.jsx';
 import EditDropdown from '@/components/ui/EditDropdown.jsx'
 import {Edit, Trash, Vote} from 'lucide-react'
 import PropTypes from 'prop-types';
-import CountdownDisplay from '@/components/album/CountdownDisplay.jsx';
+import CountdownDisplay from '@/components/ui/CountdownDisplay.jsx';
 
 
 
@@ -66,7 +66,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                         {album?.status === "countdown" && (
                             <div className="scale-75">
                                 <CountdownDisplay
-                                    album={album}
+                                    item={album}
                                     onCountdownEnd={onAlbumRefresh}
                                 />
                             </div>

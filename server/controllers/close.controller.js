@@ -67,11 +67,11 @@ export const tieBreakVote = async (req,res) => {
 export const setCountdown = async (req, res) => {
     try {      
         const { days } = req.body;
-        const countdownDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 = 24 hours in milliseconds
+        const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 = 24 hours in milliseconds
 
         const updatedAlbum = await Album.findByIdAndUpdate(
             req.params.id,
-            { $set: { countdownDate, status: "countdown" } },
+            { $set: { expiresAt, status: "countdown" } },
             { new: true }
         );
 

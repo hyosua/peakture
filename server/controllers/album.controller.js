@@ -17,7 +17,7 @@ export const getAlbum = async (req, res) => {
         }
         const now = new Date();
         // Vérifie si l'album est en countdown et si la date de countdown est passée
-        if (album.status === 'countdown' && album.countdownDate < now) {
+        if (album.status === 'countdown' && album.expiresAt < now) {
             await closeAlbumService(album._id, album.familyId);
             album = await Album.findById(req.params.id);
         }

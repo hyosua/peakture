@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useToast } from "@/context/ToastContext.jsx"
 import PropTypes from "prop-types";
+import CountdownDisplay from "../ui/CountdownDisplay";
 
 
-const PollDisplay = ({ poll, onVote}) => {
+const PollDisplay = ({ poll, onVote, onPollClose}) => {
     const [selectedOption, setSelectedOption] = useState(null)
     const [loading, setLoading] = useState(false);
 
@@ -41,6 +42,16 @@ const PollDisplay = ({ poll, onVote}) => {
             <h2 className="text-primary font-bold text-5xl mb-4">
                 {poll.title}
             </h2>
+            {/* Countdown Display */}
+                {poll?.status === "countdown" && (
+                    <div className="scale-75">
+                        <CountdownDisplay
+                            item={poll}
+                            onCountdownEnd={onPollClose}
+                        />
+                    </div>
+                )}
+
             <form className="space-y-4 ">
                 <div>
                     {poll.options.map((option, index) => (
@@ -88,6 +99,7 @@ PollDisplay.propTypes = {
     poll: PropTypes.shape({
         title: PropTypes.string.isRequired,
         _id: PropTypes.string.isRequired,
+        status: PropTypes.string.isRequired,
         options: PropTypes.arrayOf(
             PropTypes.shape({
                 _id: PropTypes.string.isRequired,
@@ -98,6 +110,7 @@ PollDisplay.propTypes = {
     }).isRequired,
     onVote: PropTypes.func.isRequired,
     onPollCreated: PropTypes.func.isRequired,
+    onPollClose: PropTypes.func.isRequired,
     currentFamilyId: PropTypes.string.isRequired,
 };
 

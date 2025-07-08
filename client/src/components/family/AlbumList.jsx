@@ -105,7 +105,7 @@ const AlbumList = () => {
 
             setAlbums(prevAlbums =>
                 prevAlbums.map(album =>
-                    album._id === albumId ? { ...album, status: "countdown", countdownDate: new Date(Date.now() + days * 24 * 60 * 60 * 1000) } : album
+                    album._id === albumId ? { ...album, status: "countdown", expiresAt: new Date(Date.now() + days * 24 * 60 * 60 * 1000) } : album
                 )
             )
 

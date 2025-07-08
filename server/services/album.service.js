@@ -27,7 +27,7 @@ export const isCountdownEnded = async (albumId) => {
         return false;
     }
     const currentTime = new Date();
-    return currentTime > album.countdownDate;
+    return currentTime > album.expiresAt;
 }
 
 export const isCountdownActive = async (albumId) => {
@@ -39,6 +39,6 @@ export const isCountdownActive = async (albumId) => {
         return false;
     }
     const currentTime = new Date();
-    return currentTime <= album.countdownDate;
+    return currentTime <= album.expiresAt;
 }
 

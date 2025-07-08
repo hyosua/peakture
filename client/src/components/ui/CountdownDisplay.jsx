@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-const CountdownDisplay = ({ album, onCountdownEnd }) => {
+const CountdownDisplay = ({ item, onCountdownEnd }) => {
     const [timeLeft, setTimeLeft] = useState(null);
 
     useEffect(() => {
-        if(!album || !album?.countdownDate) return;
+        if(!item?.expiresAt) return;
 
         const timer = setInterval(() => {
             const now = new Date();
-            const countdownDate = new Date(album.countdownDate);
-            const remaining = countdownDate.getTime() - now.getTime();
+            const expiresAt = new Date(item.expiresAt);
+            const remaining = expiresAt.getTime() - now.getTime();
 
             if (remaining <= 0) {
                 clearInterval(timer);
@@ -22,7 +22,7 @@ const CountdownDisplay = ({ album, onCountdownEnd }) => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [album, onCountdownEnd]);
+    }, [item, onCountdownEnd]);
 
     const getCurrentCountdown = () => {
         if (!timeLeft) return null;
@@ -35,7 +35,7 @@ const CountdownDisplay = ({ album, onCountdownEnd }) => {
 
     const currentCountdown = getCurrentCountdown();
 
-    if(album?.status !== "countdown" || !currentCountdown) {
+    if(item?.status !== "countdown" || !currentCountdown) {
         return null; // No countdown to display
     }
   
@@ -81,8 +81,8 @@ const CountdownDisplay = ({ album, onCountdownEnd }) => {
   );
 } 
 CountdownDisplay.propTypes = {
-    album: PropTypes.shape({
-        countdownDate: PropTypes.instanceOf(Date),
+    item: PropTypes.shape({
+        expiresAt: PropTypes.instanceOf(Date),
         status: PropTypes.string,
     }).isRequired,
     onCountdownEnd: PropTypes.func.isRequired,

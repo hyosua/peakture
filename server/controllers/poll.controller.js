@@ -48,7 +48,7 @@ export const vote = async (req, res) => {
             return res.status(404).json({ success: false, message: "Sondage non trouvé" })
         }
 
-        if(!poll.isActive || new Date() > poll.expiresAt){
+        if(poll.status === "closed" || new Date() > poll.expiresAt){
             return res.status(400).json({ success: false, message: "Le sondage est terminé" })
         }
 
@@ -67,7 +67,7 @@ export const vote = async (req, res) => {
        option.votes += 1
        poll.votes.push({ optionId, userId })
        await poll.save()
-         return res.status(200).json({ success: true, message: "Vote enregistré avec succès", poll })
+        return res.status(200).json({ success: true, message: "Vote enregistré avec succès", poll })
     } catch (error) {
         console.error("Erreur dans poll Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })

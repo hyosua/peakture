@@ -25,7 +25,7 @@
             default: "open",
             required: true,
         },
-        countdownDate: {
+        expiresAt: {
             type: Date,
             required: false,
         },

@@ -13,7 +13,7 @@ import TieBreakView from "@/components/album/TieBreakView.jsx"
 import ConfirmMessage from "@/components/ui/ConfirmMessage.jsx"
 import { getMonthName } from '@/utils/dateConvert.js'
 import FullscreenSwiper from "@/components/album/FullscreenSwiper.jsx";
-import CountdownDisplay from "../components/album/CountdownDisplay.jsx";    
+import CountdownDisplay from "../components/ui/CountdownDisplay.jsx";    
 
 
 const breakpointColumns = {
@@ -498,7 +498,7 @@ const AlbumPage = () => {
                             }}
                             className="scale-75 lg:scale-100">
                                 <CountdownDisplay
-                                    album={album}
+                                    item={album}
                                     onCountdownEnd={getAlbumData}
                                 />
                         </motion.div>

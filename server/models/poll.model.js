@@ -47,9 +47,11 @@ const pollSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    isActive: {
-        type: Boolean,
-        default: true
+    status: {
+        type: String,
+        enum: ["closed", "countdown"],
+        default: "countdown",
+        required: true,
     },
     expiresAt: {
         type: Date,

@@ -12,7 +12,7 @@ const closeAlbum = async () => {
         const now = new Date();
         const albumsToClose = await Album.find({
             status: "countdown",
-            countdownDate: { $lt: now }
+            expiresAt: { $lt: now }
         });
         console.log(`Nombre d'albums à cloturer : ${albumsToClose.length}`);
         if (albumsToClose.length === 0) {
