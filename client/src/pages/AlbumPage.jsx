@@ -13,7 +13,7 @@ import TieBreakView from "@/components/album/TieBreakView.jsx"
 import ConfirmMessage from "@/components/ui/ConfirmMessage.jsx"
 import { getMonthName } from '@/utils/dateConvert.js'
 import FullscreenSwiper from "@/components/album/FullscreenSwiper.jsx";
-import CountdownDisplay from "../components/ui/CountdownDisplay.jsx";    
+import CountdownDisplay from "../components/ui/CountdownDisplay.jsx";
 
 
 const breakpointColumns = {
@@ -34,6 +34,7 @@ const AlbumPage = () => {
     const [image, setImage] = useState(null)
     const [preview, setPreview] = useState(null)
     const [uploading, setUploading] = useState(false)
+    
     const [votedPhotoId, setVotedPhotoId] = useState(null)
     const [cloudinaryURL, setCloudinaryURL] = useState(null)
     const [showError, setShowError] = useState(false)

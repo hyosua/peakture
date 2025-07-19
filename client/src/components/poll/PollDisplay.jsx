@@ -37,7 +37,7 @@ const PollDisplay = ({ poll, onVote, onPollClose}) => {
 
 
     return (
-        <div className="max-w-md mx-auto bg-base-200 mt-6 p-4 border rounded shadow-md overflow-hidden">
+        <>
 
             <h2 className="text-primary font-bold text-5xl mb-4">
                 {poll.title}
@@ -90,7 +90,7 @@ const PollDisplay = ({ poll, onVote, onPollClose}) => {
                     </button>
                 </div>
             </form>
-        </div>
+        </>
         
     )
 }

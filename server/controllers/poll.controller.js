@@ -75,3 +75,19 @@ export const vote = async (req, res) => {
 
 }
 
+export const deletePoll = async (req, res) => {
+    try {
+        const pollId = req.params.id
+        if(!pollId){
+            return res.status(400).json({ success: false, message: "Aucun sondage trouvé" })
+        }
+        const poll = await Poll.findByIdAndDelete(pollId)
+        if(!poll){
+            return res.status(404).json({ success: false, message: "Sondage non trouvé" })
+        }
+        return res.status(200).json({ success: true, message: "Sondage supprimé avec succès" })
+    } catch (error) {
+        console.error("Erreur dans deletePoll Controller:", error.message)
+        return res.status(500).json({ error: "Erreur interne du serveur." })
+    }
+}   
