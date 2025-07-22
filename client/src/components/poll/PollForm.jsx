@@ -130,6 +130,7 @@ const PollForm = ({ onPollCreated, currentFamilyId, currentUserId }) => {
                                         type="button"
                                         onClick={() => handleRemoveOption(index)}
                                         className="btn-xs btn-circle text-error"
+                                        tabIndex={"-1"}
                                         >
                                             <X />
                                         </button>

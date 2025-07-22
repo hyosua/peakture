@@ -55,7 +55,7 @@ const PollDisplay = ({ poll, onVote, onPollClose}) => {
             <form className="space-y-4 ">
                 <div>
                     {poll.options.map((option, index) => (
-                        <div key={index} className="flex items-center space-x-2">
+                        <div key={index} className="flex items-center space-x-2 mb-2">
                             <label key={option._id} className="block">
                                 <input 
                                     type="radio"

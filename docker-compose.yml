@@ -13,6 +13,11 @@ services:
     depends_on:
       - server
     command: npm run dev
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 785M
 
   server:
     build:
@@ -27,5 +32,10 @@ services:
     env_file:
       - ./server/.env
     command: npm run dev
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
 
 

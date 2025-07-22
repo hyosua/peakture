@@ -6,10 +6,12 @@ import PollForm from '../components/poll/PollForm';
 import PollDisplay from '../components/poll/PollDisplay';
 import PollResult from '../components/poll/PollResult';
 import { X } from 'lucide-react';
+import ConfirmMessage from '@/components/ui/ConfirmMessage';
 
 const Poll = () => {
     const [poll,setPoll] = useState(null)
     const [pollLoading, setPollLoading] = useState(false)
+    const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
     const {currentUser, currentFamily} = useAuth()
     const {showToast} = useToast()
@@ -59,6 +61,7 @@ const Poll = () => {
             }
                 
             setPoll(null)
+            setIsConfirmOpen(false)
             showToast({ message: "Sondage supprimé avec succès", type: "success" })
         } catch (error) {
             showToast({ message: error, type: "error" })
@@ -95,12 +98,12 @@ const Poll = () => {
     }
 
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col items-center justify-center'>
             <div className="card bg-base-100 w-96 shadow-sm">
                 <div className="card-body">
                     { isAdmin && poll && (
                         <div className="card-actions justify-end ">
-                            <button className="btn btn-square btn-sm" onClick={ handleDeletePoll }>
+                            <button className="btn btn-square btn-sm" onClick={ () => setIsConfirmOpen(true) } >
                                 <X />
                             </button>
                         </div>
@@ -108,6 +111,16 @@ const Poll = () => {
                     { pollContent }
                 </div>
             </div>
+
+            <ConfirmMessage
+                title="Supprimer le sondage?"
+                message="La suppression d&apos;un sondage est définitive et ne peut pas être annulée."
+                onConfirm={handleDeletePoll}
+                onCancel={() => {
+                    setIsConfirmOpen(false)
+                }}
+                isOpen={isConfirmOpen}
+            /> 
         </div>
     )
 }
