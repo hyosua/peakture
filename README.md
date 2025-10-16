@@ -3,6 +3,8 @@
 ## Description
 Peakture est une application permettant de rejoindre une "Family" : une communauté où les utilisateurs peuvent participer à des concours photo mensuels pour garder le contact avec leurs proches de manière ludique.
 
+Site déployé: https://peakture.fr/
+
 ### Fonctionnalités principales
 En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 - **Admin** :
