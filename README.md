@@ -1,4 +1,4 @@
-# Peakture (Work in Progress)
+# Peakture 
 
 ## Description
 Peakture est une application permettant de rejoindre une "Family" : une communauté où les utilisateurs peuvent participer à des concours photo mensuels pour garder le contact avec leurs proches de manière ludique.
