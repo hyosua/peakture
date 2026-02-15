@@ -39,7 +39,7 @@ En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
 ### Installation
 1. **Cloner le projet**
    ```
-   git clone https://github.com/ton-utilisateur/peakture.git
+   git clone https://github.com/hyosua/peakture.git
    cd peakture
    ```
 
