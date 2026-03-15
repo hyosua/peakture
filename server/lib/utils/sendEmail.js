@@ -5,7 +5,6 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const envLink = process.env.NODE_ENV === 'production' ? 'https://peakture.fr' : 'http://localhost:5173'
 export const sendSignupNotification = async (userMail, username) => {
-    console.log('SENDGRID_API_KEY:', process.env.SENDGRID_API_KEY);
     const msg = {
         to: userMail,
         from: 'hyo@peakture.fr',
@@ -41,7 +40,6 @@ export const sendSignupNotification = async (userMail, username) => {
 
 
 export const sendFamilyNotification = async (userMail, username, familyName, familyId, inviteCode) => {
-    console.log('Sendgrid receiver info: ', userMail, username, familyName, familyId, inviteCode);
     const msg = {
         to: userMail,
         from: 'hyo@peakture.fr',
