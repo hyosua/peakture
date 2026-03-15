@@ -1,5 +1,5 @@
 import '@/App.css';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
 import Auth from '@/components/auth/Auth.jsx'
 import { CheckCircle, HelpCircle, Camera, Users, Trophy, ChevronDown } from 'lucide-react';
@@ -27,20 +27,6 @@ const STARS = [
   { id:28, top:'14%', left:'99%', s:1,   o:0.4 }, { id:29, top:'42%', left:'33%', s:1,   o:0.6 },
 ]
 
-const FloatingCard = ({ style, icon: Icon, label, delay = 0 }) => (
-  <motion.div
-    className="absolute hidden md:flex flex-col items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl"
-    style={style}
-    animate={{ y: [0, -10, 0] }}
-    transition={{ duration: 4, repeat: Infinity, delay, ease: 'easeInOut' }}
-  >
-    <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)' }}>
-      <Icon className="w-7 h-7 text-white/80" />
-    </div>
-    <span className="text-white/60 text-xs font-medium whitespace-nowrap">{label}</span>
-  </motion.div>
-)
-
 const Step = ({ icon: Icon, number, title, desc, color }) => (
   <motion.div
     className="flex flex-col items-center text-center gap-4 p-6"
@@ -53,13 +39,13 @@ const Step = ({ icon: Icon, number, title, desc, color }) => (
       <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${color}`}>
         <Icon className="w-8 h-8 text-white" />
       </div>
-      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-base-100 border-2 border-base-300 flex items-center justify-center text-xs font-bold">
+      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: '#1e1a4a', border: '2px solid rgba(139,92,246,0.4)' }}>
         {number}
       </span>
     </div>
     <div>
-      <h3 className="font-bold text-lg mb-1">{title}</h3>
-      <p className="text-base-content/60 text-sm leading-relaxed">{desc}</p>
+      <h3 className="font-bold text-lg mb-1 text-white">{title}</h3>
+      <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
     </div>
   </motion.div>
 )
@@ -345,43 +331,6 @@ const HomePage = () => {
           </motion.div>
         </div>
 
-        {/* Cartes flottantes sur la montagne */}
-        <FloatingCard
-          style={{ bottom: '30%', left: '8%' }}
-          icon={Camera}
-          label="Ta photo"
-          delay={0}
-        />
-        <FloatingCard
-          style={{ bottom: '44%', left: '20%' }}
-          icon={Users}
-          label="Les votes"
-          delay={0.8}
-        />
-        <FloatingCard
-          style={{ bottom: '54%', right: '18%' }}
-          icon={Trophy}
-          label="#2 ce mois"
-          delay={1.4}
-        />
-        {/* Carte gagnante au sommet */}
-        <motion.div
-          className="absolute hidden md:flex flex-col items-center gap-1 rounded-2xl p-3 shadow-2xl border"
-          style={{
-            bottom: '31%', left: '50%', transform: 'translateX(-50%)',
-            background: 'linear-gradient(135deg, rgba(251,191,36,0.25), rgba(251,191,36,0.1))',
-            borderColor: 'rgba(251,191,36,0.5)',
-            backdropFilter: 'blur(12px)',
-          }}
-          animate={{ y: [0, -12, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div className="w-16 h-16 rounded-xl flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.2)' }}>
-            <Trophy className="w-8 h-8 text-amber-400" />
-          </div>
-          <span className="text-amber-300 text-xs font-bold">🏆 Peakture du mois</span>
-        </motion.div>
-
         {/* Montagne SVG */}
         <div className="absolute bottom-0 w-full pointer-events-none" style={{ lineHeight: 0 }}>
           <svg viewBox="0 0 1440 380" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '380px', display: 'block' }}>
@@ -415,7 +364,7 @@ const HomePage = () => {
       {/* ══════════════════════════════════════════
           COMMENT ÇA MARCHE
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-4 bg-base-100">
+      <section style={{ background: '#100d30' }} className="py-20 px-4">
         <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
@@ -423,26 +372,26 @@ const HomePage = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl font-bold mb-3">Comment ça marche ?</h2>
-          <p className="text-base-content/50 max-w-md mx-auto">
+          <h2 className="text-3xl font-bold mb-3 text-white">Comment ça marche ?</h2>
+          <p className="text-white/40 max-w-md mx-auto">
             Trois étapes pour conquérir le sommet
           </p>
         </motion.div>
 
-        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-base-200">
+        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
           <Step
             number={1}
             icon={Camera}
             title="Soumets ta photo"
             desc="Chaque mois, un thème. Partage ton meilleur cliché avec ta famille."
-            color="bg-violet-500"
+            color="bg-violet-600"
           />
           <Step
             number={2}
             icon={Users}
             title="Ta famille vote"
             desc="Chaque membre vote pour sa photo préférée. Un vote par album, tu peux changer d'avis."
-            color="bg-blue-500"
+            color="bg-violet-400"
           />
           <Step
             number={3}
@@ -457,7 +406,7 @@ const HomePage = () => {
       {/* ══════════════════════════════════════════
           REJOINDRE / CRÉER
       ══════════════════════════════════════════ */}
-      <section id="action" className="py-20 px-4 bg-base-200">
+      <section id="action" style={{ background: '#0a0818' }} className="py-20 px-4">
         <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
@@ -465,39 +414,41 @@ const HomePage = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl font-bold mb-3">Prêt à grimper ?</h2>
-          <p className="text-base-content/50">Rejoins une famille existante ou crée la tienne</p>
+          <h2 className="text-3xl font-bold mb-3 text-white">Prêt à grimper ?</h2>
+          <p className="text-white/40">Rejoins une famille existante ou crée la tienne</p>
         </motion.div>
 
         <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* ── Rejoindre ── */}
           <motion.div
-            className="bg-base-100 rounded-3xl p-8 shadow-sm border border-base-300"
+            className="rounded-3xl p-8 border"
+            style={{ background: 'rgba(109,40,217,0.12)', borderColor: 'rgba(139,92,246,0.3)' }}
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.2)' }}>
+                <Users className="w-5 h-5 text-violet-400" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-primary">Rejoins une Family</h3>
-                <p className="text-xs text-base-content/50">Tu as un code d'invitation ?</p>
+                <h3 className="font-bold text-lg text-violet-300">Rejoins une Family</h3>
+                <p className="text-xs text-white/40">Tu as un code d'invitation ?</p>
               </div>
-              <div className="tooltip tooltip-primary tooltip-left ml-auto" data-tip="Rejoins une communauté pour partager tes photos et participer aux concours.">
-                <HelpCircle className="w-4 h-4 text-base-content/30 hover:text-info cursor-pointer" />
+              <div className="tooltip tooltip-right ml-auto" data-tip="Rejoins une communauté pour partager tes photos et participer aux concours.">
+                <HelpCircle className="w-4 h-4 text-white/20 hover:text-white/50 cursor-pointer" />
               </div>
             </div>
             <form onSubmit={handleJoinFamily} className="space-y-4">
               <div className="form-control">
-                <label className="label pb-1"><span className="label-text text-sm">Code d'invitation</span></label>
+                <label className="label pb-1"><span className="label-text text-white/60 text-sm">Code d'invitation</span></label>
                 <input
                   type="text"
                   placeholder="ABC123"
-                  className="input input-bordered w-full tracking-widest font-mono text-lg uppercase"
+                  className="input w-full tracking-widest font-mono text-lg uppercase text-white"
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,92,246,0.4)' }}
                   pattern="[A-F0-9]{6}"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value)}
@@ -505,14 +456,19 @@ const HomePage = () => {
                   required
                   onInput={(e) => e.target.value = e.target.value.toUpperCase()}
                 />
-                <p className="text-xs text-base-content/40 mt-1">6 caractères · A-F, 0-9</p>
+                <p className="text-xs text-white/25 mt-1">6 caractères · A-F, 0-9</p>
               </div>
               {serverResponse && !serverResponse?.family && joiningFamily && (
                 <div role="alert" className="alert alert-error alert-soft">
                   <span>{serverResponse.message}</span>
                 </div>
               )}
-              <button type="submit" className="btn btn-primary w-full" disabled={joiningFamily}>
+              <button
+                type="submit"
+                className="btn w-full font-bold"
+                style={{ background: '#7c3aed', color: 'white', border: 'none' }}
+                disabled={joiningFamily}
+              >
                 {joiningFamily ? <span className="loading loading-spinner loading-sm" /> : 'Rejoindre →'}
               </button>
             </form>
@@ -520,43 +476,50 @@ const HomePage = () => {
 
           {/* ── Créer ── */}
           <motion.div
-            className="bg-base-100 rounded-3xl p-8 shadow-sm border border-base-300"
+            className="rounded-3xl p-8 border"
+            style={{ background: 'rgba(180,130,0,0.1)', borderColor: 'rgba(251,191,36,0.3)' }}
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-secondary" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.15)' }}>
+                <Trophy className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-secondary">Crée ta Family</h3>
-                <p className="text-xs text-base-content/50">Lance ton propre concours</p>
+                <h3 className="font-bold text-lg text-amber-300">Crée ta Family</h3>
+                <p className="text-xs text-white/40">Lance ton propre concours</p>
               </div>
-              <div className="tooltip tooltip-secondary tooltip-left ml-auto" data-tip="Deviens admin d'une communauté et invite tes proches.">
-                <HelpCircle className="w-4 h-4 text-base-content/30 hover:text-info cursor-pointer" />
+              <div className="tooltip tooltip-left ml-auto" data-tip="Deviens admin d'une communauté et invite tes proches.">
+                <HelpCircle className="w-4 h-4 text-white/20 hover:text-white/50 cursor-pointer" />
               </div>
             </div>
             <form onSubmit={handleCreateFamily} className="space-y-4">
               <div className="form-control">
-                <label className="label pb-1"><span className="label-text text-sm">Nom de la Family</span></label>
+                <label className="label pb-1"><span className="label-text text-white/60 text-sm">Nom de la Family</span></label>
                 <input
                   type="text"
                   placeholder="Les Duponts"
-                  className="input input-bordered w-full"
+                  className="input w-full text-white"
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(251,191,36,0.35)' }}
                   value={familyName}
                   onChange={(e) => setFamilyName(e.target.value)}
                   required
                 />
-                <p className="text-xs text-base-content/40 mt-1">Un code d'invitation sera généré automatiquement</p>
+                <p className="text-xs text-white/25 mt-1">Un code d'invitation sera généré automatiquement</p>
               </div>
               {serverResponse?.message && creatingFamily && (
                 <div role="alert" className="alert alert-error alert-soft">
                   <span>{serverResponse.message}</span>
                 </div>
               )}
-              <button type="submit" className="btn btn-secondary w-full" disabled={creatingFamily}>
+              <button
+                type="submit"
+                className="btn w-full font-bold"
+                style={{ background: '#fbbf24', color: '#07071a', border: 'none' }}
+                disabled={creatingFamily}
+              >
                 {creatingFamily ? <span className="loading loading-spinner loading-sm" /> : 'Créer ma Family →'}
               </button>
             </form>
@@ -581,9 +544,9 @@ const HomePage = () => {
       )}
 
       {/* ── Footer ── */}
-      <footer className="py-8 text-center text-sm text-base-content/40 bg-base-200 border-t border-base-300">
+      <footer className="py-8 text-center text-sm border-t" style={{ background: '#07071a', color: 'rgba(255,255,255,0.3)', borderColor: 'rgba(139,92,246,0.15)' }}>
         <p className="font-medium mb-1">🏔 Chaque photo nous rapproche du sommet</p>
-        <p>© 2025 Peakture · <a href="https://storyset.com/worker" className="hover:text-base-content/60">illustrations by Storyset</a></p>
+        <p>© 2025 Peakture · <a href="https://storyset.com/worker" className="hover:text-white/60 transition-colors">illustrations by Storyset</a></p>
       </footer>
     </div>
   );
