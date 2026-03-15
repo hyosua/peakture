@@ -31,14 +31,12 @@ export const signup = async (req, res) => {
             password: hashedPassword
         })
 
-        console.log("Invite code", inviteCode)
         if(inviteCode){
             const result = await Family.findOneAndUpdate(
                 { inviteCode },
                 { $push: { members: newUser._id }},
                 { new: true }
             )
-            console.log("Family update Result:", result)
             if(!result){
                 return res.status(400).json({error: "Code d'invitation invalide"})
             }
@@ -110,15 +108,8 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     const isProduction = process.env.NODE_ENV === 'production';
-    const cookieDomain = isProduction ? '.peakture.fr' : undefined; 
+    const cookieDomain = isProduction ? '.peakture.fr' : undefined;
     try {
-        console.log("[logout] Attempting to clear jwt cookie");
-        console.log("Environnement:", process.env.NODE_ENV);
-        console.log(" - Domain:", cookieDomain);
-
-
-        console.log("Cookies received in request:", req.cookies);
-
         res.cookie("jwt", "", {
             domain: cookieDomain, 
             httpOnly: true,
