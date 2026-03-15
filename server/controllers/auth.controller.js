@@ -220,7 +220,7 @@ export const resetPassword = async (req, res) => {
         res.status(200).json({ success: true, message: "Mot de passe mis à jour avec succès!" })
     }catch (error){
         console.log("Error in auth controller", error.message)
-        return res.status(500).json({ success: true, error: "Internal Server Error"})
+        return res.status(500).json({ success: false, error: "Internal Server Error"})
     }
 }
 
@@ -232,12 +232,11 @@ export const verifyResetToken = async(req, res) => {
             resetToken: token,
             resetTokenExpires: { $gt: Date.now() }
         });
-        console.log("User Reset Token", user)
         if (!user) return  res.status(400).json({ isValid: false })
 
         res.json({ isValid: true, email: user.email })
     }catch(error){
         console.log("Error in auth controller (verifyResetToken)", error.message)
-        return res.status(500).json({ success: true, error: "Internal Server Error"})
+        return res.status(500).json({ success: false, error: "Internal Server Error"})
     }
 }

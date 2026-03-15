@@ -58,13 +58,15 @@ const AlbumList = () => {
     const deleteAlbum = async (id) => {
 
        const response =  await fetch(`${import.meta.env.VITE_API_URL}/api/albums/${id}/cloudinary/delete`, {
-            method: "DELETE"
+            method: "DELETE",
+            credentials: "include"
         })
 
         if(response.ok){
             try{
                 await fetch(`${import.meta.env.VITE_API_URL}/api/albums/${id}`, {
                     method: 'DELETE',
+                    credentials: "include"
                 })  
             }catch(error){
                 console.error("Impossible de supprimer l'album de la database:", error)
@@ -93,6 +95,7 @@ const AlbumList = () => {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/set-countdown`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ days })
             })
 
@@ -127,6 +130,7 @@ const AlbumList = () => {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/albums/close/${albumId}/close-album`,{
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({ familyId })
             });
 
@@ -168,6 +172,7 @@ const AlbumList = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     theme: newTheme
                 })
@@ -225,6 +230,7 @@ const AlbumList = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
+                credentials: "include",
                 body: JSON.stringify(newAlbumForm)
             })
 

@@ -169,6 +169,7 @@ const AlbumPage = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     albumId: album._id,
                     src: imageUrl,
@@ -322,6 +323,7 @@ const AlbumPage = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     src: cloudinaryUrl
                 })
@@ -347,7 +349,8 @@ const AlbumPage = () => {
             }
             
             const response = await fetch(`${API_BASE_URL}/api/photos/${photoId}`, {
-                method: "DELETE" 
+                method: "DELETE",
+                credentials: "include"
             })
             if(!response.ok) {
                 throw new Error("Une erreur est survenue lors de la suppression de la Bdd")
@@ -392,6 +395,7 @@ const AlbumPage = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify({
                     description: input
                 })
