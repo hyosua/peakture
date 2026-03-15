@@ -39,8 +39,7 @@ export const getAlbum = async (req, res) => {
 
 export const createAlbum = async (req, res) => {
     try {
-        const { familyId, month, theme, description, admin } = req.body
-        const year = new Date().getFullYear()
+        const { familyId, month, year, theme, description, admin } = req.body
 
         if(await Album.findOne({familyId, month, year})){
             return res.status(404).json({ message: "Il y'a déjà un album pour ce mois" })

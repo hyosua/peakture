@@ -24,8 +24,10 @@ const AlbumList = () => {
     
     const {isAdmin, currentUser} = useAuth()
     const currentFamily = currentUser?.familyId
+    const currentYear = new Date().getFullYear()
     const [newAlbumForm, setNewAlbumForm ] = useState({
         month: 0,
+        year: currentYear,
         theme: '',
         description: '',
         familyId: familyId,
@@ -250,7 +252,7 @@ const AlbumList = () => {
                 familyId: newAlbumFromServer.familyId
             }
             setAlbums(prev => [...prev, newAlbum])
-            setNewAlbumForm({ month: 0, theme: "", familyId: familyId, admin: currentUser._id })
+            setNewAlbumForm({ month: 0, year: currentYear, theme: "", familyId: familyId, admin: currentUser._id })
             setShowAddForm(false)
         } catch (error) {
             console.error('Error creating a new album: ', error)
@@ -325,7 +327,26 @@ const AlbumList = () => {
                                 </div>
                                 
                                 <div className='mb-4'>
-                                    
+                                    <label className="font-semibold block mb-2">Année
+                                        <motion.select
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ duration: 0.3, ease: "easeOut" }}
+                                            value={newAlbumForm.year}
+                                            onChange={handleFormChange}
+                                            name='year'
+                                            className="block w-full p-2 mb-4 border-2 rounded"
+                                            required
+                                        >
+                                            {[currentYear - 1, currentYear, currentYear + 1].map(y => (
+                                                <option className="bg-base-100 font-bold" key={y} value={y}>{y}</option>
+                                            ))}
+                                        </motion.select>
+                                    </label>
+                                </div>
+
+                                <div className='mb-4'>
+
                                     <label className='font-semibold block mb-2'>Thème
                                         <input
                                             

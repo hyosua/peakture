@@ -55,7 +55,8 @@ export const resetPasswordSchema = z.object({
 export const createAlbumSchema = z.object({
     theme: z.string().trim().min(1, "Le thème est requis").max(100, "Le thème est trop long"),
     familyId: z.string().regex(objectIdRegex, "Identifiant de famille invalide"),
-    month: z.number().int().min(1, "Choisis un mois valide").max(12),
+    month: z.coerce.number().int().min(1, "Choisis un mois valide").max(12),
+    year: z.coerce.number().int().min(2020).max(2100),
     admin: z.string().regex(objectIdRegex, "Identifiant admin invalide"),
     adminModel: z.enum(['User', 'Guest']).optional(),
     description: z.string().trim().max(500).optional(),
