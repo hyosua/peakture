@@ -85,9 +85,15 @@ export const deletePhoto = async (req, res) => {
 
         // récupération de la photo
         const photo = await Photo.findOne({ _id: photoId });
-        
+
         if (!photo) {
             return res.status(404).json({ message: "Photo not found" });
+        }
+
+        // Vérification que l'utilisateur est bien l'auteur de la photo
+        const userOrGuest = req.user || req.guest
+        if (photo.userId.toString() !== userOrGuest._id.toString()) {
+            return res.status(403).json({ message: "Action non autorisée" })
         }
 
         // Vérif du format d'album Id
@@ -200,14 +206,22 @@ export const replacePhoto = async (req,res) => {
         })
     }
 
+    // récupération de l'ancienne photo
+    const photo = await Photo.findOne({ _id: photoId });
+
+    if (!photo) return res.status(404).json({ message: "Photo non trouvée" })
+
+    // Vérification que l'utilisateur est bien l'auteur de la photo
+    const userOrGuest = req.user || req.guest
+    if (photo.userId.toString() !== userOrGuest._id.toString()) {
+        return res.status(403).json({ message: "Action non autorisée" })
+    }
+
     const updatedPhoto = {
         src: src,
         albumId: albumId,
         votes: 0
     }
-    
-    // récupération de l'ancienne photo
-    const photo = await Photo.findOne({ _id: photoId });
     const albumCover = await Album.findOne({
         _id: new ObjectId(albumId),
         cover: photo.src

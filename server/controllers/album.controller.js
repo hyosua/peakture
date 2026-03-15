@@ -1,6 +1,7 @@
 import User from "../models/user.model.js"
 import Guest from "../models/guest.model.js"
 import Album from "../models/album.model.js"
+import Family from "../models/family.model.js"
 import Photo from "../models/photo.model.js"
 import { ObjectId } from "mongodb";
 import cloudinary from "../cloudinaryConfig.js"
@@ -109,12 +110,20 @@ export const editAlbumTheme = async (req, res) => {
 
 export const deleteAlbum = async (req, res) => {
     try {
-        
         const albumId = req.params.id
 
-        await Photo.deleteMany({
-            albumId
-        })
+        const album = await Album.findById(albumId)
+        if (!album) return res.status(404).json({ message: "Album introuvable" })
+
+        const family = await Family.findById(album.familyId)
+        if (!family) return res.status(404).json({ message: "Famille introuvable" })
+
+        const userOrGuest = req.user || req.guest
+        if (family.admin.toString() !== userOrGuest._id.toString()) {
+            return res.status(403).json({ message: "Action réservée à l'administrateur" })
+        }
+
+        await Photo.deleteMany({ albumId })
         
         const query = { _id: new ObjectId(albumId) };
 

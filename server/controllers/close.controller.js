@@ -1,9 +1,24 @@
 import Album from "../models/album.model.js"
+import Family from "../models/family.model.js"
 import Photo from "../models/photo.model.js"
 import { closeAlbumService, assignPoints, determineUserOrGuest } from "../services/closeAlbum.service.js";
 
+const isAdmin = (family, userOrGuest) =>
+    family.admin.toString() === userOrGuest._id.toString()
+
 export const closeAlbum = async (req, res) => {
     try {
+        const album = await Album.findById(req.params.id)
+        if (!album) return res.status(404).json({ error: "Album introuvable" })
+
+        const family = await Family.findById(album.familyId)
+        if (!family) return res.status(404).json({ error: "Famille introuvable" })
+
+        const userOrGuest = req.user || req.guest
+        if (!isAdmin(family, userOrGuest)) {
+            return res.status(403).json({ error: "Action réservée à l'administrateur" })
+        }
+
         const result = await closeAlbumService(req.params.id, req.body.familyId);
         if(result.status === 'tie-break'){
             return res.status(200).json({
@@ -65,9 +80,20 @@ export const tieBreakVote = async (req,res) => {
 }
 
 export const setCountdown = async (req, res) => {
-    try {      
+    try {
+        const album = await Album.findById(req.params.id)
+        if (!album) return res.status(404).json({ message: "Album non trouvé" })
+
+        const family = await Family.findById(album.familyId)
+        if (!family) return res.status(404).json({ error: "Famille introuvable" })
+
+        const userOrGuest = req.user || req.guest
+        if (!isAdmin(family, userOrGuest)) {
+            return res.status(403).json({ error: "Action réservée à l'administrateur" })
+        }
+
         const { days } = req.body;
-        const countdownDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000); // 24 * 60 * 60 * 1000 = 24 hours in milliseconds
+        const countdownDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
         const updatedAlbum = await Album.findByIdAndUpdate(
             req.params.id,

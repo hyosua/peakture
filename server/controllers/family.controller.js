@@ -242,10 +242,17 @@ export const change = async (req, res) => {
 }
 export const editFamilyName = async (req, res) => {
     try {
-        const update = req.body
-        const updatedFamily = await Family.findByIdAndUpdate(req.params.id, update, {
+        const family = await Family.findById(req.params.id)
+        if (!family) return res.status(404).json({ error: "Famille introuvable" })
+
+        const userOrGuest = req.user || req.guest
+        if (family.admin.toString() !== userOrGuest._id.toString()) {
+            return res.status(403).json({ error: "Action réservée à l'administrateur" })
+        }
+
+        const updatedFamily = await Family.findByIdAndUpdate(req.params.id, req.body, {
             new : true,
-            runValidators: true, // Verifie le format défini dans le schéma mongoose
+            runValidators: true,
         })
         return res.status(200).json({ success: true, message: "Le nom de la Family a bien été modifié", updatedFamily })
     } catch (error) {
