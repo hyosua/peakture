@@ -1,11 +1,68 @@
 import '@/App.css';
-import  { useState, useEffect} from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
 import Auth from '@/components/auth/Auth.jsx'
-import { CheckCircle, HelpCircle } from 'lucide-react';
+import { CheckCircle, HelpCircle, Camera, Users, Trophy, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import ConfirmMessage from '@/components/ui/ConfirmMessage.jsx';
 import { useToast } from "@/context/ToastContext.jsx"
+import { motion } from 'motion/react'
+
+// Étoiles fixes pour éviter le recalcul à chaque rendu
+const STARS = [
+  { id:0,  top:'4%',  left:'12%', s:1.5, o:0.8 }, { id:1,  top:'8%',  left:'67%', s:1,   o:0.5 },
+  { id:2,  top:'3%',  left:'34%', s:2,   o:0.9 }, { id:3,  top:'15%', left:'82%', s:1,   o:0.6 },
+  { id:4,  top:'6%',  left:'55%', s:1.5, o:0.7 }, { id:5,  top:'20%', left:'5%',  s:1,   o:0.5 },
+  { id:6,  top:'11%', left:'90%', s:2,   o:0.8 }, { id:7,  top:'2%',  left:'76%', s:1,   o:0.6 },
+  { id:8,  top:'18%', left:'44%', s:1.5, o:0.4 }, { id:9,  top:'25%', left:'23%', s:1,   o:0.7 },
+  { id:10, top:'7%',  left:'18%', s:1,   o:0.5 }, { id:11, top:'13%', left:'61%', s:2,   o:0.9 },
+  { id:12, top:'30%', left:'88%', s:1,   o:0.4 }, { id:13, top:'5%',  left:'48%', s:1.5, o:0.6 },
+  { id:14, top:'22%', left:'72%', s:1,   o:0.8 }, { id:15, top:'9%',  left:'3%',  s:2,   o:0.5 },
+  { id:16, top:'35%', left:'15%', s:1,   o:0.3 }, { id:17, top:'28%', left:'38%', s:1.5, o:0.7 },
+  { id:18, top:'16%', left:'95%', s:1,   o:0.6 }, { id:19, top:'40%', left:'52%', s:1,   o:0.4 },
+  { id:20, top:'1%',  left:'88%', s:2,   o:0.9 }, { id:21, top:'45%', left:'7%',  s:1,   o:0.3 },
+  { id:22, top:'33%', left:'29%', s:1.5, o:0.5 }, { id:23, top:'19%', left:'57%', s:1,   o:0.7 },
+  { id:24, top:'10%', left:'40%', s:1,   o:0.6 }, { id:25, top:'50%', left:'78%', s:1.5, o:0.4 },
+  { id:26, top:'38%', left:'65%', s:1,   o:0.5 }, { id:27, top:'26%', left:'10%', s:2,   o:0.8 },
+  { id:28, top:'14%', left:'99%', s:1,   o:0.4 }, { id:29, top:'42%', left:'33%', s:1,   o:0.6 },
+]
+
+const FloatingCard = ({ style, icon: Icon, label, delay = 0 }) => (
+  <motion.div
+    className="absolute hidden md:flex flex-col items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-3 shadow-xl"
+    style={style}
+    animate={{ y: [0, -10, 0] }}
+    transition={{ duration: 4, repeat: Infinity, delay, ease: 'easeInOut' }}
+  >
+    <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.15)' }}>
+      <Icon className="w-7 h-7 text-white/80" />
+    </div>
+    <span className="text-white/60 text-xs font-medium whitespace-nowrap">{label}</span>
+  </motion.div>
+)
+
+const Step = ({ icon: Icon, number, title, desc, color }) => (
+  <motion.div
+    className="flex flex-col items-center text-center gap-4 p-6"
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.6, delay: number * 0.15 }}
+  >
+    <div className="relative">
+      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg ${color}`}>
+        <Icon className="w-8 h-8 text-white" />
+      </div>
+      <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-base-100 border-2 border-base-300 flex items-center justify-center text-xs font-bold">
+        {number}
+      </span>
+    </div>
+    <div>
+      <h3 className="font-bold text-lg mb-1">{title}</h3>
+      <p className="text-base-content/60 text-sm leading-relaxed">{desc}</p>
+    </div>
+  </motion.div>
+)
 
 const HomePage = () => {
   const [joinCode, setJoinCode] = useState('');
@@ -22,28 +79,24 @@ const HomePage = () => {
   const [successSignup, setSuccessSignup] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const {currentUser, logout, fetchCurrentUser, error} = useAuth()
-  const {showToast} = useToast()
+  const { currentUser, logout, fetchCurrentUser, error } = useAuth()
+  const { showToast } = useToast()
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Ouvrir le modal signup avec un code d'invitation 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const inviteCode = params.get('inviteCode');
-
     if (inviteCode) {
       setJoinCode(inviteCode);
       setShowLoginForm(true);
       setSignupForm(true);
     }
-
-    if (params.get('showLoginForm') === 'true'){
+    if (params.get('showLoginForm') === 'true') {
       setShowLoginForm(true)
     }
   }, [location]);
 
-  // Afficher le message d'erreur 
   useEffect(() => {
     if (errorMessage) {
       setShowError(true);
@@ -51,85 +104,57 @@ const HomePage = () => {
         setShowError(false);
         setErrorMessage('');
       }, 3000);
-  
       return () => clearTimeout(timer);
     }
   }, [errorMessage]);
-  
 
   const handleJoinFamily = async (e) => {
     e.preventDefault();
-
     try {
       setJoiningFamily(true)
-      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/join`,{
-        method : "POST",
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/join`, {
+        method: "POST",
         credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            inviteCode: joinCode
-        })
-      }) 
-      
-      if(result.status === 400){
-        setIsConfirmOpen(true)
-        return
-      }
-
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inviteCode: joinCode })
+      })
+      if (result.status === 400) { setIsConfirmOpen(true); return }
       const familyData = await result.json()
-      
       setServerResponse(familyData)
-      if (familyData.family) {
-        setJoiningFamily(false);
-      }
-    }catch(error){
-      setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
-    }finally{
-      if (isConfirmOpen || (serverResponse && serverResponse.family)) {
-        setJoiningFamily(false);
-      }
+      if (familyData.family) setJoiningFamily(false);
+    } catch (error) {
+      setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error })
+    } finally {
+      if (isConfirmOpen || (serverResponse && serverResponse.family)) setJoiningFamily(false);
     }
   };
 
   const handleChangeFamily = async () => {
-    try{
-      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/change`,{
-        method :"PATCH",
+    try {
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/change`, {
+        method: "PATCH",
         credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          inviteCode: joinCode
-        })
-    })
-
-    if (!result.ok) {
-      const errorText = await result.text();
-      console.error("Erreur de réponse:", result.status, errorText);
-      throw new Error(`Erreur ${result.status}: ${result.statusText}`);
-    }
-    
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inviteCode: joinCode })
+      })
+      if (!result.ok) throw new Error(`Erreur ${result.status}: ${result.statusText}`);
       const familyData = await result.json()
       setServerResponse(familyData)
       setIsConfirmOpen(false)
-    }catch(error){
+    } catch (error) {
       console.error("Erreur lors du changement de famille: ", error)
-    }finally {
+    } finally {
       setJoiningFamily(false);
     }
   }
 
   useEffect(() => {
-    if (!serverResponse) return; 
-  
+    if (!serverResponse) return;
     if (serverResponse.family && serverResponse.family._id) {
       const handleFamilyJoin = async () => {
         await fetchCurrentUser();
         navigate(`/family/${serverResponse.family._id}`);
-        setServerResponse(null); 
+        setServerResponse(null);
       };
       handleFamilyJoin();
     }
@@ -139,36 +164,27 @@ const HomePage = () => {
     e.preventDefault();
     setCreatingFamily(true)
     try {
-      
-      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/create`,{
-        method : "POST",
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/api/family/create`, {
+        method: "POST",
         credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name: familyName
-        })
-      }) 
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: familyName })
+      })
       const familyData = await result.json()
       setServerResponse(familyData)
-    }catch(error){
-      setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error})
-      showToast({ message: error, type: "error"})
+    } catch (error) {
+      setServerResponse({ message: "Une erreur est survenue lors du fetching des données", error })
+      showToast({ message: error, type: "error" })
     }
   };
 
-  
-
   useEffect(() => {
     let timer
-    if(successLogin){
-      timer = setTimeout(() => {
-        setSuccessLogin(false)
-      },2000)
+    if (successLogin) {
+      timer = setTimeout(() => setSuccessLogin(false), 2000)
     }
     return () => clearTimeout(timer)
-  },[successLogin])
+  }, [successLogin])
 
   const handleLogout = async (e) => {
     e.preventDefault()
@@ -176,204 +192,398 @@ const HomePage = () => {
     try {
       await logout()
       navigate('/')
-      console.log("Logout: ", currentUser)
     } catch (error) {
-      console.error("Erreur lors du logout: ", error);
       setErrorMessage("Une erreur lors de la déconnexion s'est produite.");
     }
   }
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
+    const timer = setTimeout(() => setLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="min-h-screen bg-base-300 flex flex-col">
-      {/* Header with Logo */}
-      <header className="relative py-4 px-4 flex justify-center">
+    <div className="min-h-screen flex flex-col">
 
-        { successLogin && (
-          <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
-            <div role="alert" className="alert alert-success alert-soft shadow-lg maw-w-md">
-              <CheckCircle />
+      {/* ── TOASTS ── */}
+      {successLogin && (
+        <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
+          <div role="alert" className="alert alert-success alert-soft shadow-lg">
+            <CheckCircle />
             <span>Bienvenue à la maison {currentUser?.username}</span>
           </div>
         </div>
-        )}
-
-        { successSignup && (
-                <div role="alert" className="fixed alert alert-success">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>Inscription réussie!</span>
-                </div>
-            )}
-        
-        { showError && (
-          <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
-            <div role="alert" className="alert alert-error alert-soft shadow-lg maw-w-sm">
+      )}
+      {successSignup && (
+        <div role="alert" className="fixed top-4 inset-x-0 flex justify-center z-50">
+          <div className="alert alert-success"><span>Inscription réussie !</span></div>
+        </div>
+      )}
+      {(showError || (!showError && error)) && (
+        <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
+          <div role="alert" className="alert alert-error alert-soft shadow-lg max-w-sm">
             <span>{errorMessage || error}</span>
           </div>
         </div>
-        )}
-        {!showError && error && (
-          <div className='fixed top-4 inset-x-0 flex justify-center items-center z-50'>
-            <div role="alert" className="alert alert-error alert-soft shadow-lg max-w-sm">
-              <span>{error}</span>
-            </div>
-          </div>
-        )}
-
-        <ConfirmMessage 
-          isOpen={isConfirmOpen}
-          onCancel={() => {
-            setIsConfirmOpen(false)
-            setJoiningFamily(false)
-          }}
-          title={"Changement de Family"}
-          message="Hey ! Tu fais déjà partie d’une famille sur Peakture. Si tu rejoins celle-ci, tu perdras l’accès à l’ancienne. Es-tu sûr de vouloir continuer ?"
-          onConfirm={handleChangeFamily}
-        />
-
-        {/* LOGO */}
-        <img src="https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png" className='w-14 absolute top-4 left-4 h-auto'/>
-        
-        { currentUser && !currentUser.sessionId ? (
-          <button className='btn btn-sm btn-outline   btn-accent absolute top-6 right-4'
-                onClick={handleLogout}
-        >
-                  Se Déconnecter
-        </button>
-        ) : (
-          <div>
-              <button className='btn btn-sm btn-outline   btn-accent absolute top-6 right-4'
-                       onClick={() => setShowLoginForm(true)}
-               >
-                  Se Connecter
-              </button>
-              <button className='btn btn-sm btn-soft hidden lg:block btn-accent absolute top-6 right-32'
-                      onClick={() => {
-                        setSignupForm(true)
-                        setShowLoginForm(true)
-                      }}
-              >
-                  S&apos;inscrire
-              </button>
-          </div>
-        )}
-
-      </header>
-      
-
-<main className="flex-grow flex flex-col md:flex-row mt-10 px-4 py-2">
-  
-  {/* Join Family Side */}
-  <div className="flex-1 flex flex-col items-center justify-center p-4 bg-base-200 rounded-lg md:mr-2  md:mb-0">
-      <h2 className="text-3xl font-bold mb-6 text-primary flex items-center gap-2">
-        Rejoins une Family
-        <div className="tooltip tooltip-primary tooltip-left" data-tip="Rejoins une communauté pour partager tes photos et participer à des concours.">
-          <HelpCircle className="w-5 h-5  text-gray-400 hover:text-info transition-colors cursor-pointer" />
-        </div>
-      </h2>
-    <form onSubmit={handleJoinFamily} className="w-full max-w-xs">
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text mb-2">Entre le Family Code</span>
-        </label>
-        <input 
-          type="text" 
-          placeholder="ABC123" 
-          className="input input-bordered w-full" 
-          pattern="[A-F0-9]{6}" 
-          value={joinCode}
-          onChange={(e) => setJoinCode(e.target.value)}
-          title="Code hexadécimal (6 caractères, A-F, 0-9)" 
-          required 
-          onInput={(e) => e.target.value = e.target.value.toUpperCase()}
-        />
-        <p className="validator-hint">
-          Le code doit contenir exactement 6 caractères (A-F, 0-9)
-        </p>
-      </div>
-      { serverResponse && !serverResponse?.family && joiningFamily && (
-        <div role="alert" className="alert alert-error alert-soft mt-2">
-          <span>{serverResponse.message}</span>
-        </div>
       )}
-      <button type="submit" className="btn btn-primary w-full mt-6 text-lg hover:bg-emerald-500">
-        Rejoindre 
-      </button>
-    </form>
-  </div>
 
-  <div className="divider md:divider-horizontal text-xl text-white font-bold">OU</div>
-  
-  {/* Create Family Side */}
-  <div className="flex-1 flex flex-col items-center justify-center p-6 bg-base-200 rounded-lg md:ml-2">
-    <h2 className="text-3xl font-bold mb-6 text-secondary flex items-center gap-2">
-      Crée ta Family
-      <div className="tooltip tooltip-secondary tooltip-left max-w-xs" data-tip="Devient l'admin d'une communauté où les membres peuvent participer à des concours photo.">
-      <HelpCircle className="w-5 h-5  text-gray-400 hover:text-info transition-colors cursor-pointer" />
+      <ConfirmMessage
+        isOpen={isConfirmOpen}
+        onCancel={() => { setIsConfirmOpen(false); setJoiningFamily(false) }}
+        title={"Changement de Family"}
+        message="Hey ! Tu fais déjà partie d'une famille sur Peakture. Si tu rejoins celle-ci, tu perdras l'accès à l'ancienne. Es-tu sûr de vouloir continuer ?"
+        onConfirm={handleChangeFamily}
+      />
 
-      </div>
-    </h2>
-    <form onSubmit={handleCreateFamily} className="w-full max-w-xs">
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text mb-2">Nom de la Family</span>
-        </label>
-        <input 
-          type="text" 
-          placeholder="Smith" 
-          className="input input-bordered w-full" 
-          value={familyName}
-          title="Entrer le nom de votre Famille" 
-          onChange={(e) => setFamilyName(e.target.value)}
-          required
+      {/* ══════════════════════════════════════════
+          HERO — Ciel nocturne + montagne
+      ══════════════════════════════════════════ */}
+      <section
+        className="relative min-h-screen flex flex-col overflow-hidden"
+        style={{ background: 'linear-gradient(to bottom, #07071a 0%, #12103a 40%, #1e1250 70%, #2a1060 100%)' }}
+      >
+        {/* Étoiles */}
+        {STARS.map(s => (
+          <span
+            key={s.id}
+            className="absolute rounded-full bg-white animate-pulse"
+            style={{ top: s.top, left: s.left, width: s.s, height: s.s, opacity: s.o, animationDuration: `${2 + s.id % 3}s` }}
+          />
+        ))}
+
+        {/* Halo doré au sommet */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 rounded-full blur-3xl pointer-events-none"
+          style={{ bottom: '28%', width: '40vw', height: '20vw', background: 'radial-gradient(ellipse, rgba(251,191,36,0.25) 0%, transparent 70%)' }}
         />
-        { serverResponse?.message && creatingFamily && (
-          <div role="alert" className="alert alert-error alert-soft mt-2">
-            <span>{serverResponse.message}</span>
+
+        {/* ── Header ── */}
+        <header className="relative z-10 flex items-center justify-between px-6 py-5">
+          <img
+            src="https://res.cloudinary.com/djsj0pfm3/image/upload/c_thumb,w_200,g_face/v1740580694/logo_white_ocjjvc.png"
+            className="w-12 h-auto"
+            alt="Peakture"
+          />
+          <div className="flex gap-2">
+            {currentUser && !currentUser.sessionId ? (
+              <button className="btn btn-sm btn-outline btn-accent" onClick={handleLogout}>
+                Se Déconnecter
+              </button>
+            ) : (
+              <>
+                <button
+                  className="btn btn-sm btn-ghost text-white/80 hover:text-white"
+                  onClick={() => setShowLoginForm(true)}
+                >
+                  Se Connecter
+                </button>
+                <button
+                  className="btn btn-sm btn-accent"
+                  onClick={() => { setSignupForm(true); setShowLoginForm(true) }}
+                >
+                  S&apos;inscrire
+                </button>
+              </>
+            )}
           </div>
-        )}
-      </div>
-      <button type="submit" className="btn btn-secondary hover:bg-orange-500 w-full mt-6 text-lg">
-        Créer 
-      </button>
-    </form>
-  </div>
-  
-  { showLoginForm && (
-    <Auth
-      signUp={signupForm} 
-      isOpen={showLoginForm}  
-      preFilledInviteCode={joinCode}
-      onClose={() => {
-        setShowLoginForm(false)
-        setSignupForm(false)
-      }}
-      onLoginSuccess={() => {
-        setSuccessLogin(true);
-        setShowLoginForm(false);
-      }}
-      onSignupSuccess={() => {
-        setSuccessSignup(true)
-        setSuccessLogin(true)
-        setTimeout(() => {setSuccessSignup(false)}, 3000)
-        setShowLoginForm(false)
-      }}
-    />
-  )}
-</main>
-      
-      <footer className="p-4 text-center text-sm opacity-70">
-      <a href="https://storyset.com/worker" className=" mt-10 text-xs text-neutral">illustrations by Storyset</a>
-        © 2025 Peakture - Chaque photo nous rapproche du sommet
+        </header>
+
+        {/* ── Contenu héro ── */}
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 pb-40">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 text-amber-300 text-sm font-medium mb-8"
+          >
+            <span>🏔</span>
+            <span>Concours photo mensuel en famille</span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="text-white leading-none mb-6"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(3.5rem, 9vw, 7rem)', letterSpacing: '0.02em' }}
+          >
+            La meilleure photo<br />
+            <span style={{ color: '#fbbf24', WebkitTextStroke: '1px rgba(251,191,36,0.3)' }}>
+              atteint le sommet
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-white/60 text-lg max-w-md mb-10"
+          >
+            Soumets ta photo, laisse ta famille voter.<br />
+            Chaque mois, un seul cliché conquiert le pic.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-3"
+          >
+            <button
+              className="btn btn-lg px-8 font-bold"
+              style={{ background: '#fbbf24', color: '#07071a', border: 'none' }}
+              onClick={() => document.getElementById('action').scrollIntoView({ behavior: 'smooth' })}
+            >
+              Rejoindre une Family
+            </button>
+            <button
+              className="btn btn-lg btn-outline px-8 text-white border-white/30 hover:bg-white/10 hover:border-white/50"
+              onClick={() => { setSignupForm(true); setShowLoginForm(true) }}
+            >
+              Créer ma Family
+            </button>
+          </motion.div>
+        </div>
+
+        {/* Cartes flottantes sur la montagne */}
+        <FloatingCard
+          style={{ bottom: '30%', left: '8%' }}
+          icon={Camera}
+          label="Ta photo"
+          delay={0}
+        />
+        <FloatingCard
+          style={{ bottom: '44%', left: '20%' }}
+          icon={Users}
+          label="Les votes"
+          delay={0.8}
+        />
+        <FloatingCard
+          style={{ bottom: '54%', right: '18%' }}
+          icon={Trophy}
+          label="#2 ce mois"
+          delay={1.4}
+        />
+        {/* Carte gagnante au sommet */}
+        <motion.div
+          className="absolute hidden md:flex flex-col items-center gap-1 rounded-2xl p-3 shadow-2xl border"
+          style={{
+            bottom: '31%', left: '50%', transform: 'translateX(-50%)',
+            background: 'linear-gradient(135deg, rgba(251,191,36,0.25), rgba(251,191,36,0.1))',
+            borderColor: 'rgba(251,191,36,0.5)',
+            backdropFilter: 'blur(12px)',
+          }}
+          animate={{ y: [0, -12, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <div className="w-16 h-16 rounded-xl flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.2)' }}>
+            <Trophy className="w-8 h-8 text-amber-400" />
+          </div>
+          <span className="text-amber-300 text-xs font-bold">🏆 Peakture du mois</span>
+        </motion.div>
+
+        {/* Montagne SVG */}
+        <div className="absolute bottom-0 w-full pointer-events-none" style={{ lineHeight: 0 }}>
+          <svg viewBox="0 0 1440 380" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '380px', display: 'block' }}>
+            <defs>
+              <radialGradient id="peakGlow" cx="50%" cy="100%" r="60%">
+                <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            {/* Montagnes arrière */}
+            <path d="M0,380 L0,280 L120,200 L280,310 L440,220 L560,270 L680,160 L800,250 L960,190 L1100,280 L1260,210 L1380,260 L1440,230 L1440,380Z" fill="#1a1060" opacity="0.6" />
+            {/* Halo sur le pic */}
+            <ellipse cx="720" cy="55" rx="260" ry="90" fill="url(#peakGlow)" />
+            {/* Montagnes principales */}
+            <path d="M0,380 L0,310 L150,270 L320,340 L480,260 L580,310 L680,200 L720,40 L760,200 L860,290 L1000,240 L1150,320 L1300,275 L1440,300 L1440,380Z" fill="#0f0c2e" />
+            {/* Premier plan */}
+            <path d="M0,380 L0,360 L100,340 L250,360 L380,330 L500,360 L620,345 L720,330 L820,345 L940,355 L1060,335 L1200,355 L1340,340 L1440,350 L1440,380Z" fill="#0a0818" />
+          </svg>
+        </div>
+
+        {/* Flèche scroll */}
+        <motion.div
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 z-10"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity }}
+        >
+          <ChevronDown className="w-6 h-6" />
+        </motion.div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          COMMENT ÇA MARCHE
+      ══════════════════════════════════════════ */}
+      <section className="py-20 px-4 bg-base-100">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl font-bold mb-3">Comment ça marche ?</h2>
+          <p className="text-base-content/50 max-w-md mx-auto">
+            Trois étapes pour conquérir le sommet
+          </p>
+        </motion.div>
+
+        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-base-200">
+          <Step
+            number={1}
+            icon={Camera}
+            title="Soumets ta photo"
+            desc="Chaque mois, un thème. Partage ton meilleur cliché avec ta famille."
+            color="bg-violet-500"
+          />
+          <Step
+            number={2}
+            icon={Users}
+            title="Ta famille vote"
+            desc="Chaque membre vote pour sa photo préférée. Un vote par album, tu peux changer d'avis."
+            color="bg-blue-500"
+          />
+          <Step
+            number={3}
+            icon={Trophy}
+            title="Le sommet est conquis"
+            desc="La photo avec le plus de votes remporte la Peakture du mois et grimpe au classement."
+            color="bg-amber-500"
+          />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          REJOINDRE / CRÉER
+      ══════════════════════════════════════════ */}
+      <section id="action" className="py-20 px-4 bg-base-200">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl font-bold mb-3">Prêt à grimper ?</h2>
+          <p className="text-base-content/50">Rejoins une famille existante ou crée la tienne</p>
+        </motion.div>
+
+        <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {/* ── Rejoindre ── */}
+          <motion.div
+            className="bg-base-100 rounded-3xl p-8 shadow-sm border border-base-300"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-primary">Rejoins une Family</h3>
+                <p className="text-xs text-base-content/50">Tu as un code d'invitation ?</p>
+              </div>
+              <div className="tooltip tooltip-primary tooltip-left ml-auto" data-tip="Rejoins une communauté pour partager tes photos et participer aux concours.">
+                <HelpCircle className="w-4 h-4 text-base-content/30 hover:text-info cursor-pointer" />
+              </div>
+            </div>
+            <form onSubmit={handleJoinFamily} className="space-y-4">
+              <div className="form-control">
+                <label className="label pb-1"><span className="label-text text-sm">Code d'invitation</span></label>
+                <input
+                  type="text"
+                  placeholder="ABC123"
+                  className="input input-bordered w-full tracking-widest font-mono text-lg uppercase"
+                  pattern="[A-F0-9]{6}"
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value)}
+                  title="Code hexadécimal (6 caractères, A-F, 0-9)"
+                  required
+                  onInput={(e) => e.target.value = e.target.value.toUpperCase()}
+                />
+                <p className="text-xs text-base-content/40 mt-1">6 caractères · A-F, 0-9</p>
+              </div>
+              {serverResponse && !serverResponse?.family && joiningFamily && (
+                <div role="alert" className="alert alert-error alert-soft">
+                  <span>{serverResponse.message}</span>
+                </div>
+              )}
+              <button type="submit" className="btn btn-primary w-full" disabled={joiningFamily}>
+                {joiningFamily ? <span className="loading loading-spinner loading-sm" /> : 'Rejoindre →'}
+              </button>
+            </form>
+          </motion.div>
+
+          {/* ── Créer ── */}
+          <motion.div
+            className="bg-base-100 rounded-3xl p-8 shadow-sm border border-base-300"
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-secondary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-secondary">Crée ta Family</h3>
+                <p className="text-xs text-base-content/50">Lance ton propre concours</p>
+              </div>
+              <div className="tooltip tooltip-secondary tooltip-left ml-auto" data-tip="Deviens admin d'une communauté et invite tes proches.">
+                <HelpCircle className="w-4 h-4 text-base-content/30 hover:text-info cursor-pointer" />
+              </div>
+            </div>
+            <form onSubmit={handleCreateFamily} className="space-y-4">
+              <div className="form-control">
+                <label className="label pb-1"><span className="label-text text-sm">Nom de la Family</span></label>
+                <input
+                  type="text"
+                  placeholder="Les Duponts"
+                  className="input input-bordered w-full"
+                  value={familyName}
+                  onChange={(e) => setFamilyName(e.target.value)}
+                  required
+                />
+                <p className="text-xs text-base-content/40 mt-1">Un code d'invitation sera généré automatiquement</p>
+              </div>
+              {serverResponse?.message && creatingFamily && (
+                <div role="alert" className="alert alert-error alert-soft">
+                  <span>{serverResponse.message}</span>
+                </div>
+              )}
+              <button type="submit" className="btn btn-secondary w-full" disabled={creatingFamily}>
+                {creatingFamily ? <span className="loading loading-spinner loading-sm" /> : 'Créer ma Family →'}
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Auth modal ── */}
+      {showLoginForm && (
+        <Auth
+          signUp={signupForm}
+          isOpen={showLoginForm}
+          preFilledInviteCode={joinCode}
+          onClose={() => { setShowLoginForm(false); setSignupForm(false) }}
+          onLoginSuccess={() => { setSuccessLogin(true); setShowLoginForm(false) }}
+          onSignupSuccess={() => {
+            setSuccessSignup(true); setSuccessLogin(true);
+            setTimeout(() => setSuccessSignup(false), 3000);
+            setShowLoginForm(false)
+          }}
+        />
+      )}
+
+      {/* ── Footer ── */}
+      <footer className="py-8 text-center text-sm text-base-content/40 bg-base-200 border-t border-base-300">
+        <p className="font-medium mb-1">🏔 Chaque photo nous rapproche du sommet</p>
+        <p>© 2025 Peakture · <a href="https://storyset.com/worker" className="hover:text-base-content/60">illustrations by Storyset</a></p>
       </footer>
     </div>
   );
