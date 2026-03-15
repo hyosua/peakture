@@ -57,7 +57,7 @@ export const createAlbum = async (req, res) => {
         res.status(201).send(result);
     } catch(err) {
         console.error(err);
-        res.status(500).send("Erreur lors de la création de l'album");
+        res.status(500).json({ message: "Erreur lors de la création de l'album" });
     }
 }
 
