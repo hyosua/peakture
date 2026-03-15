@@ -32,8 +32,11 @@ export const signup = async (req, res) => {
         })
 
         if(inviteCode){
+            if(!/^[A-F0-9]{6}$/i.test(inviteCode)){
+                return res.status(400).json({ error: "Code d'invitation invalide" })
+            }
             const result = await Family.findOneAndUpdate(
-                { inviteCode },
+                { inviteCode: String(inviteCode) },
                 { $push: { members: newUser._id }},
                 { new: true }
             )
@@ -168,10 +171,13 @@ export const getMe = async (req, res) => {
 }
 
 export const requestPasswordReset = async (req, res) => {
+    // Réponse générique dans tous les cas pour ne pas révéler l'existence d'un compte
+    const genericResponse = { success: true, message: "Un email de réinitialisation a été envoyé à l'adresse indiquée" }
     try {
         const { email } = req.body
-        
+
         const user = await User.findOne({ email })
+        if (!user) return res.status(200).json(genericResponse)
 
         const token = crypto.randomBytes(32).toString("hex")
         const expiresAt = Date.now() + 1000 * 60 * 60; // Expire dans 1H
@@ -183,20 +189,23 @@ export const requestPasswordReset = async (req, res) => {
         const resetUrl = `${base_url}/reset-password?token=${token}`;
 
         await sendPasswordResetNotification(user.username, email, resetUrl)
-        res.status(200).json({ success: true, message: "Un email de réinitialisation a été envoyé à l'adresse indiquée" })
+        res.status(200).json(genericResponse)
     }catch (error){
-        console.log("Error in auth controller (requestPasswordReset", error.message)
-        return res.status(500).json({ success: true, error: "Internal Server Error"})
+        console.error("Error in auth controller (requestPasswordReset)", error.message)
+        return res.status(500).json({ error: "Internal Server Error"})
     }
 }
 
 export const resetPassword = async (req, res) => {
     try {
         const { resetToken, password } = req.body
-        const user = await User.findOne({ resetToken })
+        const user = await User.findOne({
+            resetToken,
+            resetTokenExpires: { $gt: Date.now() }
+        })
 
         if(!user){
-            return res.status(404).json({ success: false, message: "Aucun utilisateur avec cet email"})
+            return res.status(400).json({ success: false, message: "Lien expiré ou invalide"})
         }
 
         // hash password

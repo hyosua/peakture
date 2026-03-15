@@ -121,7 +121,7 @@ export const join = async (req, res) => {
         const { inviteCode } = req.body
 
         // Vérification du code d'invitation
-        const family = await Family.findOne({ inviteCode })
+        const family = await Family.findOne({ inviteCode: String(inviteCode) })
         if (!family) {
             return res.status(404).json({ message: "Aucune famille ne correspond à ce code...", family: null })
         }
@@ -319,7 +319,7 @@ export const validateInviteCode = async (req, res) => {
     try{
         const {inviteCode} = req.body
         const existingFamily = await Family.findOne(
-            {inviteCode: inviteCode}
+            { inviteCode: String(inviteCode) }
         )
         
         if(!existingFamily){
