@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import User from '../models/user.model.js'
+import Guest from '../models/guest.model.js'
 import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 import Family from '../models/family.model.js'
 import { sendPasswordResetNotification, sendSignupNotification } from '../lib/utils/sendEmail.js'
@@ -88,7 +89,18 @@ export const login = async (req, res) => {
             return res.status(400).json({error: "Qui va là? mot de passe incorrect"})
         }
 
-        res.clearCookie("sessionId"); // Supprime le sessionId d'invité
+        // Nettoyer la session invité si elle existe
+        const sessionId = req.cookies.sessionId
+        if (sessionId) {
+            const guest = await Guest.findOneAndDelete({ sessionId })
+            if (guest?.familyId) {
+                await Family.updateOne(
+                    { _id: guest.familyId },
+                    { $pull: { guestMembers: guest._id } }
+                )
+            }
+        }
+        res.clearCookie("sessionId")
 
         generateTokenAndSetCookie(res, user._id)
 

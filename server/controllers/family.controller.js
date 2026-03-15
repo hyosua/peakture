@@ -1,12 +1,9 @@
-import bcrypt from 'bcryptjs'
 import Family from '../models/family.model.js'
 import User from '../models/user.model.js'
 import Guest from '../models/guest.model.js'
 import Album from '../models/album.model.js'
-import me from '../routes/auth.routes.js'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
-import { generateTokenAndSetCookie } from '../lib/utils/generateToken.js'
 import { sendFamilyNotification } from '../lib/utils/sendEmail.js'
 import { closeAlbumService } from '../services/closeAlbum.service.js'
 
@@ -143,37 +140,20 @@ export const join = async (req, res) => {
             return res.status(201).json({ message: "Bienvenue dans la famille !", family, user: req.user })
         }
 
-        // Gestion des invités avec un sessionId
-        let sessionId = req.cookies.sessionId
-        let guest
-
-        if (!sessionId) {
-            sessionId = generateTokenAndSetCookie(res) // Générer un sessionId
-            guest = new Guest({ sessionId, familyId: [family._id] })
-            await guest.save()
-        } else {
-            // Vérifier si le guest existe déjà
-            guest = await Guest.findOne({ sessionId })
-            if (!guest) {
-                guest = new Guest({ sessionId, familyId: [family._id] })
-                await guest.save()
-            }
+        // Guest path — req.guest est déjà défini par le middleware identifyUserOrGuest
+        if (req.guest.familyId) {
+            return res.status(400).json({ message: "L'utilisateur appartient déjà à une famille." })
         }
 
-        // Ajouter le guest à la famille
-        if (!req.guest.familyId) {  
-            req.guest.familyId = family._id;  
-            await req.guest.save();  
-        } else {  
-            return res.status(400).json({ message: "L'utilisateur appartient déjà à une famille." });
-        }
+        req.guest.familyId = family._id
+        await req.guest.save()
 
-        if (!family.guestMembers.includes(guest._id)) {
-            family.guestMembers.push(guest._id)
+        if (!family.guestMembers.includes(req.guest._id)) {
+            family.guestMembers.push(req.guest._id)
             await family.save()
         }
 
-        return res.status(201).json({ message: "Invité ajouté à la famille", family, sessionId })
+        return res.status(201).json({ message: "Invité ajouté à la famille", family })
     } catch (error) {
         console.error("Erreur dans join Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
@@ -184,21 +164,20 @@ export const change = async (req, res) => {
     try {
         const { inviteCode } = req.body
 
-        // Vérification du code d'invitation
         const family = await Family.findOne({ inviteCode })
-        const previousFamily = await Family.findById(req.user.familyId)
         if (!family) {
             return res.status(404).json({ message: "Aucune famille ne correspond à ce code...", family: null })
         }
 
         if (req.user) {
-            // Un utilisateur enregistré change de famille
-            req.user.familyId = family._id;  
-            await req.user.save();  
+            const previousFamily = await Family.findById(req.user.familyId)
+            req.user.familyId = family._id
+            await req.user.save()
 
             family.members.push(req.user._id)
             await family.save()
-            if(previousFamily){
+
+            if (previousFamily) {
                 previousFamily.members.pull(req.user._id)
                 await previousFamily.save()
             }
@@ -206,35 +185,25 @@ export const change = async (req, res) => {
             return res.status(201).json({ message: `Bienvenue dans la famille !`, family, user: req.user })
         }
 
-        // Gestion des invités avec un sessionId
-        let sessionId = req.cookies.sessionId
-        let guest
+        // Guest path — req.guest est déjà défini par le middleware identifyUserOrGuest
+        const previousFamily = req.guest.familyId
+            ? await Family.findById(req.guest.familyId)
+            : null
 
-        if (!sessionId) {
-            sessionId = generateTokenAndSetCookie(res) // Générer un sessionId
-            guest = new Guest({ sessionId, familyId: [family._id] })
-            await guest.save()
-        } else {
-            // Vérifier si le guest existe déjà
-            guest = await Guest.findOne({ sessionId })
-            if (!guest) {
-                guest = new Guest({ sessionId, familyId: [family._id] })
-                await guest.save()
-            }
+        req.guest.familyId = family._id
+        await req.guest.save()
+
+        if (!family.guestMembers.includes(req.guest._id)) {
+            family.guestMembers.push(req.guest._id)
+            await family.save()
         }
 
-        // Ajouter le guest à la famille
-            req.guest.familyId = family._id;  
-            await req.guest.save();  
-
-        if (!family.guestMembers.includes(guest._id)) {
-            family.guestMembers.push(guest._id)
-            await family.save()
-            previousFamily.guestMembers.pull(guest._id)
+        if (previousFamily) {
+            previousFamily.guestMembers.pull(req.guest._id)
             await previousFamily.save()
         }
 
-        return res.status(201).json({ message: "Invité ajouté à la famille", family, sessionId })
+        return res.status(201).json({ message: "Invité ajouté à la famille", family })
     } catch (error) {
         console.error("Erreur dans change Family Controller:", error.message)
         return res.status(500).json({ error: "Erreur interne du serveur." })
