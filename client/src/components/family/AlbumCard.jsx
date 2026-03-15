@@ -115,7 +115,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
                                 },
                                 {
                                 label: "Supprimer",
-                                icon: <Trash className="h-4 w-4 text-red-500" />,
+                                icon: <Trash className="h-4 w-4 text-error" />,
                                 disabled: false,
                                 onClick: () => setIsDeleteAlbumId(album._id),
                                 },

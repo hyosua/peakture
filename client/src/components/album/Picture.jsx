@@ -102,7 +102,7 @@
                                     },
                                     {
                                         label: "Supprimer",
-                                        icon: <Trash className="h-4 w-4 text-red-500" />,
+                                        icon: <Trash className="h-4 w-4 text-error" />,
                                         onClick: () => deletePhoto(photo._id, photo.src),
                                     },
                                 ]}

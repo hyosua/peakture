@@ -18,7 +18,7 @@ export default function ClassementVide() {
         className="mb-4"
       />
       <h2 className="text-xl font-bold">Classement en attente...</h2>
-      <p className="text-sm text-gray-500 mt-2">
+      <p className="text-sm text-base-content/60 mt-2">
         Une fois le concours terminé, vous verrez ici les résultats ✨
       </p>
     </motion.div>

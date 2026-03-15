@@ -109,7 +109,7 @@ const Profile = () => {
           <button
             disabled={!isEditing}
             onClick={handleSubmit}
-            className={`w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-neutral ${isEditing ? 'bg-primary cursor-pointer hover:bg-accent' : 'bg-gray-400 cursor-not-allowed'}`}
+            className={`w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-neutral ${isEditing ? 'bg-primary cursor-pointer hover:bg-accent' : 'bg-base-300 cursor-not-allowed'}`}
           >
             Enregistrer
           </button>
@@ -218,7 +218,7 @@ const Profile = () => {
                       name="username"
                       value={user.username}
                       onChange={handleUsernameChange}
-                      className="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                      className="block w-full pl-3 pr-3 py-2 border border-base-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
                       placeholder="Votre nom d'utilisateur"
                     />
                   </div>

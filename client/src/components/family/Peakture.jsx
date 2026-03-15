@@ -126,7 +126,7 @@ const Peakture = () => {
           e.stopPropagation();
           handleFullscreenClick(e);
         }}
-        className="absolute top-3 right-3 cursor-pointer bg-black/20 text-gray-300 p-2 rounded-full hover:bg-black/80 z-20"
+        className="absolute top-3 right-3 cursor-pointer bg-black/20 text-base-content/70 p-2 rounded-full hover:bg-black/80 z-20"
         title="Voir en plein écran"
       >
         <Expand className="h-5 w-5" />

@@ -296,7 +296,7 @@ const AlbumList = () => {
                             <div className='flex justify-between items-center mb-4'>
                                 <h2 className='text-xl font-semibold'>Ajouter Un Album</h2>
                                 <button 
-                                    className='p-1 rounded-full hover:bg-gray-200 hover:text-neutral cursor-pointer'
+                                    className='p-1 rounded-full hover:bg-base-200 hover:text-neutral cursor-pointer'
                                     onClick={() => {
                                         setShowAddForm(false)
                                         setErrorMessage('')
@@ -383,7 +383,7 @@ const AlbumList = () => {
                                 <div className='flex gap-4 justify-end'>
                                     <button
                                         type='button'
-                                        className='btn btn-ghost hover:bg-red-400 hover:text-base-100'
+                                        className='btn btn-ghost hover:bg-error hover:text-error-content'
                                         onClick={() => {
                                             setShowAddForm(false)
                                             setErrorMessage('')
@@ -440,7 +440,7 @@ const AlbumList = () => {
                                     Aucun album
                             </motion.h2>
                             <motion.p 
-                                className={`${isAdmin ? "text-gray-200" : "hidden"}`}
+                                className={`${isAdmin ? "text-base-content/70" : "hidden"}`}
                                 initial={{ opacity: 0, scale: 0.6 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{
@@ -481,7 +481,7 @@ const AlbumList = () => {
                                         value={newTheme}
                                         placeholder='Entrer le nouveau thème'
                                         onChange={(e) => setNewTheme(e.target.value)}
-                                        className='w-full px-3 py-2 border text-white border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-2'
+                                        className='w-full px-3 py-2 border text-base-content border-base-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary mb-2'
                                     />
                                     <div className='flex space-x-2'>
                                         <button
