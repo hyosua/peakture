@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const validate = (schema) => (req, res, next) => {
     const result = schema.safeParse(req.body)
     if (!result.success) {
-        const message = result.error.errors[0]?.message || "Données invalides"
+        const message = result.error.issues[0]?.message || "Données invalides"
         return res.status(400).json({ error: message })
     }
     req.body = result.data
