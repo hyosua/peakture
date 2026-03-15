@@ -10,7 +10,8 @@ const Dock = () => {
 
     const currentPath = location.pathname;
 
-    if (currentPath === '/' && !currentUser) return null;
+    const isAnonymousGuest = currentUser?.sessionId && !currentUser?.familyId;
+    if (currentPath === '/' && (!currentUser || isAnonymousGuest)) return null;
 
     return (
         <div className="dock z-50 dock-sm lg:dock-lg w-screen left-0 right-0">
