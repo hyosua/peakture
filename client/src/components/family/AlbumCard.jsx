@@ -45,7 +45,7 @@ const AlbumCard = ({ album, index, handleEdit, handleAlbumClick, isAdmin, setIsD
             onClick={() => handleAlbumClick(album._id)}
         >
             <motion.div 
-                className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-200 ${statusStyle.border} rounded-lg indicator group`}
+                className={`relative flex flex-col p-4 cursor-pointer border-2 bg-base-100 ${statusStyle.border} rounded-lg indicator group`}
                 initial={{ opacity: 0, scale: 0.6 }}
                 animate={isInView ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.6, y: 20 }}
                     transition={{

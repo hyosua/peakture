@@ -103,7 +103,7 @@ const FamilyHome = () => {
             </div>
         )}
             { family ? (
-                <div className='bg-base-100 flex flex-col items-center'>
+                <div className='bg-base-200 flex flex-col items-center'>
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}

@@ -70,7 +70,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
             <button 
               type="button" 
               tabIndex={"-1"} 
-              className='absolute right-4 top-2 hover:border cursor-pointer hover:border-accent rounded-md p-1'
+              className='absolute right-4 top-2 hover:border cursor-pointer hover:border-secondary rounded-md p-1'
               title="Voir/Masquer mdp"
               onClick={(e) => {
                 e.preventDefault();
@@ -81,7 +81,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
             </button>
             <button
               type="button"
-              className="btn btn-link text-accent btn-accent text-sm"
+              className="btn btn-link text-secondary btn-secondary text-sm"
               onClick={() => {
                 onClose();
                 setTimeout(() => {
@@ -109,7 +109,7 @@ const Login = ({ onClose, onLoginSuccess, onSwitchToSignup}) => {
             Pas encore de compte ? 
             <button
               type="button"
-              className="btn btn-link text-accent btn-accent text-sm"
+              className="btn btn-link text-secondary btn-secondary text-sm"
               onClick={onSwitchToSignup}
             >
               S&apos;inscrire

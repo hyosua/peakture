@@ -83,7 +83,7 @@ const Peakture = () => {
     <div className={`flex justify-center items-center my-6²`}>
       {peakture && (
         <motion.div
-          className="relative w-80 md:w-96 lg:w-[450px] mx-auto p-6 flex flex-col items-center bg-base-200 rounded-xl overflow-hidden shadow-lg"
+          className="relative w-80 md:w-96 lg:w-[450px] mx-auto p-6 flex flex-col items-center bg-base-100 rounded-xl overflow-hidden shadow-lg"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

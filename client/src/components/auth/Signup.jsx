@@ -187,7 +187,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess, inviteCode }) => {
           
           <button 
             type="submit" 
-            className={`btn btn-accent w-full`}
+            className={`btn btn-secondary w-full`}
             disabled={isLoading}
           >
             {isLoading ? (

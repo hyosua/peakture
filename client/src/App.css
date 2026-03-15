@@ -3,5 +3,50 @@
 
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: dim --default, dark --prefersdark;
+  themes: peakture --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "peakture";
+  default: true;
+  color-scheme: dark;
+
+  /* Backgrounds — Synthwave, un peu plus clair */
+  --color-base-100: oklch(0.30 0.07 293);  /* cards/surfaces */
+  --color-base-200: oklch(0.22 0.06 293);  /* page background */
+  --color-base-300: oklch(0.16 0.04 290);  /* fond le plus sombre / borders */
+  --color-base-content: oklch(0.92 0.015 290);
+
+  /* Primary — ambre/jaune chaud */
+  --color-primary: oklch(0.82 0.18 70);
+  --color-primary-content: oklch(0.15 0.03 70);
+
+  /* Secondary — violet doux */
+  --color-secondary: oklch(0.62 0.27 285);
+  --color-secondary-content: oklch(0.98 0.01 285);
+
+  /* Accent — cyan/teal synthwave */
+  /* Accent — rose/magenta chaud (pont entre jaune et violet) */
+  --color-accent: oklch(0.68 0.24 340);
+  --color-accent-content: oklch(0.98 0.01 340);
+
+  /* Neutral */
+  --color-neutral: oklch(0.26 0.06 293);
+  --color-neutral-content: oklch(0.90 0.015 290);
+
+  /* Statuts */
+  --color-info: oklch(0.70 0.14 220);
+  --color-info-content: oklch(0.10 0.03 280);
+  --color-success: oklch(0.70 0.18 150);
+  --color-success-content: oklch(0.10 0.03 280);
+  --color-warning: oklch(0.80 0.17 89);
+  --color-warning-content: oklch(0.10 0.03 280);
+  --color-error: oklch(0.62 0.22 25);
+  --color-error-content: oklch(0.98 0.01 25);
+
+  /* Rayons */
+  --radius-selector: 0.75rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1rem;
+  --border: 1px;
 }
