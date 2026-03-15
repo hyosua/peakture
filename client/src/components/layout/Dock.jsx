@@ -9,7 +9,8 @@ const Dock = () => {
     const {currentUser} = useAuth()
 
     const currentPath = location.pathname;
-    
+
+    if (currentPath === '/' && !currentUser) return null;
 
     return (
         <div className="dock z-50 dock-sm lg:dock-lg w-screen left-0 right-0">
