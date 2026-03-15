@@ -29,7 +29,11 @@ export const getPhotosFromAlbum = async (req, res) => {
 
 export const addPhoto = async (req, res) => {
     try {
-        const { albumId, src, userId, username, userModel } = req.body
+        const { albumId, src } = req.body
+        const userOrGuest = req.user || req.guest
+        const userId = userOrGuest._id
+        const username = userOrGuest.username
+        const userModel = req.user ? 'User' : 'Guest'
 
         if( !albumId || !src ) {
             return res.status(400).json({message: "Album Id and Image URL are required" })
@@ -266,13 +270,23 @@ export const replacePhoto = async (req,res) => {
 
 // Vote: 1 seul vote par album, possibilité de changer son vote
 export const votePhoto = async (req,res) => {
+    const photoId = req.params.id
+    const userId = (req.user || req.guest)?._id
+    const { albumId } = req.body
+
+    if (!userId) return res.status(401).json({ message: "Non authentifié" })
+
+    // Vérification self-vote côté serveur
+    const targetPhoto = await Photo.findById(photoId)
+    if (!targetPhoto) return res.status(404).json({ message: "Photo introuvable" })
+    if (targetPhoto.userId?.toString() === userId.toString()) {
+        return res.status(403).json({ message: "Impossible de voter pour sa propre photo" })
+    }
+
     const session = await mongoose.startSession()
     session.startTransaction()
 
     try {
-        const photoId = req.params.id
-        const userId = req.user._id
-        const {albumId} = req.body
 
         const previousVote = await Photo.findOne({ albumId, votedBy: userId})
         const sameVote = await Photo.findOne({ _id: photoId, votedBy: userId})

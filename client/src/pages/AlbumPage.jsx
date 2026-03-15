@@ -173,9 +173,6 @@ const AlbumPage = () => {
                 body: JSON.stringify({
                     albumId: album._id,
                     src: imageUrl,
-                    userId: currentUser._id,
-                    username: currentUser.username,
-                    userModel: currentUser.sessionId ? "Guest" : "User"
                 })
             })
 

@@ -78,7 +78,6 @@ export const addPhotoSchema = z.object({
         .string()
         .url("URL invalide")
         .regex(cloudinaryUrlRegex, "Source d'image non autorisée"),
-    username: z.string().trim().max(50).optional()
 })
 
 export const editFamilyNameSchema = z.object({
