@@ -1,105 +1,49 @@
-# Peakture 
+# Peakture
 
-## Description
-Peakture est une application permettant de rejoindre une "Family" : une communauté où les utilisateurs peuvent participer à des concours photo mensuels pour garder le contact avec leurs proches de manière ludique.
+**Peakture** est une application web de concours photo en famille. Chaque mois, les membres d'une *Family* participent à un concours sur un thème choisi par l'admin, votent pour leur photo préférée, et découvrent le classement final — une façon ludique de garder le contact avec ses proches.
 
-Site déployé: https://peakture.fr/
+Site déployé : [peakture.fr](https://peakture.fr)
 
-### Fonctionnalités principales
-En fonction du type d'utilisateur, voici les fonctionnalités disponibles :
-- **Admin** :
-  - Création d'une "Family"
-  - Création d'un album avec un thème
-  - Clôturer les votes
-- **Utilisateur** :
-  - Rejoindre une "Family"
-  - Créer une "Family" et en devenir admin
-  - Participer à un album en uploadant une photo
-  - Voter pour la photo d'un autre utilisateur
-- **Invité** :
-  - Possibilité de tester l'application en créant une "Family"
-  - Rejoindre une "Family"
-  - Impossible de participer sans inscription
+---
 
-## Technologies utilisées
-- **Backend** : Node.js, Express, MongoDB avec Mongoose
-- **Frontend** : React avec Vite
-- **Style** : TailwindCSS, DaisyUI
-- **Authentification** : JWT
-- **Stockage d'images** : Cloudinary
-- **Envoi d'e-mails** : SendGrid
-- **Autres** : React Router DOM, React Masonry CSS, Motion
+## Fonctionnalités
 
-## Installation et Configuration
+### Rôles utilisateurs
 
-### Prérequis
-- [Node.js](https://nodejs.org/)
-- [MongoDB](https://www.mongodb.com/)
+| Rôle | Capacités |
+|---|---|
+| **Admin** | Créer une Family, créer des albums avec thème et date, lancer/clôturer les votes |
+| **Membre** | Rejoindre une Family, uploader une photo par album, voter pour les autres |
+| **Invité** | Créer ou rejoindre une Family pour tester l'app — inscription requise pour participer |
 
-### Installation
-1. **Cloner le projet**
-   ```
-   git clone https://github.com/hyosua/peakture.git
-   cd peakture
-   ```
+### Cycle d'un concours
 
-2. **Installer les dépendances**
-   - Pour le serveur :
-     ```
-     cd server
-     npm install
-     ```
-   - Pour le client :
-     ```
-     cd client
-     npm install
-     ```
+1. L'admin crée un album avec un thème (ex. *"Nature — Juin 2025"*)
+2. Les membres uploadent leur photo pendant la période de participation
+3. L'admin lance le vote — chacun vote pour sa photo préférée (pas la sienne)
+4. L'admin clôture le vote et le classement est révélé
 
-3. **Configuration des variables d'environnement**
-   Créer un fichier `.env` dans le dossier `server` et ajouter les variables suivantes :
-   ```env
-   ATLAS_URI=your_mongodb_connection_string
-   CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-   CLOUDINARY_API_KEY=your_cloudinary_api_key
-   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-   CLOUDINARY_UPLOAD_PRESET=your_upload_preset
-   JWT_SECRET=your_jwt_secret
-   NODE_ENV=development
-   SENDGRID_API_KEY=your_sendgrid_api_key
-   ```
+---
 
-## Utilisation
+## Stack technique
 
-### Lancer le projet avec Docker 🚀 
-Ce projet utilise Docker pour lancer l'application MERN (MongoDB, Express, React, Node.js) en local.
+- **Backend** : Node.js / Express / MongoDB (Mongoose)
+- **Frontend** : React / Vite / TailwindCSS / DaisyUI
+- **Auth** : JWT (httpOnly cookies)
+- **Stockage** : Cloudinary
+- **Emails** : SendGrid
+- **Autres** : React Router, Framer Motion, Redux
 
-- **Pré-requis**
-Docker et Docker Compose doivent être installés sur votre machine.
+---
 
-Une instance MongoDB locale doit être en cours d'exécution (ou utilisez MongoDB Atlas).
+## Sécurité
 
-- **Configuration des variables d’environnement**
-Certaines fonctionnalités (comme la connexion à Cloudinary ou MongoDB) nécessitent des variables d’environnement.
+L'application a fait l'objet d'un audit selon l'OWASP Top 10 et des mesures ont été mises en place pour couvrir les principales catégories de risques :
 
-Copiez le fichier d’exemple :
-  ```
-cp server/.env.example server/.env
-  ```
-
-Remplissez-le avec vos informations personnelles (Cloudinary, MongoDB, etc.).
-
-Démarrage de l'application
-Depuis la racine du projet, lancez la commande :
-
-  ```
-docker compose up 
-  ```
-
-Les services suivants seront disponibles :
-
-Frontend (Vite + React) : http://localhost:5173
-
-Backend (Express API) : 
-
-
-
+- **Contrôle d'accès** : toutes les routes d'écriture sont protégées par authentification ; les opérations sensibles vérifient le rôle de l'utilisateur côté serveur
+- **Validation des entrées** : les données entrantes sont validées et filtrées côté serveur avant tout traitement ou persistance
+- **Protection contre l'injection** : les paramètres utilisateur sont assainis pour prévenir les injections NoSQL et autres
+- **Headers de sécurité** : les réponses HTTP incluent les headers de sécurité recommandés
+- **Gestion des sessions** : cookies sécurisés (httpOnly, SameSite), nettoyage des sessions à la déconnexion
+- **Limitation du trafic** : rate limiting appliqué sur les endpoints d'authentification
+- **Journalisation** : aucune donnée sensible n'est loguée en production
