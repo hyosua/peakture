@@ -6,10 +6,10 @@ import { validate, addPhotoSchema } from '../middleware/validate.js'
 const router  = express.Router()
 
 router.get('/:albumId', getPhotosFromAlbum)
-router.post('/', validate(addPhotoSchema), addPhoto)
-router.delete('/:id', deletePhoto);
-router.post('/cloudinary/delete', deleteFromCloudinary)
-router.patch('/:id', replacePhoto)
+router.post('/', identifyUserOrGuest, validate(addPhotoSchema), addPhoto)
+router.delete('/:id', identifyUserOrGuest, deletePhoto);
+router.post('/cloudinary/delete', identifyUserOrGuest, deleteFromCloudinary)
+router.patch('/:id', identifyUserOrGuest, replacePhoto)
 router.patch('/:id/vote', identifyUserOrGuest, votePhoto)
 router.get("/:id/has-submitted", identifyUserOrGuest, hasSubmitted)
 
