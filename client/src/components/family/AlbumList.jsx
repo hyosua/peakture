@@ -535,7 +535,7 @@ const AlbumList = () => {
             
             {isAdmin && (
                 <motion.button
-                    className='p-6 btn btn-primary mt-6 rounded-full hover:text-neutral flex items-center cursor-pointer'
+                    className='fixed bottom-6 right-6 z-40 p-6 btn btn-primary rounded-full shadow-lg hover:text-neutral flex items-center cursor-pointer'
                     onClick={() => setShowAddForm(true)}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={{ opacity: 1, scale: 1 }}
