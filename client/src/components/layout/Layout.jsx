@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const Layout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-hidden">
         <main className="flex-grow">{children}</main>
           <Dock />
     </div>
