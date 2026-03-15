@@ -29,7 +29,7 @@ export default function EditDropdown({ actions }) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="absolute right-0 mt-2 w-48 bg-neutral shadow-lg rounded-xl border-2 border-gray-200"
+                className="absolute right-0 mt-2 w-48 bg-neutral shadow-lg rounded-xl border border-base-300"
                 >
                 <ul className="">
                     {actions.map((action, index) => (

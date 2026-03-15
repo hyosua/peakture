@@ -12,9 +12,9 @@ const WinnerBanner = ({ winner }) => {
         initial={{ scale: 0 }}
         animate={{ scale: 0.9 }}
         transition={{ type: "spring", stiffness: 300, damping: 10 }}
-        className="flex items-center space-x-3 bg-neutral text-yellow-600 px-6 py-3 rounded-2xl shadow-xl"
+        className="flex items-center space-x-3 bg-neutral text-secondary px-6 py-3 rounded-2xl shadow-xl"
       >
-        <Trophy className="w-6 h-6 text-yellow-600" />
+        <Trophy className="w-6 h-6 text-secondary" />
         <span className="text-xl font-bold">
         {winner?.username}
         </span>

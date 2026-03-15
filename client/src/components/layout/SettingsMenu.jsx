@@ -65,7 +65,7 @@ const SettingsMenu = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="absolute bottom-16 right-0 w-48 bg-neutral shadow-lg rounded-xl border-2 border-gray-200"
+          className="absolute bottom-16 right-0 w-48 bg-neutral shadow-lg rounded-xl border border-base-300"
         >
           <ul>
           {!currentUser?.sessionId &&(
