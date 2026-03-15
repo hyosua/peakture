@@ -1,14 +1,12 @@
 import express from "express"
 import { getPhotosFromAlbum, addPhoto, deletePhoto, deleteFromCloudinary, replacePhoto, votePhoto, hasSubmitted } from '../controllers/photos.controller.js'
-
 import { identifyUserOrGuest } from '../middleware/identifyUserOrGuest.js'
-
+import { validate, addPhotoSchema } from '../middleware/validate.js'
 
 const router  = express.Router()
 
-
 router.get('/:albumId', getPhotosFromAlbum)
-router.post('/', addPhoto)
+router.post('/', validate(addPhotoSchema), addPhoto)
 router.delete('/:id', deletePhoto);
 router.post('/cloudinary/delete', deleteFromCloudinary)
 router.patch('/:id', replacePhoto)
