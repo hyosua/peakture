@@ -16,7 +16,7 @@ const Auth = ({ onClose, onLoginSuccess, signUp, onSignupSuccess, preFilledInvit
                   exit={{ opacity: 0 }}
         >
           {/* Conteneur principal */}
-          <div className="w-96 m-4 h-auto perspective-1000 flex items-center justify-center">
+          <div className="w-full max-w-sm mx-4 h-auto perspective-1000 flex items-center justify-center">
             {/* Conteneur qui va tourner */}
             <motion.div 
               className="w-full h-full flex items-center relative preserve-3d"
