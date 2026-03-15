@@ -137,10 +137,10 @@ const Profile = () => {
         <motion.label
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="absolute bottom-3 right-3 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-primary"            
+            className="absolute bottom-3 right-3 bg-base-100 p-2 rounded-full shadow-md cursor-pointer hover:bg-primary"
             title="Changer l'image de couverture"
           >
-            <Camera size={20} className="text-gray-600" />
+            <Camera size={20} className="text-base-content/60" />
             <input 
               type="file" 
               onChange={handleCoverChange} 
@@ -154,7 +154,7 @@ const Profile = () => {
         <div className="flex gap-6 h-screen">
       {/* Avatar Section */}
       <div className="relative flex-shrink-0">
-        <div className="relative w-32 h-32 rounded-full border-4 border-white shadow-lg -mt-16 bg-neutral">
+        <div className="relative w-32 h-32 rounded-full border-4 border-primary shadow-lg -mt-16 bg-neutral">
 
           {/* Loader ou Image */}
           {avatarUploading ? (
@@ -178,10 +178,10 @@ const Profile = () => {
           <motion.label
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="absolute -top-2 left-1 bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-primary"
+            className="absolute -top-2 left-1 bg-base-100 p-2 rounded-full shadow-md cursor-pointer hover:bg-primary"
             title="Changer la photo"
           >
-            <Camera size={16} className="text-gray-600" />
+            <Camera size={16} className="text-base-content/60" />
             <input 
               type="file" 
               onChange={handleAvatarChange} 

@@ -234,7 +234,7 @@ const AlbumPage = () => {
 
     const handleVote = async (photo_id) => {
         // si l'utilisateur n'est pas connecté impossible de voter
-        if(!currentUser.email){
+        if(!currentUser?.email){
             setShowVoteError(true)
             setTimeout(() => {
                 setShowVoteError(false)
@@ -552,7 +552,7 @@ const AlbumPage = () => {
 
                     {photos?.length > 0 && album?.status === "open" && (
                         <motion.p 
-                        className="text-gray-500 text-sm mb-6"
+                        className="text-base-content/50 text-sm mb-6"
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{
@@ -842,8 +842,8 @@ const AlbumPage = () => {
                                     ) : (
                                         <div className="py-8">
                                             <Upload size={48} className="mx-auto text-white mb-2" />
-                                            <p className="text-gray-300 mb-6">Déposez votre image ici ou</p>
-                                            <label className="bg-white hover:bg-neutral text-black hover:text-white px-4 py-2 rounded cursor-pointer">
+                                            <p className="text-base-content/70 mb-6">Déposez votre image ici ou</p>
+                                            <label className="bg-primary hover:bg-primary/80 text-primary-content px-4 py-2 rounded cursor-pointer">
                                                 Parcourir
                                                 <input
                                                     type="file"

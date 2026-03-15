@@ -22,7 +22,7 @@ const TieBreakView = ({ album, tiedPhotos, otherPhotos, onTieBreakVote, disabled
                         <h2 className="text-primary font-bold mb-2 text-center">
                             {currentUser.username}, à toi de départager.
                         </h2>
-                        <p className="text-gray-500 m-4 mb-6">Choisis la photo qui mérite selon toi d&apos;atteindre le sommet</p>
+                        <p className="text-base-content/50 m-4 mb-6">Choisis la photo qui mérite selon toi d&apos;atteindre le sommet</p>
                     </>
                     
                 ) : (

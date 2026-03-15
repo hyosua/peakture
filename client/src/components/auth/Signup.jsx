@@ -151,7 +151,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess, inviteCode }) => {
             <button 
                   type="button"
                   tabIndex={"-1"} // empêche le focus sur le bouton
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer'
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-base-content cursor-pointer'
                   onClick={(e) => {
                     e.preventDefault()
                     setShowPassword(!showPassword)
@@ -173,7 +173,7 @@ const Signup = ({ onClose, onSwitchToLogin, onSignupSuccess, inviteCode }) => {
             <button 
                   type="button"
                   tabIndex={"-1"}
-                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 cursor-pointer'
+                  className='absolute inset-y-0 right-0 pr-3 flex items-center text-base-content/50 hover:text-base-content cursor-pointer'
                   onClick={(e) => {
                     e.preventDefault()
                     setShowPassword(!showPassword)

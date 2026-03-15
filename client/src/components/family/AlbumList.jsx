@@ -459,7 +459,7 @@ const AlbumList = () => {
                                     <div className='flex space-x-2'>
                                         <button
                                             onClick={handleCancel}
-                                            className='p-2 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-error flex items-center cursor-pointer'
+                                            className='p-2 py-2 bg-base-200 text-base-content rounded-lg hover:bg-error flex items-center cursor-pointer'
                                         >
                                             <X size={26} className='mr-1' /> 
                                         </button>
