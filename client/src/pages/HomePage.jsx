@@ -276,15 +276,6 @@ const HomePage = () => {
 
         {/* ── Contenu héro ── */}
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 pb-40">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 text-amber-300 text-sm font-medium mb-8"
-          >
-            <span>🏔</span>
-            <span>Concours photo mensuel en famille</span>
-          </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -295,7 +286,7 @@ const HomePage = () => {
           >
             La meilleure photo<br />
             <span style={{ color: '#fbbf24', WebkitTextStroke: '1px rgba(251,191,36,0.3)' }}>
-              atteint le sommet
+              atteindra le sommet
             </span>
           </motion.h1>
 
@@ -352,19 +343,20 @@ const HomePage = () => {
         </div>
 
         {/* Flèche scroll */}
-        <motion.div
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 z-10"
+        <motion.button
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/40 z-10 cursor-pointer hover:text-white/70 transition-colors"
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.8, repeat: Infinity }}
+          onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
         >
           <ChevronDown className="w-6 h-6" />
-        </motion.div>
+        </motion.button>
       </section>
 
       {/* ══════════════════════════════════════════
           COMMENT ÇA MARCHE
       ══════════════════════════════════════════ */}
-      <section style={{ background: '#100d30' }} className="py-20 px-4">
+      <section id="how-it-works" style={{ background: '#100d30' }} className="py-20 px-4">
         <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
